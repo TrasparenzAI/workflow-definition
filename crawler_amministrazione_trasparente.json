@@ -59,22 +59,22 @@
               {
                 "name": "companies_chunk_0",
                 "taskReferenceName": "companies_chunk_0_ref",
-				        "inputParameters": {
-					        "companies": "${companies_task_ref.output.response.body.content}",
-					        "queryExpression": ".companies |.[0:25]"
-				        },
-	          	  "type": "JSON_JQ_TRANSFORM"
+                "inputParameters": {
+                  "companies": "${companies_task_ref.output.response.body.content}",
+                  "queryExpression": ".companies |.[0:25]"
+                },
+                "type": "JSON_JQ_TRANSFORM"
               },
-  	          {
-  		          "name": "companies_chunk_0_size",
-  		          "taskReferenceName": "companies_chunk_0_size_ref",
-  		          "inputParameters": {
-  		            "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-  		            "evaluatorType": "javascript",
-  		            "s": "${companies_chunk_0_ref.output.result}"
-  		          },
-  		          "type": "INLINE"
-  	          },
+              {
+                "name": "companies_chunk_0_size",
+                "taskReferenceName": "companies_chunk_0_size_ref",
+                "inputParameters": {
+                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
+                  "evaluatorType": "javascript",
+                  "s": "${companies_chunk_0_ref.output.result}"
+                },
+                "type": "INLINE"
+              },
               {
                 "name": "switch_companies_chunk_0",
                 "taskReferenceName": "switch_companies_chunk_0_ref",
@@ -84,21 +84,21 @@
                 "type": "SWITCH",
                 "decisionCases": {
                   "true": [
-		              {
-		                "name": "start_rule_workflow_chunck_0",
-		                "taskReferenceName": "start_rule_workflow_chunck_0_ref",
-		                "inputParameters": {
-		                  "companies": "${companies_chunk_0_ref.output.result}",
-		                  "parent_workflow_id": "${workflow.workflowId}",
-		                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-		                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}"
-		                },
-		                "subWorkflowParam": {
-		                  "name": "Rule_Workflow",
-		                  "version": 1
-		                },                
-		                "type": "SUB_WORKFLOW"
-		              }
+                  {
+                    "name": "start_rule_workflow_chunck_0",
+                    "taskReferenceName": "start_rule_workflow_chunck_0_ref",
+                    "inputParameters": {
+                      "companies": "${companies_chunk_0_ref.output.result}",
+                      "parent_workflow_id": "${workflow.workflowId}",
+                      "crawler_save_object": "${workflow.input.crawler_save_object}",
+                      "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}"
+                    },
+                    "subWorkflowParam": {
+                      "name": "Rule_Workflow",
+                      "version": 1
+                    },                
+                    "type": "SUB_WORKFLOW"
+                  }
                   ]
                 },
                 "defaultCase": [],
@@ -110,22 +110,22 @@
               {
                 "name": "companies_chunk_1",
                 "taskReferenceName": "companies_chunk_1_ref",
-        				"inputParameters": {
-        				"companies": "${companies_task_ref.output.response.body.content}",
-        				"queryExpression": ".companies |.[25:50]"
-        			},
-	          	"type": "JSON_JQ_TRANSFORM"
+                "inputParameters": {
+                "companies": "${companies_task_ref.output.response.body.content}",
+                "queryExpression": ".companies |.[25:50]"
               },
-  	          {
-  		          "name": "companies_chunk_1_size",
-  		          "taskReferenceName": "companies_chunk_1_size_ref",
-  		          "inputParameters": {
-  		            "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-  		            "evaluatorType": "javascript",
-  		            "s": "${companies_chunk_1_ref.output.result}"
-  		          },
-  		          "type": "INLINE"
-  	          },
+              "type": "JSON_JQ_TRANSFORM"
+              },
+              {
+                "name": "companies_chunk_1_size",
+                "taskReferenceName": "companies_chunk_1_size_ref",
+                "inputParameters": {
+                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
+                  "evaluatorType": "javascript",
+                  "s": "${companies_chunk_1_ref.output.result}"
+                },
+                "type": "INLINE"
+              },
               {
                 "name": "switch_companies_chunk_1",
                 "taskReferenceName": "switch_companies_chunk_1_ref",
@@ -135,21 +135,21 @@
                 "type": "SWITCH",
                 "decisionCases": {
                   "true": [
-		              {
-		                "name": "start_rule_workflow_chunck_1",
-		                "taskReferenceName": "start_rule_workflow_chunck_1_ref",
-		                "inputParameters": {
-		                  "companies": "${companies_chunk_1_ref.output.result}",
-		                  "parent_workflow_id": "${workflow.workflowId}",
-		                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-		                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}"
-		                },
-		                "subWorkflowParam": {
-		                  "name": "Rule_Workflow",
-		                  "version": 1
-		                },                
-		                "type": "SUB_WORKFLOW"
-		              }                  	
+                  {
+                    "name": "start_rule_workflow_chunck_1",
+                    "taskReferenceName": "start_rule_workflow_chunck_1_ref",
+                    "inputParameters": {
+                      "companies": "${companies_chunk_1_ref.output.result}",
+                      "parent_workflow_id": "${workflow.workflowId}",
+                      "crawler_save_object": "${workflow.input.crawler_save_object}",
+                      "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}"
+                    },
+                    "subWorkflowParam": {
+                      "name": "Rule_Workflow",
+                      "version": 1
+                    },                
+                    "type": "SUB_WORKFLOW"
+                  }                   
                   ]
                 },
                 "defaultCase": [],
@@ -161,22 +161,22 @@
               {
                 "name": "companies_chunk_2",
                 "taskReferenceName": "companies_chunk_2_ref",
-        				"inputParameters": {
-      					"companies": "${companies_task_ref.output.response.body.content}",
-      					"queryExpression": ".companies |.[50:75]"
-				      },
-	          	"type": "JSON_JQ_TRANSFORM"
+                "inputParameters": {
+                "companies": "${companies_task_ref.output.response.body.content}",
+                "queryExpression": ".companies |.[50:75]"
               },
-	          {
-		          "name": "companies_chunk_2_size",
-		          "taskReferenceName": "companies_chunk_2_size_ref",
-		          "inputParameters": {
-		            "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-		            "evaluatorType": "javascript",
-		            "s": "${companies_chunk_2_ref.output.result}"
-		          },
-		          "type": "INLINE"
-	          },              
+              "type": "JSON_JQ_TRANSFORM"
+              },
+            {
+              "name": "companies_chunk_2_size",
+              "taskReferenceName": "companies_chunk_2_size_ref",
+              "inputParameters": {
+                "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
+                "evaluatorType": "javascript",
+                "s": "${companies_chunk_2_ref.output.result}"
+              },
+              "type": "INLINE"
+            },              
               {
                 "name": "switch_companies_chunk_2",
                 "taskReferenceName": "switch_companies_chunk_2_ref",
@@ -186,21 +186,21 @@
                 "type": "SWITCH",
                 "decisionCases": {
                   "true": [
-		              {
-		                "name": "start_rule_workflow_chunck_2",
-		                "taskReferenceName": "start_rule_workflow_chunck_2_ref",
-		                "inputParameters": {
-		                  "companies": "${companies_chunk_2_ref.output.result}",
-		                  "parent_workflow_id": "${workflow.workflowId}",
-		                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-		                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}"
-		                },
-		                "subWorkflowParam": {
-		                  "name": "Rule_Workflow",
-		                  "version": 1
-		                },                
-		                "type": "SUB_WORKFLOW"
-		              }                  	
+                  {
+                    "name": "start_rule_workflow_chunck_2",
+                    "taskReferenceName": "start_rule_workflow_chunck_2_ref",
+                    "inputParameters": {
+                      "companies": "${companies_chunk_2_ref.output.result}",
+                      "parent_workflow_id": "${workflow.workflowId}",
+                      "crawler_save_object": "${workflow.input.crawler_save_object}",
+                      "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}"
+                    },
+                    "subWorkflowParam": {
+                      "name": "Rule_Workflow",
+                      "version": 1
+                    },                
+                    "type": "SUB_WORKFLOW"
+                  }                   
                   ]
                 },
                 "defaultCase": [],
@@ -212,22 +212,22 @@
               {
                 "name": "companies_chunk_3",
                 "taskReferenceName": "companies_chunk_3_ref",
-				        "inputParameters": {
-					       "companies": "${companies_task_ref.output.response.body.content}",
-					       "queryExpression": ".companies |.[75:100]"
-				        },
-	          	  "type": "JSON_JQ_TRANSFORM"
+                "inputParameters": {
+                 "companies": "${companies_task_ref.output.response.body.content}",
+                 "queryExpression": ".companies |.[75:100]"
+                },
+                "type": "JSON_JQ_TRANSFORM"
               },
-  	          {
-  		          "name": "companies_chunk_3_size",
-  		          "taskReferenceName": "companies_chunk_3_size_ref",
-  		          "inputParameters": {
-  		            "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-  		            "evaluatorType": "javascript",
-  		            "s": "${companies_chunk_3_ref.output.result}"
-  		          },
-  		          "type": "INLINE"
-  	          },
+              {
+                "name": "companies_chunk_3_size",
+                "taskReferenceName": "companies_chunk_3_size_ref",
+                "inputParameters": {
+                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
+                  "evaluatorType": "javascript",
+                  "s": "${companies_chunk_3_ref.output.result}"
+                },
+                "type": "INLINE"
+              },
               {
                 "name": "switch_companies_chunk_3",
                 "taskReferenceName": "switch_companies_chunk_3_ref",
@@ -237,21 +237,21 @@
                 "type": "SWITCH",
                 "decisionCases": {
                   "true": [
-		              {
-		                "name": "start_rule_workflow_chunck_3",
-		                "taskReferenceName": "start_rule_workflow_chunck_3_ref",
-		                "inputParameters": {
-		                  "companies": "${companies_chunk_3_ref.output.result}",
-		                  "parent_workflow_id": "${workflow.workflowId}",
-		                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-		                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}"
-		                },
-		                "subWorkflowParam": {
-		                  "name": "Rule_Workflow",
-		                  "version": 1
-		                },                
-		                "type": "SUB_WORKFLOW"
-		              }                  	
+                  {
+                    "name": "start_rule_workflow_chunck_3",
+                    "taskReferenceName": "start_rule_workflow_chunck_3_ref",
+                    "inputParameters": {
+                      "companies": "${companies_chunk_3_ref.output.result}",
+                      "parent_workflow_id": "${workflow.workflowId}",
+                      "crawler_save_object": "${workflow.input.crawler_save_object}",
+                      "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}"
+                    },
+                    "subWorkflowParam": {
+                      "name": "Rule_Workflow",
+                      "version": 1
+                    },                
+                    "type": "SUB_WORKFLOW"
+                  }                   
                   ]
                 },
                 "defaultCase": [],
