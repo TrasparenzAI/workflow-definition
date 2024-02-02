@@ -3,7 +3,7 @@
   "updateTime": 1706173716218,
   "name": "crawler_amministrazione_trasparente",
   "description": "Crawler Amministrazione Trasparente",
-  "version": 2,
+  "version": 1,
   "tasks": [
     {
       "name": "Set Initial Last Page",
