@@ -2,7 +2,7 @@
   "createTime": 1706115292688,
   "updateTime": 1706474406146,
   "accessPolicy": {},
-  "name": "Rule_Workflow",
+  "name": "rule_workflow",
   "description": "Rule Workflow",
   "version": 1,
   "tasks": [

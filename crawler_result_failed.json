@@ -6,298 +6,271 @@
   "version": 1,
   "tasks": [
     {
-      "name": "Set Initial Last Page",
-      "taskReferenceName": "set_initial_last_page_ref",
+      "name": "results_task",
+      "taskReferenceName": "results_task_ref",
       "inputParameters": {
-        "last_page": false
+        "http_request": {
+          "uri": "https://dica33.ba.cnr.it/result-service/v1/results/all?workflowId=${workflow.input.workflowId}&status=${workflow.input.status}",
+          "method": "GET",
+          "connectionTimeOut": 3000,
+          "readTimeOut": 60000,
+          "accept": "application/json",
+          "contentType": "application/json"
+        }
       },
-      "type": "SET_VARIABLE"
+      "type": "HTTP"
     },
     {
-      "name": "pagination_task",
-      "taskReferenceName": "pagination_task_ref",
+      "name": "results_divide_size",
+      "taskReferenceName": "results_divide_size_ref",
       "inputParameters": {
-        "last_page": "${workflow.variables.last_page}"
+        "expression": "(function(){ return Math.floor($.s / 4) })();",
+        "evaluatorType": "javascript",
+        "s": "${results_task_ref.output.response.body.length()}"
       },
-      "type": "DO_WHILE",
-      "loopCondition": "if ($.last_page) { false; } else { true; }",
-      "loopOver": [
+      "type": "INLINE"
+    },    
+    {
+      "name": "fork",
+      "taskReferenceName": "fork_ref",
+      "inputParameters": {},
+      "type": "FORK_JOIN",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [
+        [
+          {
+            "name": "results_chunk_0",
+            "taskReferenceName": "results_chunk_0_ref",
+            "inputParameters": {
+              "companies": "${results_task_ref.output.response.body}",
+              "queryExpression": ".companies |.[0:${results_divide_size_ref.output.result}]"
+            },
+            "type": "JSON_JQ_TRANSFORM"
+          },
+          {
+            "name": "results_chunk_0_size",
+            "taskReferenceName": "results_chunk_0_size_ref",
+            "inputParameters": {
+              "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
+              "evaluatorType": "javascript",
+              "s": "${results_chunk_0_ref.output.result}"
+            },
+            "type": "INLINE"
+          },
+          {
+            "name": "switch_results_chunk_0",
+            "taskReferenceName": "switch_results_chunk_0_ref",
+            "inputParameters": {
+              "size": "${results_chunk_0_size_ref.output.result}"
+            },
+            "type": "SWITCH",
+            "decisionCases": {
+              "true": [
+              {
+                "name": "start_rule_workflow_chunck_0",
+                "taskReferenceName": "start_rule_workflow_chunck_0_ref",
+                "inputParameters": {
+                  "companies": "${results_chunk_0_ref.output.result}",
+                  "parent_workflow_id": "${workflow.input.workflowId}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "POST"
+                },
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
+                },                
+                "type": "SUB_WORKFLOW"
+              }
+              ]
+            },
+            "defaultCase": [],
+            "evaluatorType": "value-param",
+            "expression": "size"
+          }
+        ],
+        [
+          {
+            "name": "results_chunk_1",
+            "taskReferenceName": "results_chunk_1_ref",
+            "inputParameters": {
+            "companies": "${results_task_ref.output.response.body}",
+            "queryExpression": ".companies |.[${results_divide_size_ref.output.result}:${results_divide_size_ref.output.result} * 2]"
+          },
+          "type": "JSON_JQ_TRANSFORM"
+          },
+          {
+            "name": "results_chunk_1_size",
+            "taskReferenceName": "results_chunk_1_size_ref",
+            "inputParameters": {
+              "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
+              "evaluatorType": "javascript",
+              "s": "${results_chunk_1_ref.output.result}"
+            },
+            "type": "INLINE"
+          },
+          {
+            "name": "switch_results_chunk_1",
+            "taskReferenceName": "switch_results_chunk_1_ref",
+            "inputParameters": {
+              "size": "${results_chunk_1_size_ref.output.result}"
+            },
+            "type": "SWITCH",
+            "decisionCases": {
+              "true": [
+              {
+                "name": "start_rule_workflow_chunck_1",
+                "taskReferenceName": "start_rule_workflow_chunck_1_ref",
+                "inputParameters": {
+                  "companies": "${results_chunk_1_ref.output.result}",
+                  "parent_workflow_id": "${workflow.input.workflowId}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "POST"
+                },
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
+                },                
+                "type": "SUB_WORKFLOW"
+              }                   
+              ]
+            },
+            "defaultCase": [],
+            "evaluatorType": "value-param",
+            "expression": "size"
+          }
+        ],
+        [
+          {
+            "name": "results_chunk_2",
+            "taskReferenceName": "results_chunk_2_ref",
+            "inputParameters": {
+            "companies": "${results_task_ref.output.response.body}",
+            "queryExpression": ".companies |.[${results_divide_size_ref.output.result} * 2:${results_divide_size_ref.output.result} * 3]"
+          },
+          "type": "JSON_JQ_TRANSFORM"
+          },
         {
-          "name": "iteration_task",
-          "taskReferenceName": "iteration_task_ref",
+          "name": "results_chunk_2_size",
+          "taskReferenceName": "results_chunk_2_size_ref",
           "inputParameters": {
-            "expression": "(function(){ return ($.i - 1 | 0);})();",
+            "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
             "evaluatorType": "javascript",
-            "i": "${pagination_task_ref.output.iteration}"
+            "s": "${results_chunk_2_ref.output.result}"
           },
           "type": "INLINE"
-        },
-        {
-          "name": "results_task",
-          "taskReferenceName": "results_task_ref",
-          "inputParameters": {
-            "http_request": {
-              "uri": "https://dica33.ba.cnr.it/result-service/v1/results?size=100&workflowId=${workflow.input.workflowId}&status=${workflow.input.status}&page=${iteration_task_ref.output.result}",
-              "method": "GET",
-              "connectionTimeOut": 3000,
-              "readTimeOut": 10000,
-              "accept": "application/json",
-              "contentType": "application/json"
-            }
+        },              
+          {
+            "name": "switch_results_chunk_2",
+            "taskReferenceName": "switch_results_chunk_2_ref",
+            "inputParameters": {
+              "size": "${results_chunk_2_size_ref.output.result}"
+            },
+            "type": "SWITCH",
+            "decisionCases": {
+              "true": [
+              {
+                "name": "start_rule_workflow_chunck_2",
+                "taskReferenceName": "start_rule_workflow_chunck_2_ref",
+                "inputParameters": {
+                  "companies": "${results_chunk_2_ref.output.result}",
+                  "parent_workflow_id": "${workflow.input.workflowId}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "POST"
+                },
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
+                },                
+                "type": "SUB_WORKFLOW"
+              }                   
+              ]
+            },
+            "defaultCase": [],
+            "evaluatorType": "value-param",
+            "expression": "size"
+          }
+        ],
+        [
+          {
+            "name": "results_chunk_3",
+            "taskReferenceName": "results_chunk_3_ref",
+            "inputParameters": {
+             "companies": "${results_task_ref.output.response.body}",
+             "queryExpression": ".companies |.[${results_divide_size_ref.output.result} * 3:${results_task_ref.output.response.body.length()}]"
+            },
+            "type": "JSON_JQ_TRANSFORM"
           },
-          "type": "HTTP"
-        },
-        {
-          "name": "fork",
-          "taskReferenceName": "fork_ref",
-          "inputParameters": {},
-          "type": "FORK_JOIN",
-          "decisionCases": {},
-          "defaultCase": [],
-          "forkTasks": [
-            [
-              {
-                "name": "results_chunk_0",
-                "taskReferenceName": "results_chunk_0_ref",
-                "inputParameters": {
-                  "companies": "${results_task_ref.output.response.body.content}",
-                  "queryExpression": ".companies |.[0:25]"
-                },
-                "type": "JSON_JQ_TRANSFORM"
-              },
-              {
-                "name": "results_chunk_0_size",
-                "taskReferenceName": "results_chunk_0_size_ref",
-                "inputParameters": {
-                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                  "evaluatorType": "javascript",
-                  "s": "${results_chunk_0_ref.output.result}"
-                },
-                "type": "INLINE"
-              },
-              {
-                "name": "switch_results_chunk_0",
-                "taskReferenceName": "switch_results_chunk_0_ref",
-                "inputParameters": {
-                  "size": "${results_chunk_0_size_ref.output.result}"
-                },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                  {
-                    "name": "start_rule_workflow_chunck_0",
-                    "taskReferenceName": "start_rule_workflow_chunck_0_ref",
-                    "inputParameters": {
-                      "companies": "${results_chunk_0_ref.output.result}",
-                      "parent_workflow_id": "${workflow.input.workflowId}",
-                      "crawler_save_object": "true",
-                      "crawler_save_screenshot": "true",
-                      "save_method": "POST"
-                    },
-                    "subWorkflowParam": {
-                      "name": "Rule_Workflow",
-                      "version": 1
-                    },                
-                    "type": "SUB_WORKFLOW"
-                  }
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
-              }
-            ],
-            [
-              {
-                "name": "results_chunk_1",
-                "taskReferenceName": "results_chunk_1_ref",
-                "inputParameters": {
-                "companies": "${results_task_ref.output.response.body.content}",
-                "queryExpression": ".companies |.[25:50]"
-              },
-              "type": "JSON_JQ_TRANSFORM"
-              },
-              {
-                "name": "results_chunk_1_size",
-                "taskReferenceName": "results_chunk_1_size_ref",
-                "inputParameters": {
-                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                  "evaluatorType": "javascript",
-                  "s": "${results_chunk_1_ref.output.result}"
-                },
-                "type": "INLINE"
-              },
-              {
-                "name": "switch_results_chunk_1",
-                "taskReferenceName": "switch_results_chunk_1_ref",
-                "inputParameters": {
-                  "size": "${results_chunk_1_size_ref.output.result}"
-                },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                  {
-                    "name": "start_rule_workflow_chunck_1",
-                    "taskReferenceName": "start_rule_workflow_chunck_1_ref",
-                    "inputParameters": {
-                      "companies": "${results_chunk_1_ref.output.result}",
-                      "parent_workflow_id": "${workflow.input.workflowId}",
-                      "crawler_save_object": "true",
-                      "crawler_save_screenshot": "true",
-                      "save_method": "POST"
-                    },
-                    "subWorkflowParam": {
-                      "name": "Rule_Workflow",
-                      "version": 1
-                    },                
-                    "type": "SUB_WORKFLOW"
-                  }                   
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
-              }
-            ],
-            [
-              {
-                "name": "results_chunk_2",
-                "taskReferenceName": "results_chunk_2_ref",
-                "inputParameters": {
-                "companies": "${results_task_ref.output.response.body.content}",
-                "queryExpression": ".companies |.[50:75]"
-              },
-              "type": "JSON_JQ_TRANSFORM"
-              },
-            {
-              "name": "results_chunk_2_size",
-              "taskReferenceName": "results_chunk_2_size_ref",
-              "inputParameters": {
-                "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                "evaluatorType": "javascript",
-                "s": "${results_chunk_2_ref.output.result}"
-              },
-              "type": "INLINE"
-            },              
-              {
-                "name": "switch_results_chunk_2",
-                "taskReferenceName": "switch_results_chunk_2_ref",
-                "inputParameters": {
-                  "size": "${results_chunk_2_size_ref.output.result}"
-                },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                  {
-                    "name": "start_rule_workflow_chunck_2",
-                    "taskReferenceName": "start_rule_workflow_chunck_2_ref",
-                    "inputParameters": {
-                      "companies": "${results_chunk_2_ref.output.result}",
-                      "parent_workflow_id": "${workflow.input.workflowId}",
-                      "crawler_save_object": "true",
-                      "crawler_save_screenshot": "true",
-                      "save_method": "POST"
-                    },
-                    "subWorkflowParam": {
-                      "name": "Rule_Workflow",
-                      "version": 1
-                    },                
-                    "type": "SUB_WORKFLOW"
-                  }                   
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
-              }
-            ],
-            [
-              {
-                "name": "results_chunk_3",
-                "taskReferenceName": "results_chunk_3_ref",
-                "inputParameters": {
-                 "companies": "${results_task_ref.output.response.body.content}",
-                 "queryExpression": ".companies |.[75:100]"
-                },
-                "type": "JSON_JQ_TRANSFORM"
-              },
-              {
-                "name": "results_chunk_3_size",
-                "taskReferenceName": "results_chunk_3_size_ref",
-                "inputParameters": {
-                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                  "evaluatorType": "javascript",
-                  "s": "${results_chunk_3_ref.output.result}"
-                },
-                "type": "INLINE"
-              },
-              {
-                "name": "switch_results_chunk_3",
-                "taskReferenceName": "switch_results_chunk_3_ref",
-                "inputParameters": {
-                  "size": "${results_chunk_3_size_ref.output.result}"
-                },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                  {
-                    "name": "start_rule_workflow_chunck_3",
-                    "taskReferenceName": "start_rule_workflow_chunck_3_ref",
-                    "inputParameters": {
-                      "companies": "${results_chunk_3_ref.output.result}",
-                      "parent_workflow_id": "${workflow.input.workflowId}",
-                      "crawler_save_object": "true",
-                      "crawler_save_screenshot": "true",
-                      "save_method": "POST"
-                    },
-                    "subWorkflowParam": {
-                      "name": "Rule_Workflow",
-                      "version": 1
-                    },                
-                    "type": "SUB_WORKFLOW"
-                  }                   
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
-              }
-            ]
-          ]
-        },
-        {
-          "name": "join",
-          "taskReferenceName": "join_ref",
-          "inputParameters": {},
-          "type": "JOIN",
-          "decisionCases": {},
-          "defaultCase": [],
-          "forkTasks": [],
-          "startDelay": 0,
-          "joinOn": [],
-          "optional": false,
-          "defaultExclusiveJoinTask": [],
-          "asyncComplete": false,
-          "loopOver": [],
-          "onStateChange": {}
-        },
-        {
-          "name": "Set Last Page",
-          "taskReferenceName": "set_last_page_ref",
-          "inputParameters": {
-            "last_page": "${results_task_ref.output.response.body.last}"
+          {
+            "name": "results_chunk_3_size",
+            "taskReferenceName": "results_chunk_3_size_ref",
+            "inputParameters": {
+              "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
+              "evaluatorType": "javascript",
+              "s": "${results_chunk_3_ref.output.result}"
+            },
+            "type": "INLINE"
           },
-          "type": "SET_VARIABLE"
-        }        
-      ],
-      "evaluatorType": "value-param",
+          {
+            "name": "switch_results_chunk_3",
+            "taskReferenceName": "switch_results_chunk_3_ref",
+            "inputParameters": {
+              "size": "${results_chunk_3_size_ref.output.result}"
+            },
+            "type": "SWITCH",
+            "decisionCases": {
+              "true": [
+              {
+                "name": "start_rule_workflow_chunck_3",
+                "taskReferenceName": "start_rule_workflow_chunck_3_ref",
+                "inputParameters": {
+                  "companies": "${results_chunk_3_ref.output.result}",
+                  "parent_workflow_id": "${workflow.input.workflowId}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "POST"
+                },
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
+                },                
+                "type": "SUB_WORKFLOW"
+              }                   
+              ]
+            },
+            "defaultCase": [],
+            "evaluatorType": "value-param",
+            "expression": "size"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "join",
+      "taskReferenceName": "join_ref",
+      "inputParameters": {},
+      "type": "JOIN",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": [],
       "onStateChange": {}
     }
   ],
   "inputParameters": [
     "status",
-    "workflowId"
-  ],
+    "workflowId",
+    "crawler_save_object",
+    "crawler_save_screenshot"
+   ],
   "outputParameters": {},
   "schemaVersion": 2,
   "restartable": true,

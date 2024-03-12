@@ -95,7 +95,7 @@
                       "save_method": "PUT"
                     },
                     "subWorkflowParam": {
-                      "name": "Rule_Workflow",
+                      "name": "rule_workflow",
                       "version": 1
                     },                
                     "type": "SUB_WORKFLOW"
@@ -147,7 +147,7 @@
                       "save_method": "PUT"
                     },
                     "subWorkflowParam": {
-                      "name": "Rule_Workflow",
+                      "name": "rule_workflow",
                       "version": 1
                     },                
                     "type": "SUB_WORKFLOW"
@@ -199,7 +199,7 @@
                       "save_method": "PUT"
                     },
                     "subWorkflowParam": {
-                      "name": "Rule_Workflow",
+                      "name": "rule_workflow",
                       "version": 1
                     },                
                     "type": "SUB_WORKFLOW"
@@ -251,7 +251,7 @@
                         "save_method": "PUT"
                       },
                       "subWorkflowParam": {
-                        "name": "Rule_Workflow",
+                        "name": "rule_workflow",
                         "version": 1
                       },                
                       "type": "SUB_WORKFLOW"
@@ -298,7 +298,9 @@
       "taskReferenceName": "start_crawler_407_ref",
       "inputParameters": {
         "status": "407",
-        "workflowId": "${workflow.workflowId}"
+        "workflowId": "${workflow.workflowId}",
+        "crawler_save_object": "true",
+        "crawler_save_screenshot": "true"
       },
       "subWorkflowParam": {
         "name": "crawler_result_failed",
@@ -311,7 +313,9 @@
       "taskReferenceName": "start_crawler_400_ref",
       "inputParameters": {
         "status": "400",
-        "workflowId": "${workflow.workflowId}"
+        "workflowId": "${workflow.workflowId}",
+        "crawler_save_object": "true",
+        "crawler_save_screenshot": "true"
       },
       "subWorkflowParam": {
         "name": "crawler_result_failed",

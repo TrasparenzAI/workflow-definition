@@ -1,0 +1,839 @@
+{
+  "createTime": 1710181947590,
+  "updateTime": 1710235241482,
+  "name": "rule_detail_child_workflow",
+  "description": "Rule Detail Child Workflow",
+  "version": 1,
+  "tasks": [
+    {
+      "name": "Crawler HTTP Stream",
+      "taskReferenceName": "crawler_http_stream_ref",
+      "inputParameters": {
+        "http_request": {
+          "uri": "https://dica33.ba.cnr.it/crawler/crawl",
+          "body": "{\"crawlingMode\": \"httpStream\", \"saveObject\": ${workflow.input.crawler_save_object}, \"saveScreenshot\":false,\"url\": \"${workflow.input.resultURL}\"}",
+          "method": "POST",
+          "connectionTimeOut": 10000,
+          "readTimeOut": 60000
+        }
+      },
+      "type": "HTTP",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": true,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": [],
+      "onStateChange": {}
+    },
+    {
+      "name": "Switch Crawler HTTP Stream Completed",
+      "taskReferenceName": "switch_crawler_http_stream_completed_ref",
+      "inputParameters": {
+        "switchCaseValue": "${crawler_http_stream_ref.status}"
+      },
+      "type": "SWITCH",
+      "decisionCases": {
+        "COMPLETED": [
+          {
+            "name": "Switch Crawler HTTP Stream",
+            "taskReferenceName": "switch_crawler_http_stream_ref",
+            "inputParameters": {
+              "switchCaseValue": "${crawler_http_stream_ref.output.response.body.result}"
+            },
+            "type": "SWITCH",
+            "decisionCases": {
+              "200": [
+                {
+                  "name": "Rule HTTP Stream",
+                  "taskReferenceName": "rule_http_stream_ref",
+                  "inputParameters": {
+                    "http_request": {
+                      "uri": "https://dica33.ba.cnr.it/rule-service/v1/rules/child?ruleName=${workflow.input.rule_name}",
+                      "body": "${crawler_http_stream_ref.output.response.body.htmlPage}",
+                      "method": "POST",
+                      "connectionTimeOut": 1000,
+                      "readTimeOut": 5000
+                    }
+                  },
+                  "type": "HTTP",
+                  "decisionCases": {},
+                  "defaultCase": [],
+                  "forkTasks": [],
+                  "startDelay": 0,
+                  "joinOn": [],
+                  "optional": true,
+                  "defaultExclusiveJoinTask": [],
+                  "asyncComplete": false,
+                  "loopOver": [],
+                  "onStateChange": {}
+                },
+                {
+                  "name": "Switch Rule HTTP Stream",
+                  "taskReferenceName": "switch_rule_http_stream_ref",
+                  "inputParameters": {
+                    "switchCaseValue": "${rule_http_stream_ref.status}"
+                  },
+                  "type": "SWITCH",
+                  "decisionCases": {
+                    "COMPLETED_WITH_ERRORS": [
+                      {
+                        "name": "Crawler HTML Source",
+                        "taskReferenceName": "crawler_html_source_ref",
+                        "inputParameters": {
+                          "http_request": {
+                            "uri": "https://dica33.ba.cnr.it/crawler/crawl",
+                            "body": "{\"crawlingMode\": \"htmlSource\", \"saveObject\": ${workflow.input.crawler_save_object}, \"saveScreenshot\":${workflow.input.crawler_save_screenshot},\"url\": \"${workflow.input.resultURL}\"}",
+                            "method": "POST",
+                            "connectionTimeOut": 10000,
+                            "readTimeOut": 60000
+                          }
+                        },
+                        "type": "HTTP",
+                        "decisionCases": {},
+                        "defaultCase": [],
+                        "forkTasks": [],
+                        "startDelay": 0,
+                        "joinOn": [],
+                        "optional": true,
+                        "defaultExclusiveJoinTask": [],
+                        "asyncComplete": false,
+                        "loopOver": [],
+                        "onStateChange": {}
+                      },
+                      {
+                        "name": "Switch Crawler HTML Source",
+                        "taskReferenceName": "switch_crawler_html_source_ref",
+                        "inputParameters": {
+                          "switchCaseValue": "${crawler_html_source_ref.output.response.body.result}"
+                        },
+                        "type": "SWITCH",
+                        "decisionCases": {
+                          "200": [
+                            {
+                              "name": "Rule HTML Source",
+                              "taskReferenceName": "rule_html_source_ref",
+                              "inputParameters": {
+                                "http_request": {
+                                  "uri": "https://dica33.ba.cnr.it/rule-service/v1/rules/child?ruleName=${workflow.input.rule_name}",
+                                  "body": "${crawler_html_source_ref.output.response.body.htmlPage}",
+                                  "method": "POST",
+                                  "connectionTimeOut": 1000,
+                                  "readTimeOut": 1000
+                                }
+                              },
+                              "type": "HTTP",
+                              "decisionCases": {},
+                              "defaultCase": [],
+                              "forkTasks": [],
+                              "startDelay": 0,
+                              "joinOn": [],
+                              "optional": true,
+                              "defaultExclusiveJoinTask": [],
+                              "asyncComplete": false,
+                              "loopOver": [],
+                              "onStateChange": {}
+                            },
+                            {
+                              "name": "Switch Rule HTML Source",
+                              "taskReferenceName": "switch_rule_html_source_ref",
+                              "inputParameters": {
+                                "switchCaseValue": "${rule_html_source_ref.status}"
+                              },
+                              "type": "SWITCH",
+                              "decisionCases": {
+                                "COMPLETED_WITH_ERRORS": [
+                                  {
+                                    "name": "Company JQ HTML Source Failed",
+                                    "taskReferenceName": "company_jq_html_source_failed_ref",
+                                    "inputParameters": {
+                                      "id": "${workflow.input.ipa.idResult}",
+                                      "idIpa": "${workflow.input.ipa.id}",
+                                      "codiceIpa": "${workflow.input.ipa.codiceIpa}",
+                                      "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
+                                      "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
+                                      "tipologia": "${workflow.input.ipa.tipologia}",
+                                      "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
+                                      "codiceNatura": "${workflow.input.ipa.codiceNatura}",
+                                      "acronimo": "${workflow.input.ipa.acronimo}",
+                                      "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
+                                      "sorgente": "${workflow.input.ipa.sorgente}",
+                                      "realUrl": "${crawler_html_source_ref.output.response.body.realUrl}",
+                                      "objectBucket": "${crawler_html_source_ref.output.response.body.objectBucket}",
+                                      "objectId": "${crawler_html_source_ref.output.response.body.objectId}",
+                                      "objectResult": "${crawler_html_source_ref.output.response.body.objectResult}",
+                                      "screenshotBucket": "${crawler_html_source_ref.output.response.body.screenshotBucket}",
+                                      "screenshotId": "${crawler_html_source_ref.output.response.body.screenShotId}",
+                                      "screenshotResult": "${crawler_html_source_ref.output.response.body.screenShotResult}",
+                                      "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                      "workflow_child_id": "${workflow.workflowId}",
+                                      "error_message": "${crawler_html_source_ref.output.response.body.message}",
+                                      "length": "${crawler_html_source_ref.output.response.body.length}",
+                                      "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, status: 400, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, ruleName: .ruleName }",
+                                      "ruleName": "${workflow.input.rule_name}/child"
+                                    },
+                                    "type": "JSON_JQ_TRANSFORM",
+                                    "decisionCases": {},
+                                    "defaultCase": [],
+                                    "forkTasks": [],
+                                    "startDelay": 0,
+                                    "joinOn": [],
+                                    "optional": false,
+                                    "defaultExclusiveJoinTask": [],
+                                    "asyncComplete": false,
+                                    "loopOver": [],
+                                    "onStateChange": {}
+                                  },
+                                  {
+                                    "name": "Result Rule HTML Source Failed",
+                                    "taskReferenceName": "result_rule_html_source_failed_ref",
+                                    "inputParameters": {
+                                      "http_request": {
+                                        "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                                        "body": "${company_jq_html_source_failed_ref.output.result}",
+                                        "method": "${workflow.input.save_method}",
+                                        "connectionTimeOut": 10000,
+                                        "readTimeOut": 30000
+                                      }
+                                    },
+                                    "type": "HTTP",
+                                    "decisionCases": {},
+                                    "defaultCase": [],
+                                    "forkTasks": [],
+                                    "startDelay": 0,
+                                    "joinOn": [],
+                                    "optional": false,
+                                    "defaultExclusiveJoinTask": [],
+                                    "asyncComplete": false,
+                                    "loopOver": [],
+                                    "onStateChange": {}
+                                  },
+                                  {
+                                    "name": "Terminate Rule HTML Source Failed",
+                                    "taskReferenceName": "terminate_rule_html_source_failed_ref",
+                                    "inputParameters": {
+                                      "terminationStatus": "COMPLETED"
+                                    },
+                                    "type": "TERMINATE",
+                                    "decisionCases": {},
+                                    "defaultCase": [],
+                                    "forkTasks": [],
+                                    "startDelay": 0,
+                                    "joinOn": [],
+                                    "optional": false,
+                                    "defaultExclusiveJoinTask": [],
+                                    "asyncComplete": false,
+                                    "loopOver": [],
+                                    "onStateChange": {}
+                                  }
+                                ],
+                                "COMPLETED": [
+                                  {
+                                    "name": "DO While HTML Source Rule ",
+                                    "taskReferenceName": "do_while_htmlsource_rule_ref",
+                                    "inputParameters": {
+                                      "rule_count": "${rule_html_source_ref.output.response.body.length()}"
+                                    },
+                                    "type": "DO_WHILE",
+                                    "decisionCases": {},
+                                    "defaultCase": [],
+                                    "forkTasks": [],
+                                    "startDelay": 0,
+                                    "joinOn": [],
+                                    "optional": false,
+                                    "defaultExclusiveJoinTask": [],
+                                    "asyncComplete": false,
+                                    "loopCondition": "(function () {if ($.do_while_htmlsource_rule_ref['iteration'] < .rule_count) {    return true;  }  return false;})();",
+                                    "loopOver": [
+                                      {
+                                        "name": "Rule HTML Source JSON Transform",
+                                        "taskReferenceName": "rule_html_source_json_transform_ref",
+                                        "inputParameters": {
+                                          "rules": "${rule_html_source_ref.output.body}",
+                                          "queryExpression": ".rules | .[${do_while_htmlsource_rule_ref.output.iteration}:${do_while_htmlsource_rule_ref.output.iteration} + 1]"
+                                        },
+                                        "type": "JSON_JQ_TRANSFORM",
+                                        "decisionCases": {},
+                                        "defaultCase": [],
+                                        "forkTasks": [],
+                                        "startDelay": 0,
+                                        "joinOn": [],
+                                        "optional": false,
+                                        "defaultExclusiveJoinTask": [],
+                                        "asyncComplete": false,
+                                        "loopOver": [],
+                                        "onStateChange": {}
+                                      },
+                                      {
+                                        "name": "Company JQ HTML Source Completed",
+                                        "taskReferenceName": "company_jq_html_source_completed_ref",
+                                        "inputParameters": {
+                                          "id": "${workflow.input.ipa.idResult}",
+                                          "idIpa": "${workflow.input.ipa.id}",
+                                          "codiceIpa": "${workflow.input.ipa.codiceIpa}",
+                                          "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
+                                          "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
+                                          "tipologia": "${workflow.input.ipa.tipologia}",
+                                          "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
+                                          "codiceNatura": "${workflow.input.ipa.codiceNatura}",
+                                          "acronimo": "${workflow.input.ipa.acronimo}",
+                                          "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
+                                          "sorgente": "${workflow.input.ipa.sorgente}",
+                                          "realUrl": "${crawler_html_source_ref.output.response.body.realUrl}",
+                                          "objectBucket": "${crawler_html_source_ref.output.response.body.objectBucket}",
+                                          "objectId": "${crawler_html_source_ref.output.response.body.objectId}",
+                                          "objectResult": "${crawler_html_source_ref.output.response.body.objectResult}",
+                                          "screenshotBucket": "${crawler_html_source_ref.output.response.body.screenshotBucket}",
+                                          "screenshotId": "${crawler_html_source_ref.output.response.body.screenshotId}",
+                                          "screenshotResult": "${crawler_html_source_ref.output.response.body.screenshotResult}",
+                                          "url": "${rule_html_source_json_transform_ref.output.response.body.url}",
+                                          "ruleName": "${rule_html_source_json_transform_ref.output.response.body.ruleName}",
+                                          "term": "${rule_html_source_json_transform_ref.output.response.body.term}",
+                                          "content": "${rule_html_source_json_transform_ref.output.response.body.content}",
+                                          "status": "${rule_html_source_json_transform_ref.output.response.body.status}",
+                                          "score": "${rule_html_source_json_transform_ref.output.response.body.score}",
+                                          "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                          "leaf": "${rule_html_source_json_transform_ref.output.response.body.isLeaf}",
+                                          "workflow_child_id": "${workflow.workflowId}",
+                                          "length": "${crawler_html_source_ref.output.response.body.length}",
+                                          "where": "${rule_html_source_json_transform_ref.output.response.body.where}",
+                                          "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, url: .url, ruleName: .ruleName, term: .term, content: .content, status: .status, score: .score, workflowId: .parent_workflow_id, leaf: .leaf, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, where: .where }"
+                                        },
+                                        "type": "JSON_JQ_TRANSFORM",
+                                        "decisionCases": {},
+                                        "defaultCase": [],
+                                        "forkTasks": [],
+                                        "startDelay": 0,
+                                        "joinOn": [],
+                                        "optional": false,
+                                        "defaultExclusiveJoinTask": [],
+                                        "asyncComplete": false,
+                                        "loopOver": [],
+                                        "onStateChange": {}
+                                      },
+                                      {
+                                        "name": "Result Rule HTML Source Completed",
+                                        "taskReferenceName": "result_rule_html_source_completed_ref",
+                                        "inputParameters": {
+                                          "http_request": {
+                                            "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                                            "body": "${company_jq_html_source_completed_ref.output.result}",
+                                            "method": "${workflow.input.save_method}",
+                                            "connectionTimeOut": 10000,
+                                            "readTimeOut": 30000
+                                          }
+                                        },
+                                        "type": "HTTP",
+                                        "decisionCases": {},
+                                        "defaultCase": [],
+                                        "forkTasks": [],
+                                        "startDelay": 0,
+                                        "joinOn": [],
+                                        "optional": false,
+                                        "defaultExclusiveJoinTask": [],
+                                        "asyncComplete": false,
+                                        "loopOver": [],
+                                        "onStateChange": {}
+                                      }
+                                    ],
+                                    "evaluatorType": "value-param",
+                                    "onStateChange": {}
+                                  },
+                                  {
+                                    "name": "Terminate Rule HTML Source Completed",
+                                    "taskReferenceName": "terminate_rule_html_source_completed_ref",
+                                    "inputParameters": {
+                                      "terminationStatus": "COMPLETED"
+                                    },
+                                    "type": "TERMINATE",
+                                    "decisionCases": {},
+                                    "defaultCase": [],
+                                    "forkTasks": [],
+                                    "startDelay": 0,
+                                    "joinOn": [],
+                                    "optional": false,
+                                    "defaultExclusiveJoinTask": [],
+                                    "asyncComplete": false,
+                                    "loopOver": [],
+                                    "onStateChange": {}
+                                  }
+                                ]
+                              },
+                              "defaultCase": [],
+                              "forkTasks": [],
+                              "startDelay": 0,
+                              "joinOn": [],
+                              "optional": false,
+                              "defaultExclusiveJoinTask": [],
+                              "asyncComplete": false,
+                              "loopOver": [],
+                              "evaluatorType": "value-param",
+                              "expression": "switchCaseValue",
+                              "onStateChange": {}
+                            }
+                          ],
+                          "407": [
+                            {
+                              "name": "Company JQ HTML Source 407 Failed",
+                              "taskReferenceName": "company_jq_html_source_failed_407_ref",
+                              "inputParameters": {
+                                "id": "${workflow.input.ipa.idResult}",
+                                "idIpa": "${workflow.input.ipa.id}",
+                                "codiceIpa": "${workflow.input.ipa.codiceIpa}",
+                                "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
+                                "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
+                                "tipologia": "${workflow.input.ipa.tipologia}",
+                                "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
+                                "codiceNatura": "${workflow.input.ipa.codiceNatura}",
+                                "acronimo": "${workflow.input.ipa.acronimo}",
+                                "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
+                                "sorgente": "${workflow.input.ipa.sorgente}",
+                                "realUrl": "${crawler_html_source_ref.output.response.body.realUrl}",
+                                "objectBucket": "${crawler_html_source_ref.output.response.body.objectBucket}",
+                                "objectId": "${crawler_html_source_ref.output.response.body.objectId}",
+                                "objectResult": "${crawler_html_source_ref.output.response.body.objectResult}",
+                                "screenshotBucket": "${crawler_html_source_ref.output.response.body.screenshotBucket}",
+                                "screenshotId": "${crawler_html_source_ref.output.response.body.screenShotId}",
+                                "screenshotResult": "${crawler_html_source_ref.output.response.body.screenShotResult}",
+                                "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                "workflow_child_id": "${workflow.workflowId}",
+                                "error_message": "${crawler_html_source_ref.output.response.body.message}",
+                                "length": "${crawler_html_source_ref.output.response.body.length}",
+                                "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, status: 407, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, ruleName: .ruleName }",
+                                "ruleName": "${workflow.input.rule_name}/child"
+                              },
+                              "type": "JSON_JQ_TRANSFORM",
+                              "decisionCases": {},
+                              "defaultCase": [],
+                              "forkTasks": [],
+                              "startDelay": 0,
+                              "joinOn": [],
+                              "optional": false,
+                              "defaultExclusiveJoinTask": [],
+                              "asyncComplete": false,
+                              "loopOver": [],
+                              "onStateChange": {}
+                            },
+                            {
+                              "name": "Result Rule HTML Source 407 Failed",
+                              "taskReferenceName": "result_rule_html_source_407_failed_ref",
+                              "inputParameters": {
+                                "http_request": {
+                                  "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                                  "body": "${company_jq_html_source_failed_407_ref.output.result}",
+                                  "method": "${workflow.input.save_method}",
+                                  "connectionTimeOut": 10000,
+                                  "readTimeOut": 30000
+                                }
+                              },
+                              "type": "HTTP",
+                              "decisionCases": {},
+                              "defaultCase": [],
+                              "forkTasks": [],
+                              "startDelay": 0,
+                              "joinOn": [],
+                              "optional": false,
+                              "defaultExclusiveJoinTask": [],
+                              "asyncComplete": false,
+                              "loopOver": [],
+                              "onStateChange": {}
+                            },
+                            {
+                              "name": "Terminate Rule HTML Source 407Failed",
+                              "taskReferenceName": "terminate_rule_html_source_407_failed_ref",
+                              "inputParameters": {
+                                "terminationStatus": "COMPLETED"
+                              },
+                              "type": "TERMINATE",
+                              "decisionCases": {},
+                              "defaultCase": [],
+                              "forkTasks": [],
+                              "startDelay": 0,
+                              "joinOn": [],
+                              "optional": false,
+                              "defaultExclusiveJoinTask": [],
+                              "asyncComplete": false,
+                              "loopOver": [],
+                              "onStateChange": {}
+                            }
+                          ]
+                        },
+                        "defaultCase": [],
+                        "forkTasks": [],
+                        "startDelay": 0,
+                        "joinOn": [],
+                        "optional": false,
+                        "defaultExclusiveJoinTask": [],
+                        "asyncComplete": false,
+                        "loopOver": [],
+                        "evaluatorType": "value-param",
+                        "expression": "switchCaseValue",
+                        "onStateChange": {}
+                      }
+                    ],
+                    "COMPLETED": [
+                      {
+                        "name": "DO While HTTP Stream Rule ",
+                        "taskReferenceName": "do_while_httpstream_rule_ref",
+                        "inputParameters": {
+                          "rule_count": "${rule_http_stream_ref.output.response.body.length()}"
+                        },
+                        "type": "DO_WHILE",
+                        "decisionCases": {},
+                        "defaultCase": [],
+                        "forkTasks": [],
+                        "startDelay": 0,
+                        "joinOn": [],
+                        "optional": false,
+                        "defaultExclusiveJoinTask": [],
+                        "asyncComplete": false,
+                        "loopCondition": "(function () {if ($.do_while_httpstream_rule_ref['iteration'] < .rule_count) {    return true;  }  return false;})();",
+                        "loopOver": [
+                          {
+                            "name": "Rule HTTP Stream JSON Transform",
+                            "taskReferenceName": "rule_http_stream_json_transform_ref",
+                            "inputParameters": {
+                              "rules": "${rule_http_stream_ref.output.body}",
+                              "queryExpression": ".rules | .[${do_while_httpstream_rule_ref.output.iteration}:${do_while_httpstream_rule_ref.output.iteration} + 1]"
+                            },
+                            "type": "JSON_JQ_TRANSFORM",
+                            "decisionCases": {},
+                            "defaultCase": [],
+                            "forkTasks": [],
+                            "startDelay": 0,
+                            "joinOn": [],
+                            "optional": false,
+                            "defaultExclusiveJoinTask": [],
+                            "asyncComplete": false,
+                            "loopOver": [],
+                            "onStateChange": {}
+                          },
+                          {
+                            "name": "Company JQ HTTP Stream Completed",
+                            "taskReferenceName": "company_jq_http_stream_completed_ref",
+                            "inputParameters": {
+                              "id": "${workflow.input.ipa.idResult}",
+                              "idIpa": "${workflow.input.ipa.id}",
+                              "codiceIpa": "${workflow.input.ipa.codiceIpa}",
+                              "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
+                              "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
+                              "tipologia": "${workflow.input.ipa.tipologia}",
+                              "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
+                              "codiceNatura": "${workflow.input.ipa.codiceNatura}",
+                              "acronimo": "${workflow.input.ipa.acronimo}",
+                              "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
+                              "sorgente": "${workflow.input.ipa.sorgente}",
+                              "realUrl": "${crawler_http_stream_ref.output.response.body.realUrl}",
+                              "objectBucket": "${crawler_http_stream_ref.output.response.body.objectBucket}",
+                              "objectId": "${crawler_http_stream_ref.output.response.body.objectId}",
+                              "objectResult": "${crawler_http_stream_ref.output.response.body.objectResult}",
+                              "screenshotBucket": "${crawler_http_stream_ref.output.response.body.screenshotBucket}",
+                              "screenshotId": "${crawler_http_stream_ref.output.response.body.screenshotId}",
+                              "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenshotResult}",
+                              "url": "${rule_http_stream_json_transform_ref.output.response.body.url}",
+                              "ruleName": "${rule_http_stream_json_transform_ref.output.response.body.ruleName}",
+                              "term": "${rule_http_stream_json_transform_ref.output.response.body.term}",
+                              "content": "${rule_http_stream_json_transform_ref.output.response.body.content}",
+                              "status": "${rule_http_stream_json_transform_ref.output.response.body.status}",
+                              "score": "${rule_http_stream_json_transform_ref.output.response.body.score}",
+                              "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                              "leaf": "${rule_http_stream_json_transform_ref.output.response.body.isLeaf}",
+                              "workflow_child_id": "${workflow.workflowId}",
+                              "length": "${crawler_http_stream_ref.output.response.body.length}",
+                              "where": "${rule_http_stream_json_transform_ref.output.response.body.where}",
+                              "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, url: .url, ruleName: .ruleName, term: .term, content: .content, status: .status, score: .score, workflowId: .parent_workflow_id, leaf: .leaf, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, where: .where }"
+                            },
+                            "type": "JSON_JQ_TRANSFORM",
+                            "decisionCases": {},
+                            "defaultCase": [],
+                            "forkTasks": [],
+                            "startDelay": 0,
+                            "joinOn": [],
+                            "optional": false,
+                            "defaultExclusiveJoinTask": [],
+                            "asyncComplete": false,
+                            "loopOver": [],
+                            "onStateChange": {}
+                          },
+                          {
+                            "name": "Result Rule HTTP Stream Completed",
+                            "taskReferenceName": "result_rule_http_stream_completed_ref",
+                            "inputParameters": {
+                              "http_request": {
+                                "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                                "body": "${company_jq_http_stream_completed_ref.output.result}",
+                                "method": "${workflow.input.save_method}",
+                                "connectionTimeOut": 10000,
+                                "readTimeOut": 30000
+                              }
+                            },
+                            "type": "HTTP",
+                            "decisionCases": {},
+                            "defaultCase": [],
+                            "forkTasks": [],
+                            "startDelay": 0,
+                            "joinOn": [],
+                            "optional": false,
+                            "defaultExclusiveJoinTask": [],
+                            "asyncComplete": false,
+                            "loopOver": [],
+                            "onStateChange": {}
+                          }
+                        ],
+                        "evaluatorType": "value-param",
+                        "onStateChange": {}
+                      },
+                      {
+                        "name": "Terminate Rule HTTP Stream Completed",
+                        "taskReferenceName": "terminate_rule_http_stream_completed_ref",
+                        "inputParameters": {
+                          "terminationStatus": "COMPLETED"
+                        },
+                        "type": "TERMINATE",
+                        "decisionCases": {},
+                        "defaultCase": [],
+                        "forkTasks": [],
+                        "startDelay": 0,
+                        "joinOn": [],
+                        "optional": false,
+                        "defaultExclusiveJoinTask": [],
+                        "asyncComplete": false,
+                        "loopOver": [],
+                        "onStateChange": {}
+                      }
+                    ]
+                  },
+                  "defaultCase": [],
+                  "forkTasks": [],
+                  "startDelay": 0,
+                  "joinOn": [],
+                  "optional": false,
+                  "defaultExclusiveJoinTask": [],
+                  "asyncComplete": false,
+                  "loopOver": [],
+                  "evaluatorType": "value-param",
+                  "expression": "switchCaseValue",
+                  "onStateChange": {}
+                }
+              ],
+              "407": [
+                {
+                  "name": "Company JQ HTTP Stream Failed",
+                  "taskReferenceName": "company_jq_http_stream_failed_ref",
+                  "inputParameters": {
+                    "id": "${workflow.input.ipa.idResult}",
+                    "idIpa": "${workflow.input.ipa.id}",
+                    "codiceIpa": "${workflow.input.ipa.codiceIpa}",
+                    "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
+                    "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
+                    "tipologia": "${workflow.input.ipa.tipologia}",
+                    "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
+                    "codiceNatura": "${workflow.input.ipa.codiceNatura}",
+                    "acronimo": "${workflow.input.ipa.acronimo}",
+                    "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
+                    "sorgente": "${workflow.input.ipa.sorgente}",
+                    "realUrl": "${crawler_http_stream_ref.output.response.body.realUrl}",
+                    "objectBucket": "${crawler_http_stream_ref.output.response.body.objectBucket}",
+                    "objectId": "${crawler_http_stream_ref.output.response.body.objectId}",
+                    "objectResult": "${crawler_http_stream_ref.output.response.body.objectResult}",
+                    "screenshotBucket": "${crawler_http_stream_ref.output.response.body.screenshotBucket}",
+                    "screenshotId": "${crawler_http_stream_ref.output.response.body.screenshotId}",
+                    "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenshotResult}",
+                    "status": "${crawler_http_stream_ref.output.response.body.result}",
+                    "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                    "workflow_child_id": "${workflow.workflowId}",
+                    "error_message": "${crawler_http_stream_ref.output.response.body.message}",
+                    "length": "${crawler_http_stream_ref.output.response.body.length}",
+                    "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, status: .status, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, ruleName: .ruleName}",
+                    "ruleName": "${workflow.input.rule_name}/child"
+                  },
+                  "type": "JSON_JQ_TRANSFORM",
+                  "decisionCases": {},
+                  "defaultCase": [],
+                  "forkTasks": [],
+                  "startDelay": 0,
+                  "joinOn": [],
+                  "optional": false,
+                  "defaultExclusiveJoinTask": [],
+                  "asyncComplete": false,
+                  "loopOver": [],
+                  "onStateChange": {}
+                },
+                {
+                  "name": "Result HTTP Stream Failed",
+                  "taskReferenceName": "result_http_stream_failed_ref",
+                  "inputParameters": {
+                    "http_request": {
+                      "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                      "body": "${company_jq_http_stream_failed_ref.output.result}",
+                      "method": "${workflow.input.save_method}",
+                      "connectionTimeOut": 10000,
+                      "readTimeOut": 30000
+                    }
+                  },
+                  "type": "HTTP",
+                  "decisionCases": {},
+                  "defaultCase": [],
+                  "forkTasks": [],
+                  "startDelay": 0,
+                  "joinOn": [],
+                  "optional": true,
+                  "defaultExclusiveJoinTask": [],
+                  "asyncComplete": false,
+                  "loopOver": [],
+                  "onStateChange": {}
+                },
+                {
+                  "name": "Terminate Result HTTP Stream Failed",
+                  "taskReferenceName": "terminate_result_http_stream_failed_ref",
+                  "inputParameters": {
+                    "terminationStatus": "COMPLETED"
+                  },
+                  "type": "TERMINATE",
+                  "decisionCases": {},
+                  "defaultCase": [],
+                  "forkTasks": [],
+                  "startDelay": 0,
+                  "joinOn": [],
+                  "optional": false,
+                  "defaultExclusiveJoinTask": [],
+                  "asyncComplete": false,
+                  "loopOver": [],
+                  "onStateChange": {}
+                }
+              ]
+            },
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": [],
+            "evaluatorType": "value-param",
+            "expression": "switchCaseValue",
+            "onStateChange": {}
+          }
+        ],
+        "COMPLETED_WITH_ERRORS": [
+          {
+            "name": "Company JQ HTTP Stream 500 Failed",
+            "taskReferenceName": "company_jq_http_stream_500_failed_ref",
+            "inputParameters": {
+              "id": "${workflow.input.ipa.idResult}",
+              "idIpa": "${workflow.input.ipa.id}",
+              "codiceIpa": "${workflow.input.ipa.codiceIpa}",
+              "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
+              "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
+              "tipologia": "${workflow.input.ipa.tipologia}",
+              "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
+              "codiceNatura": "${workflow.input.ipa.codiceNatura}",
+              "acronimo": "${workflow.input.ipa.acronimo}",
+              "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
+              "sorgente": "${workflow.input.ipa.sorgente}",
+              "realUrl": "${crawler_http_stream_ref.output.response.body.realUrl}",
+              "objectBucket": "${crawler_http_stream_ref.output.response.body.objectBucket}",
+              "objectId": "${crawler_http_stream_ref.output.response.body.objectId}",
+              "objectResult": "${crawler_http_stream_ref.output.response.body.objectResult}",
+              "screenshotBucket": "${crawler_http_stream_ref.output.response.body.screenshotBucket}",
+              "screenshotId": "${crawler_http_stream_ref.output.response.body.screenshotId}",
+              "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenshotResult}",
+              "status": "${crawler_http_stream_ref.output.response.body.result}",
+              "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+              "workflow_child_id": "${workflow.workflowId}",
+              "error_message": "${crawler_http_stream_ref.output}",
+              "length": "${crawler_http_stream_ref.output.response.body.length}",
+              "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, status: 500, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, ruleName: .ruleName}",
+              "ruleName": "${workflow.input.rule_name}/child"
+            },
+            "type": "JSON_JQ_TRANSFORM",
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": [],
+            "onStateChange": {}
+          },
+          {
+            "name": "Result HTTP Stream 500 Failed",
+            "taskReferenceName": "result_http_stream_500_failed_ref",
+            "inputParameters": {
+              "http_request": {
+                "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                "body": "${company_jq_http_stream_500_failed_ref.output.result}",
+                "method": "${workflow.input.save_method}",
+                "connectionTimeOut": 10000,
+                "readTimeOut": 30000
+              }
+            },
+            "type": "HTTP",
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": true,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": [],
+            "onStateChange": {}
+          },
+          {
+            "name": "Terminate Result HTTP Stream 500 Failed",
+            "taskReferenceName": "terminate_result_http_stream_500_failed_ref",
+            "inputParameters": {
+              "terminationStatus": "COMPLETED"
+            },
+            "type": "TERMINATE",
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": [],
+            "onStateChange": {}
+          }
+        ]
+      },
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": [],
+      "evaluatorType": "value-param",
+      "expression": "switchCaseValue",
+      "onStateChange": {}
+    }
+  ],
+  "inputParameters": [
+    "ipa",
+    "crawler_save_object",
+    "crawler_save_screenshot",
+    "parent_workflow_id",
+    "save_method",
+    "rule_name"
+  ],
+  "outputParameters": {},
+  "schemaVersion": 2,
+  "restartable": true,
+  "workflowStatusListenerEnabled": false,
+  "ownerEmail": "marco.spasiano@gmail.com",
+  "timeoutPolicy": "ALERT_ONLY",
+  "timeoutSeconds": 0,
+  "variables": {},
+  "inputTemplate": {}
+}

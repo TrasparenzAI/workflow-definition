@@ -2,7 +2,7 @@
     "createTime": 1706115292688,
     "updateTime": 1706474406146,
     "accessPolicy": {},
-    "name": "Rule_Detail_Workflow",
+    "name": "rule_detail_workflow",
     "description": "Rule Detail Workflow",
     "version": 1,
     "tasks": [
@@ -256,6 +256,23 @@
                                                                             "asyncComplete": false
                                                                         },
                                                                         {
+                                                                          "name": "Start Rule Child Workflow HTML Source",
+                                                                          "taskReferenceName": "start_rule_child_workflow_html_source_ref",
+                                                                          "inputParameters": {
+                                                                            "ipa": "${workflow.input.ipa}",
+                                                                            "resultURL": "result_rule_html_source_completed_ref.output.result.body.destinationUrl",
+                                                                            "parent_workflow_id": "${workflow.input.workflowId}",
+                                                                            "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                                                            "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                                                            "save_method": "PUT"
+                                                                          },
+                                                                          "subWorkflowParam": {
+                                                                            "name": "rule_detail_child_workflow",
+                                                                            "version": 1
+                                                                          },                
+                                                                          "type": "SUB_WORKFLOW"
+                                                                        },
+                                                                        {
                                                                           "name": "Terminate Rule HTML Source Completed",
                                                                           "taskReferenceName": "terminate_rule_html_source_completed_ref",
                                                                           "inputParameters": {
@@ -397,6 +414,24 @@
                                                       "optional": false,
                                                       "asyncComplete": false
                                                   },
+                                                  {
+                                                    "name": "Start Rule Child Workflow HTTP Stream",
+                                                    "taskReferenceName": "start_rule_child_workflow_http_stream_ref",
+                                                    "inputParameters": {
+                                                      "ipa": "${workflow.input.ipa}",
+                                                      "resultURL": "result_rule_http_stream_completed_ref.output.result.body.destinationUrl",
+                                                      "parent_workflow_id": "${workflow.input.workflowId}",
+                                                      "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                                      "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                                      "save_method": "PUT"
+                                                    },
+                                                    "subWorkflowParam": {
+                                                      "name": "rule_detail_child_workflow",
+                                                      "version": 1
+                                                    },                
+                                                    "type": "SUB_WORKFLOW"
+                                                  },
+
                                                   {
                                                     "name": "Terminate Rule HTTP Stream Completed",
                                                     "taskReferenceName": "terminate_rule_http_stream_completed_ref",
