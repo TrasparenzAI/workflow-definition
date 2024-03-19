@@ -10,7 +10,7 @@
       "taskReferenceName": "results_task_ref",
       "inputParameters": {
         "http_request": {
-          "uri": "https://dica33.ba.cnr.it/result-service/v1/results/all?workflowId=${workflow.input.workflowId}&status=${workflow.input.status}",
+          "uri": "https://dica33.ba.cnr.it/result-service/v1/results/all?workflowId=${workflow.input.workflowId}&ruleName=${workflow.input.rule_name}&status=${workflow.input.status}",
           "method": "GET",
           "connectionTimeOut": 3000,
           "readTimeOut": 60000,
@@ -75,7 +75,9 @@
                   "parent_workflow_id": "${workflow.input.workflowId}",
                   "crawler_save_object": "${workflow.input.crawler_save_object}",
                   "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "POST"
+                  "save_method": "POST",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}"
                 },
                 "subWorkflowParam": {
                   "name": "rule_workflow",
@@ -127,7 +129,9 @@
                   "parent_workflow_id": "${workflow.input.workflowId}",
                   "crawler_save_object": "${workflow.input.crawler_save_object}",
                   "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "POST"
+                  "save_method": "POST",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}"
                 },
                 "subWorkflowParam": {
                   "name": "rule_workflow",
@@ -179,7 +183,9 @@
                   "parent_workflow_id": "${workflow.input.workflowId}",
                   "crawler_save_object": "${workflow.input.crawler_save_object}",
                   "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "POST"
+                  "save_method": "POST",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}"
                 },
                 "subWorkflowParam": {
                   "name": "rule_workflow",
@@ -231,7 +237,9 @@
                   "parent_workflow_id": "${workflow.input.workflowId}",
                   "crawler_save_object": "${workflow.input.crawler_save_object}",
                   "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "POST"
+                  "save_method": "POST",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}"
                 },
                 "subWorkflowParam": {
                   "name": "rule_workflow",
@@ -269,7 +277,9 @@
     "status",
     "workflowId",
     "crawler_save_object",
-    "crawler_save_screenshot"
+    "crawler_save_screenshot",
+    "rule_name",
+    "execute_child"
    ],
   "outputParameters": {},
   "schemaVersion": 2,

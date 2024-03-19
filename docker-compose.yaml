@@ -21,8 +21,10 @@ services:
   conductor-server:
     environment:
       - CONFIG_PROP=config-postgres.properties
-      - JAVA_OPTS=-Xms512m -Xmx3g
+      - JAVA_OPTS=-Xms512m -Xmx5g
       - server.servlet.context-path=/conductor-server
+    volumes:
+      - ./config-postgres.properties:/app/config/config-postgres.properties    
     image: ghcr.io/cnr-anac/conductor-community-server:latest
     container_name: conductor-server
     ports:
@@ -55,7 +57,7 @@ services:
       - POSTGRES_USER=conductor
       - POSTGRES_PASSWORD=conductor
     volumes:
-      - pgdata-conductor:/var/lib/postgresql/data
+      - ./pgdata-conductor:/var/lib/postgresql/data
     networks:
       - traefik_default
     healthcheck:
@@ -70,13 +72,14 @@ services:
         max-file: "3"
 
   conductor-elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.11
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.18
     environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx3g"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx5g"
       - xpack.security.enabled=false
       - discovery.type=single-node
+      - cluster.routing.allocation.disk.threshold_enabled=false
     volumes:
-      - esdata-conductor:/usr/share/elasticsearch/data
+      - ./esdata-conductor:/usr/share/elasticsearch/data
     networks:
       - traefik_default
     healthcheck:
@@ -89,12 +92,6 @@ services:
       options:
         max-size: "1k"
         max-file: "3"
-
-volumes:
-  pgdata-conductor:
-    driver: local
-  esdata-conductor:
-    driver: local
 
 networks:
   traefik_default:

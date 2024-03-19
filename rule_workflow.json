@@ -66,10 +66,12 @@
                   "parent_workflow_id": "${workflow.input.parent_workflow_id}",
                   "crawler_save_object": "${workflow.input.crawler_save_object}",
                   "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "${workflow.input.save_method}"
+                  "save_method": "${workflow.input.save_method}",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}"
                 },
                 "subWorkflowParam": {
-                  "name": "Rule_Detail_Workflow",
+                  "name": "rule_detail_workflow",
                   "version": 1
                 },                
                 "type": "SUB_WORKFLOW"
@@ -84,10 +86,12 @@
                   "parent_workflow_id": "${workflow.input.parent_workflow_id}",
                   "crawler_save_object": "${workflow.input.crawler_save_object}",
                   "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "${workflow.input.save_method}"
+                  "save_method": "${workflow.input.save_method}",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}"
                 },
                 "subWorkflowParam": {
-                  "name": "Rule_Detail_Workflow",
+                  "name": "rule_detail_workflow",
                   "version": 1
                 },                
                 "type": "SUB_WORKFLOW"
@@ -103,7 +107,9 @@
     "crawler_save_object",
     "crawler_save_screenshot",
     "parent_workflow_id",
-    "save_method"
+    "save_method",
+    "rule_name",
+    "execute_child"
   ],
   "outputParameters": {},
   "schemaVersion": 2,
