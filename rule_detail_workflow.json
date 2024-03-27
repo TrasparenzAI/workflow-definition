@@ -186,7 +186,7 @@
                                                                             },
                                                                             "type": "HTTP",
                                                                             "startDelay": 0,
-                                                                            "optional": false,
+                                                                            "optional": true,
                                                                             "asyncComplete": false
                                                                         },
                                                                         {
@@ -253,7 +253,7 @@
                                                                             },
                                                                             "type": "HTTP",
                                                                             "startDelay": 0,
-                                                                            "optional": false,
+                                                                            "optional": true,
                                                                             "asyncComplete": false
                                                                         },
                                                                         {
@@ -354,7 +354,7 @@
                                                                   },
                                                                   "type": "HTTP",
                                                                   "startDelay": 0,
-                                                                  "optional": false,
+                                                                  "optional": true,
                                                                   "asyncComplete": false
                                                               },
                                                               {
@@ -429,7 +429,7 @@
                                                       },
                                                       "type": "HTTP",
                                                       "startDelay": 0,
-                                                      "optional": false,
+                                                      "optional": true,
                                                       "asyncComplete": false
                                                   },
                                                   {
@@ -555,8 +555,8 @@
                           }
                         ],"COMPLETED_WITH_ERRORS": [
                             {
-                                "name": "Company JQ HTTP Stream 500 Failed",
-                                "taskReferenceName": "company_jq_http_stream_500_failed_ref",
+                                "name": "Company JQ HTTP Stream 407 Failed",
+                                "taskReferenceName": "company_jq_http_stream_407_failed_ref",
                                 "inputParameters": {
                                     "id": "${workflow.input.ipa.idResult}",
                                     "idIpa": "${workflow.input.ipa.id}",
@@ -569,30 +569,21 @@
                                     "acronimo": "${workflow.input.ipa.acronimo}",
                                     "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
                                     "sorgente": "${workflow.input.ipa.sorgente}",
-                                    "realUrl": "${crawler_http_stream_ref.output.response.body.realUrl}",
-                                    "objectBucket": "${crawler_http_stream_ref.output.response.body.objectBucket}",
-                                    "objectId": "${crawler_http_stream_ref.output.response.body.objectId}",
-                                    "objectResult": "${crawler_http_stream_ref.output.response.body.objectResult}",
-                                    "screenshotBucket": "${crawler_http_stream_ref.output.response.body.screenshotBucket}",
-                                    "screenshotId": "${crawler_http_stream_ref.output.response.body.screenshotId}",
-                                    "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenshotResult}",
-                                    "status": "${crawler_http_stream_ref.output.response.body.result}",
+                                    "status": "407",
                                     "ruleName": "${workflow.input.rule_name}",
                                     "parent_workflow_id": "${workflow.input.parent_workflow_id}",
                                     "workflow_child_id": "${workflow.workflowId}",
-                                    "error_message": "${crawler_http_stream_ref.output}",
-                                    "length": "${crawler_http_stream_ref.output.response.body.length}",
-                                    "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, status: 500, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, ruleName: .ruleName}"
+                                    "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, status: .status, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, ruleName: .ruleName}"
                                 },
                                 "type": "JSON_JQ_TRANSFORM"
                             },
                             {
-                                "name": "Result HTTP Stream 500 Failed",
-                                "taskReferenceName": "result_http_stream_500_failed_ref",
+                                "name": "Result HTTP Stream 407 Failed",
+                                "taskReferenceName": "result_http_stream_407_failed_ref",
                                 "inputParameters": {
                                     "http_request": {
                                         "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
-                                        "body": "${company_jq_http_stream_500_failed_ref.output.result}",
+                                        "body": "${company_jq_http_stream_407_failed_ref.output.result}",
                                         "method": "${workflow.input.save_method}",
                                         "connectionTimeOut": 10000,
                                         "readTimeOut": 30000
@@ -604,15 +595,15 @@
                                 "asyncComplete": false
                             },
                             {
-                              "name": "Terminate Result HTTP Stream 500 Failed",
-                              "taskReferenceName": "terminate_result_http_stream_500_failed_ref",
+                              "name": "Terminate Result HTTP Stream 407 Failed",
+                              "taskReferenceName": "terminate_result_http_stream_407_failed_ref",
                               "inputParameters": {
                                 "terminationStatus": "COMPLETED"
                               },
                               "type": "TERMINATE",
                               "startDelay": 0,
                               "optional": false
-                            }                      
+                            }
                         ]
                   }
                 }

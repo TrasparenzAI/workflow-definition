@@ -14,6 +14,17 @@
       "type": "SET_VARIABLE"
     },
     {
+      "name": "Parent Workflow ID",
+      "taskReferenceName": "parent_workflow_id_ref",
+      "inputParameters": {
+        "expression": "(function(){if ($.s && $.s.length() > 0) { return $.s; } else { return  $.l; }})();",
+        "evaluatorType": "javascript",
+        "s": "${workflow.input.parent_workflow_id}",
+        "l": "${workflow.workflowId}"
+      },
+      "type": "INLINE"
+    },
+    {
       "name": "page_divide_size",
       "taskReferenceName": "page_divide_size_ref",
       "inputParameters": {
@@ -22,7 +33,7 @@
         "s": "${workflow.input.page_size}"
       },
       "type": "INLINE"
-    },        
+    },
     {
       "name": "pagination_task",
       "taskReferenceName": "pagination_task_ref",
@@ -47,7 +58,7 @@
           "taskReferenceName": "companies_task_ref",
           "inputParameters": {
             "http_request": {
-              "uri": "https://dica33.ba.cnr.it/public-sites-service/v1/companies?size=${workflow.input.page_size}&codiceCategoria=${workflow.input.codice_categoria}&page=${iteration_task_ref.output.result}",
+              "uri": "https://dica33.ba.cnr.it/public-sites-service/v1/companies?size=${workflow.input.page_size}&idIpaFrom=${workflow.input.id_ipa_from}&codiceIpa=${workflow.input.codice_ipa}&codiceCategoria=${workflow.input.codice_categoria}&page=${iteration_task_ref.output.result}&sort=id",
               "method": "GET",
               "connectionTimeOut": 3000,
               "readTimeOut": 10000,
@@ -99,7 +110,7 @@
                     "taskReferenceName": "start_rule_workflow_chunck_0_ref",
                     "inputParameters": {
                       "companies": "${companies_chunk_0_ref.output.result}",
-                      "parent_workflow_id": "${workflow.workflowId}",
+                      "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
                       "crawler_save_object": "${workflow.input.crawler_save_object}",
                       "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
                       "save_method": "PUT",
@@ -153,7 +164,7 @@
                     "taskReferenceName": "start_rule_workflow_chunck_1_ref",
                     "inputParameters": {
                       "companies": "${companies_chunk_1_ref.output.result}",
-                      "parent_workflow_id": "${workflow.workflowId}",
+                      "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
                       "crawler_save_object": "${workflow.input.crawler_save_object}",
                       "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
                       "save_method": "PUT",
@@ -207,7 +218,7 @@
                     "taskReferenceName": "start_rule_workflow_chunck_2_ref",
                     "inputParameters": {
                       "companies": "${companies_chunk_2_ref.output.result}",
-                      "parent_workflow_id": "${workflow.workflowId}",
+                      "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
                       "crawler_save_object": "${workflow.input.crawler_save_object}",
                       "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
                       "save_method": "PUT",
@@ -261,7 +272,7 @@
                       "taskReferenceName": "start_rule_workflow_chunck_3_ref",
                       "inputParameters": {
                         "companies": "${companies_chunk_3_ref.output.result}",
-                        "parent_workflow_id": "${workflow.workflowId}",
+                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
                         "crawler_save_object": "${workflow.input.crawler_save_object}",
                         "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
                         "save_method": "PUT",
@@ -315,7 +326,7 @@
                       "taskReferenceName": "start_rule_workflow_chunck_4_ref",
                       "inputParameters": {
                         "companies": "${companies_chunk_4_ref.output.result}",
-                        "parent_workflow_id": "${workflow.workflowId}",
+                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
                         "crawler_save_object": "${workflow.input.crawler_save_object}",
                         "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
                         "save_method": "PUT",
@@ -369,7 +380,7 @@
                       "taskReferenceName": "start_rule_workflow_chunck_5_ref",
                       "inputParameters": {
                         "companies": "${companies_chunk_5_ref.output.result}",
-                        "parent_workflow_id": "${workflow.workflowId}",
+                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
                         "crawler_save_object": "${workflow.input.crawler_save_object}",
                         "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
                         "save_method": "PUT",
@@ -423,7 +434,7 @@
                       "taskReferenceName": "start_rule_workflow_chunck_6_ref",
                       "inputParameters": {
                         "companies": "${companies_chunk_6_ref.output.result}",
-                        "parent_workflow_id": "${workflow.workflowId}",
+                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
                         "crawler_save_object": "${workflow.input.crawler_save_object}",
                         "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
                         "save_method": "PUT",
@@ -477,7 +488,7 @@
                       "taskReferenceName": "start_rule_workflow_chunck_7_ref",
                       "inputParameters": {
                         "companies": "${companies_chunk_7_ref.output.result}",
-                        "parent_workflow_id": "${workflow.workflowId}",
+                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
                         "crawler_save_object": "${workflow.input.crawler_save_object}",
                         "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
                         "save_method": "PUT",
@@ -531,7 +542,7 @@
                       "taskReferenceName": "start_rule_workflow_chunck_8_ref",
                       "inputParameters": {
                         "companies": "${companies_chunk_8_ref.output.result}",
-                        "parent_workflow_id": "${workflow.workflowId}",
+                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
                         "crawler_save_object": "${workflow.input.crawler_save_object}",
                         "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
                         "save_method": "PUT",
@@ -585,7 +596,7 @@
                       "taskReferenceName": "start_rule_workflow_chunck_9_ref",
                       "inputParameters": {
                         "companies": "${companies_chunk_9_ref.output.result}",
-                        "parent_workflow_id": "${workflow.workflowId}",
+                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
                         "crawler_save_object": "${workflow.input.crawler_save_object}",
                         "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
                         "save_method": "PUT",
@@ -640,7 +651,7 @@
       "taskReferenceName": "start_crawler_407_ref",
       "inputParameters": {
         "status": "407",
-        "workflowId": "${workflow.workflowId}",
+        "workflowId": "${parent_workflow_id_ref.output.result}",
         "crawler_save_object": "true",
         "crawler_save_screenshot": "true",
         "rule_name": "${workflow.input.rule_name}",
@@ -657,7 +668,7 @@
       "taskReferenceName": "start_crawler_400_ref",
       "inputParameters": {
         "status": "400",
-        "workflowId": "${workflow.workflowId}",
+        "workflowId": "${parent_workflow_id_ref.output.result}",
         "crawler_save_object": "true",
         "crawler_save_screenshot": "true",
         "rule_name": "${workflow.input.rule_name}",
@@ -672,11 +683,14 @@
   ],
   "inputParameters": [
     "page_size",
+    "parent_workflow_id",
     "codice_categoria",
+    "codice_ipa",
     "crawler_save_object",
     "crawler_save_screenshot",
     "rule_name",
-    "execute_child"
+    "execute_child",
+    "id_ipa_from"
   ],
   "outputParameters": {},
   "schemaVersion": 2,
