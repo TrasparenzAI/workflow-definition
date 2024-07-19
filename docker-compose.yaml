@@ -1,65 +1,38 @@
 version: '2.3'
 
 services:
-  conductor-ui:
-    environment:
-      - CUSTOM_LOCATION=/conductor-ui
-    image: ghcr.io/cnr-anac/conductor-community-ui:latest
-    container_name: conductor-ui
-    ports:
-      - 5000    
-    networks:
-      - traefik_default
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.conductor-ui.entrypoints=websecure"
-      - "traefik.http.routers.conductor-ui.rule=Host(`dica33.ba.cnr.it`) && PathPrefix(`/conductor-ui`)"
-      - "traefik.http.middlewares.strip-conductor.stripprefix.prefixes=/conductor-ui"
-      - "traefik.http.routers.conductor-ui.middlewares=strip-conductor@docker"
-      - "traefik.http.services.conductor-ui.loadbalancer.server.port=5000"
-      - "traefik.http.routers.conductor-ui.tls.certresolver=myresolver"
   conductor-server:
     environment:
       - CONFIG_PROP=config-postgres.properties
-      - JAVA_OPTS=-Xms512m -Xmx5g
+      - JAVA_OPTS=-Xms1g -Xmx4g
       - server.servlet.context-path=/conductor-server
     volumes:
       - ./config-postgres.properties:/app/config/config-postgres.properties    
     image: ghcr.io/cnr-anac/conductor-community-server:latest
     container_name: conductor-server
     ports:
-      - 8080
+      - 9080:8080
     extra_hosts:
       - "dica33.ba.cnr.it:150.145.95.73"      
-    networks:
-      - traefik_default
     links:
-      - conductor-elasticsearch:es
       - conductor-postgres:postgresdb
     depends_on:
-      conductor-elasticsearch:
-        condition: service_healthy
       conductor-postgres:
         condition: service_healthy
     logging:
       driver: "json-file"
       options:
-        max-size: "1k"
+        max-size: "100m"
         max-file: "3"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.conductor-server.entrypoints=websecure"
-      - "traefik.http.routers.conductor-server.rule=Host(`dica33.ba.cnr.it`) && PathPrefix(`/conductor-server`)"
-      - "traefik.http.routers.conductor-server.tls.certresolver=myresolver"
+
   conductor-postgres:
     image: postgres
+    ports:
+      - 5432
+    command: postgres -c max_connections=1000      
     environment:
       - POSTGRES_USER=conductor
       - POSTGRES_PASSWORD=conductor
-    volumes:
-      - ./pgdata-conductor:/var/lib/postgresql/data
-    networks:
-      - traefik_default
     healthcheck:
       test: timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/5432'
       interval: 5s
@@ -70,29 +43,3 @@ services:
       options:
         max-size: "1k"
         max-file: "3"
-
-  conductor-elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.18
-    environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx5g"
-      - xpack.security.enabled=false
-      - discovery.type=single-node
-      - cluster.routing.allocation.disk.threshold_enabled=false
-    volumes:
-      - ./esdata-conductor:/usr/share/elasticsearch/data
-    networks:
-      - traefik_default
-    healthcheck:
-      test: curl http://localhost:9200/_cluster/health -o /dev/null
-      interval: 5s
-      timeout: 5s
-      retries: 12
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "1k"
-        max-file: "3"
-
-networks:
-  traefik_default:
-    external: true

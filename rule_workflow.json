@@ -70,7 +70,10 @@
                   "rule_name": "${workflow.input.rule_name}",
                   "execute_child": "${workflow.input.execute_child}",
                   "connection_timeout": "${workflow.input.connection_timeout}",
-                  "read_timeout": "${workflow.input.read_timeout}"
+                  "read_timeout": "${workflow.input.read_timeout}",
+                  "crawling_mode": "${workflow.input.crawling_mode}",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}"
                 },
                 "subWorkflowParam": {
                   "name": "rule_detail_workflow",
@@ -92,7 +95,10 @@
                   "rule_name": "${workflow.input.rule_name}",
                   "execute_child": "${workflow.input.execute_child}",
                   "connection_timeout": "${workflow.input.connection_timeout}",
-                  "read_timeout": "${workflow.input.read_timeout}"
+                  "read_timeout": "${workflow.input.read_timeout}",
+                  "crawling_mode": "${workflow.input.crawling_mode}",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}"
                 },
                 "subWorkflowParam": {
                   "name": "rule_detail_workflow",
@@ -115,7 +121,10 @@
     "rule_name",
     "execute_child",
     "connection_timeout",
-    "read_timeout"
+    "read_timeout",
+    "crawling_mode",
+    "result_base_url",
+    "crawler_child_type"
   ],
   "outputParameters": {},
   "schemaVersion": 2,

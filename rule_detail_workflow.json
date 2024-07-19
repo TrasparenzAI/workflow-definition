@@ -7,6 +7,16 @@
     "version": 1,
     "tasks": [
         {
+            "name": "Crawler Child Type Sub Workflow",
+            "taskReferenceName": "crawler_child_type_sub_workflow_ref",
+            "inputParameters": {
+                "expression": "(function(){ if ($.s != undefined && $.s == 'SUB_WORKFLOW'){return true;} else { return false;} })();",
+                "evaluatorType": "javascript",
+                "s": "${workflow.input.crawler_child_type}"
+            },
+            "type": "INLINE"
+        },
+        {
             "name": "sito_istituzionale_present",
             "taskReferenceName": "sito_istituzionale_present_ref",
             "inputParameters": {
@@ -30,8 +40,8 @@
                         "taskReferenceName": "crawler_http_stream_ref",
                         "inputParameters": {
                             "http_request": {
-                                "uri": "https://dica33.ba.cnr.it/crawler/crawl",
-                                "body": "{\"crawlingMode\": \"httpStream\", \"saveObject\": ${workflow.input.crawler_save_object}, \"saveScreenshot\":false,\"url\": \"${workflow.input.ipa.sitoIstituzionale}\"}",
+                                "uri": "https://monitorai.ba.cnr.it/crawler/crawl",
+                                "body": "{\"crawlingMode\": \"${workflow.input.crawling_mode}\", \"saveObject\": ${workflow.input.crawler_save_object}, \"saveScreenshot\":false,\"url\": \"${workflow.input.ipa.sitoIstituzionale}\"}",
                                 "method": "POST",
                                 "connectionTimeOut": "${workflow.input.connection_timeout}",
                                 "readTimeOut": "${workflow.input.read_timeout}"
@@ -94,7 +104,7 @@
                                                             "taskReferenceName": "crawler_html_source_ref",
                                                             "inputParameters": {
                                                                 "http_request": {
-                                                                    "uri": "https://dica33.ba.cnr.it/crawler/crawl",
+                                                                    "uri": "https://monitorai.ba.cnr.it/crawler/crawl",
                                                                     "body": "{\"crawlingMode\": \"htmlSource\", \"saveObject\": ${workflow.input.crawler_save_object}, \"saveScreenshot\":${workflow.input.crawler_save_screenshot},\"url\": \"${workflow.input.ipa.sitoIstituzionale}\"}",
                                                                     "method": "POST",
                                                                     "connectionTimeOut": "${workflow.input.connection_timeout}",
@@ -186,11 +196,11 @@
                                                                                                 "taskReferenceName": "result_rule_html_source_failed_ref",
                                                                                                 "inputParameters": {
                                                                                                     "http_request": {
-                                                                                                        "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                                                                                                        "uri": "${workflow.input.result_base_url}/result-service/v1/results",
                                                                                                         "body": "${company_jq_html_source_failed_ref.output.result}",
                                                                                                         "method": "${workflow.input.save_method}",
                                                                                                         "connectionTimeOut": 10000,
-                                                                                                        "readTimeOut": 30000
+                                                                                                        "readTimeOut": 120000
                                                                                                     }
                                                                                                 },
                                                                                                 "type": "HTTP",
@@ -253,11 +263,11 @@
                                                                                                 "taskReferenceName": "result_rule_html_source_completed_ref",
                                                                                                 "inputParameters": {
                                                                                                     "http_request": {
-                                                                                                        "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                                                                                                        "uri": "${workflow.input.result_base_url}/result-service/v1/results",
                                                                                                         "body": "${company_jq_html_source_completed_ref.output.result}",
                                                                                                         "method": "${workflow.input.save_method}",
                                                                                                         "connectionTimeOut": 10000,
-                                                                                                        "readTimeOut": 30000
+                                                                                                        "readTimeOut": 120000
                                                                                                     }
                                                                                                 },
                                                                                                 "type": "HTTP",
@@ -275,24 +285,67 @@
                                                                                                 "decisionCases": {
                                                                                                     "true": [
                                                                                                         {
-                                                                                                            "name": "Start Rule Child Workflow HTML Source",
-                                                                                                            "taskReferenceName": "start_rule_child_workflow_html_source_ref",
+                                                                                                            "name": "Switch Child Type SUB WORKFLOW HTML Source",
+                                                                                                            "taskReferenceName": "switch_child_type_sub_workflow_html_source_ref",
                                                                                                             "inputParameters": {
-                                                                                                                "ipa": "${workflow.input.ipa}",
-                                                                                                                "resultURL": "${result_rule_html_source_completed_ref.output.response.body.destinationUrl}",
-                                                                                                                "rule_name": "${result_rule_html_source_completed_ref.output.response.body.ruleName}",
-                                                                                                                "parent_workflow_id": "${workflow.input.parent_workflow_id}",
-                                                                                                                "crawler_save_object": "${workflow.input.crawler_save_object}",
-                                                                                                                "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                                                                                                                "save_method": "PUT",
-                                                                                                                "connection_timeout": "${workflow.input.connection_timeout}",
-                                                                                                                "read_timeout": "${workflow.input.read_timeout}"
+                                                                                                                "exists": "${crawler_child_type_sub_workflow_ref.output.result}"
                                                                                                             },
-                                                                                                            "subWorkflowParam": {
-                                                                                                                "name": "rule_detail_child_workflow",
-                                                                                                                "version": 1
+                                                                                                            "type": "SWITCH",
+                                                                                                            "decisionCases": {
+                                                                                                                "true": [
+                                                                                                                    {
+                                                                                                                        "name": "SUB Rule Child Workflow HTML Source",
+                                                                                                                        "taskReferenceName": "sub_rule_child_workflow_html_source_ref",
+                                                                                                                        "inputParameters": {
+                                                                                                                            "ipa": "${workflow.input.ipa}",
+                                                                                                                            "resultURL": "${result_rule_html_source_completed_ref.output.response.body.destinationUrl}",
+                                                                                                                            "rule_name": "${result_rule_html_source_completed_ref.output.response.body.ruleName}",
+                                                                                                                            "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                                                                                                            "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                                                                                                            "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                                                                                                            "save_method": "PUT",
+                                                                                                                            "connection_timeout": "${workflow.input.connection_timeout}",
+                                                                                                                            "read_timeout": "${workflow.input.read_timeout}",
+                                                                                                                            "crawling_mode": "${workflow.input.crawling_mode}",
+                                                                                                                            "result_base_url": "${workflow.input.result_base_url}"
+                                                                                                                        },
+                                                                                                                        "subWorkflowParam": {
+                                                                                                                          "name": "rule_detail_child_workflow",
+                                                                                                                          "version": 1
+                                                                                                                        },                
+                                                                                                                        "type": "SUB_WORKFLOW"
+                                                                                                                    }
+                                                                                                                ],
+                                                                                                                "false": [
+                                                                                                                    {
+                                                                                                                        "name": "Start Rule Child Workflow HTML Source",
+                                                                                                                        "taskReferenceName": "start_rule_child_workflow_html_source_ref",
+                                                                                                                        "inputParameters": {
+                                                                                                                            "startWorkflow": {
+                                                                                                                              "name": "rule_detail_child_workflow",
+                                                                                                                              "input": {
+                                                                                                                                "ipa": "${workflow.input.ipa}",
+                                                                                                                                "resultURL": "${result_rule_html_source_completed_ref.output.response.body.destinationUrl}",
+                                                                                                                                "rule_name": "${result_rule_html_source_completed_ref.output.response.body.ruleName}",
+                                                                                                                                "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                                                                                                                "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                                                                                                                "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                                                                                                                "save_method": "PUT",
+                                                                                                                                "connection_timeout": "${workflow.input.connection_timeout}",
+                                                                                                                                "read_timeout": "${workflow.input.read_timeout}",
+                                                                                                                                "crawling_mode": "${workflow.input.crawling_mode}",
+                                                                                                                                "result_base_url": "${workflow.input.result_base_url}"
+                                                                                                                              },
+                                                                                                                              "version": 1
+                                                                                                                            }
+                                                                                                                      },
+                                                                                                                      "type": "START_WORKFLOW"
+                                                                                                                    }
+                                                                                                                ]
                                                                                                             },
-                                                                                                            "type": "SUB_WORKFLOW"
+                                                                                                            "defaultCase": [],
+                                                                                                            "evaluatorType": "value-param",
+                                                                                                            "expression": "exists"
                                                                                                         }
                                                                                                     ]
                                                                                                 },
@@ -356,11 +409,11 @@
                                                                                     "taskReferenceName": "result_rule_html_source_407_failed_ref",
                                                                                     "inputParameters": {
                                                                                         "http_request": {
-                                                                                            "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                                                                                            "uri": "${workflow.input.result_base_url}/result-service/v1/results",
                                                                                             "body": "${company_jq_html_source_failed_407_ref.output.result}",
                                                                                             "method": "${workflow.input.save_method}",
                                                                                             "connectionTimeOut": 10000,
-                                                                                            "readTimeOut": 30000
+                                                                                            "readTimeOut": 120000
                                                                                         }
                                                                                     },
                                                                                     "type": "HTTP",
@@ -419,11 +472,11 @@
                                                                         "taskReferenceName": "result_html_source_407_failed_ref",
                                                                         "inputParameters": {
                                                                             "http_request": {
-                                                                                "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                                                                                "uri": "${workflow.input.result_base_url}/result-service/v1/results",
                                                                                 "body": "${company_jq_html_source_407_failed_ref.output.result}",
                                                                                 "method": "${workflow.input.save_method}",
                                                                                 "connectionTimeOut": 10000,
-                                                                                "readTimeOut": 30000
+                                                                                "readTimeOut": 120000
                                                                             }
                                                                         },
                                                                         "type": "HTTP",
@@ -495,11 +548,11 @@
                                                             "taskReferenceName": "result_rule_http_stream_completed_ref",
                                                             "inputParameters": {
                                                                 "http_request": {
-                                                                    "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                                                                    "uri": "${workflow.input.result_base_url}/result-service/v1/results",
                                                                     "body": "${company_jq_http_stream_completed_ref.output.result}",
                                                                     "method": "${workflow.input.save_method}",
                                                                     "connectionTimeOut": 10000,
-                                                                    "readTimeOut": 30000
+                                                                    "readTimeOut": 120000
                                                                 }
                                                             },
                                                             "type": "HTTP",
@@ -517,24 +570,67 @@
                                                             "decisionCases": {
                                                                 "true": [
                                                                     {
-                                                                        "name": "Start Rule Child Workflow HTTP Stream",
-                                                                        "taskReferenceName": "start_rule_child_workflow_http_stream_ref",
+                                                                        "name": "Switch Child Type SUB WORKFLOW HTTP Stream",
+                                                                        "taskReferenceName": "switch_child_type_sub_workflow_http_stream_ref",
                                                                         "inputParameters": {
-                                                                            "ipa": "${workflow.input.ipa}",
-                                                                            "resultURL": "${result_rule_http_stream_completed_ref.output.response.body.destinationUrl}",
-                                                                            "rule_name": "${result_rule_http_stream_completed_ref.output.response.body.ruleName}",
-                                                                            "parent_workflow_id": "${workflow.input.parent_workflow_id}",
-                                                                            "crawler_save_object": "${workflow.input.crawler_save_object}",
-                                                                            "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                                                                            "save_method": "PUT",
-                                                                            "connection_timeout": "${workflow.input.connection_timeout}",
-                                                                            "read_timeout": "${workflow.input.read_timeout}"
+                                                                            "exists": "${crawler_child_type_sub_workflow_ref.output.result}"
                                                                         },
-                                                                        "subWorkflowParam": {
-                                                                            "name": "rule_detail_child_workflow",
-                                                                            "version": 1
+                                                                        "type": "SWITCH",
+                                                                        "decisionCases": {
+                                                                            "true": [
+                                                                                {
+                                                                                    "name": "SUB Rule Child Workflow HTTP Stream",
+                                                                                    "taskReferenceName": "sub_rule_child_workflow_http_stream_ref",
+                                                                                    "inputParameters": {
+                                                                                        "ipa": "${workflow.input.ipa}",
+                                                                                        "resultURL": "${result_rule_http_stream_completed_ref.output.response.body.destinationUrl}",
+                                                                                        "rule_name": "${result_rule_http_stream_completed_ref.output.response.body.ruleName}",
+                                                                                        "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                                                                        "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                                                                        "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                                                                        "save_method": "PUT",
+                                                                                        "connection_timeout": "${workflow.input.connection_timeout}",
+                                                                                        "read_timeout": "${workflow.input.read_timeout}",
+                                                                                        "crawling_mode": "${workflow.input.crawling_mode}",
+                                                                                        "result_base_url": "${workflow.input.result_base_url}"
+                                                                                    },
+                                                                                    "subWorkflowParam": {
+                                                                                      "name": "rule_detail_child_workflow",
+                                                                                      "version": 1
+                                                                                    },                
+                                                                                    "type": "SUB_WORKFLOW"
+                                                                                }
+                                                                            ],
+                                                                            "false": [
+                                                                                {
+                                                                                    "name": "Start Rule Child Workflow HTTP Stream",
+                                                                                    "taskReferenceName": "start_rule_child_workflow_http_stream_ref",
+                                                                                    "inputParameters": {
+                                                                                        "startWorkflow": {
+                                                                                          "name": "rule_detail_child_workflow",
+                                                                                          "input": {
+                                                                                            "ipa": "${workflow.input.ipa}",
+                                                                                            "resultURL": "${result_rule_http_stream_completed_ref.output.response.body.destinationUrl}",
+                                                                                            "rule_name": "${result_rule_http_stream_completed_ref.output.response.body.ruleName}",
+                                                                                            "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                                                                            "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                                                                            "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                                                                            "save_method": "PUT",
+                                                                                            "connection_timeout": "${workflow.input.connection_timeout}",
+                                                                                            "read_timeout": "${workflow.input.read_timeout}",
+                                                                                            "crawling_mode": "${workflow.input.crawling_mode}",
+                                                                                            "result_base_url": "${workflow.input.result_base_url}"
+                                                                                          },
+                                                                                          "version": 1
+                                                                                        }
+                                                                                  },
+                                                                                  "type": "START_WORKFLOW"
+                                                                                }
+                                                                            ]
                                                                         },
-                                                                        "type": "SUB_WORKFLOW"
+                                                                        "defaultCase": [],
+                                                                        "evaluatorType": "value-param",
+                                                                        "expression": "exists"
                                                                     }
                                                                 ]
                                                             },
@@ -599,11 +695,11 @@
                                                 "taskReferenceName": "result_http_stream_failed_ref",
                                                 "inputParameters": {
                                                     "http_request": {
-                                                        "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                                                        "uri": "${workflow.input.result_base_url}/result-service/v1/results",
                                                         "body": "${company_jq_http_stream_failed_ref.output.result}",
                                                         "method": "${workflow.input.save_method}",
                                                         "connectionTimeOut": 10000,
-                                                        "readTimeOut": 30000
+                                                        "readTimeOut": 120000
                                                     }
                                                 },
                                                 "type": "HTTP",
@@ -660,11 +756,11 @@
                                     "taskReferenceName": "result_http_stream_407_failed_ref",
                                     "inputParameters": {
                                         "http_request": {
-                                            "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                                            "uri": "${workflow.input.result_base_url}/result-service/v1/results",
                                             "body": "${company_jq_http_stream_407_failed_ref.output.result}",
                                             "method": "${workflow.input.save_method}",
                                             "connectionTimeOut": 10000,
-                                            "readTimeOut": 30000
+                                            "readTimeOut": 120000
                                         }
                                     },
                                     "type": "HTTP",
@@ -715,11 +811,11 @@
                         "taskReferenceName": "result_sito_istituzionale_failed_ref",
                         "inputParameters": {
                             "http_request": {
-                                "uri": "https://dica33.ba.cnr.it/result-service/v1/results",
+                                "uri": "${workflow.input.result_base_url}/result-service/v1/results",
                                 "body": "${sito_istituzionale_jq_failed_ref.output.result}",
                                 "method": "${workflow.input.save_method}",
                                 "connectionTimeOut": 10000,
-                                "readTimeOut": 30000
+                                "readTimeOut": 120000
                             }
                         },
                         "type": "HTTP",
@@ -753,7 +849,10 @@
         "rule_name",
         "execute_child",
         "connection_timeout",
-        "read_timeout"
+        "read_timeout",
+        "crawling_mode",
+        "result_base_url",
+        "crawler_child_type"
     ],
     "outputParameters": {},
     "schemaVersion": 2,
