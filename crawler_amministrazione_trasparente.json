@@ -60,13 +60,21 @@
             "http_request": {
               "uri": "https://dica33.ba.cnr.it/public-sites-service/v1/companies?size=${workflow.input.page_size}&idIpaFrom=${workflow.input.id_ipa_from}&codiceIpa=${workflow.input.codice_ipa}&codiceCategoria=${workflow.input.codice_categoria}&page=${iteration_task_ref.output.result}&sort=id",
               "method": "GET",
-              "connectionTimeOut": 3000,
-              "readTimeOut": 10000,
+              "connectionTimeOut": 30000,
+              "readTimeOut": 30000,
               "accept": "application/json",
               "contentType": "application/json"
             }
           },
           "type": "HTTP"
+        },
+        {
+          "name": "Set Last Page",
+          "taskReferenceName": "set_last_page_ref",
+          "inputParameters": {
+            "last_page": "${companies_task_ref.output.response.body.last}"
+          },
+          "type": "SET_VARIABLE"
         },
         {
           "name": "fork",
@@ -87,52 +95,28 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "companies_chunk_0_size",
-                "taskReferenceName": "companies_chunk_0_size_ref",
+                "name": "start_rule_workflow_chunck_0",
+                "taskReferenceName": "start_rule_workflow_chunck_0_ref",
                 "inputParameters": {
-                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                  "evaluatorType": "javascript",
-                  "s": "${companies_chunk_0_ref.output.result}"
+                  "companies": "${companies_chunk_0_ref.output.result}",
+                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "PUT",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}",
+                  "connection_timeout": "${workflow.input.connection_timeout}",
+                  "read_timeout": "${workflow.input.read_timeout}",
+                  "crawling_mode": "httpStream",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                  "crawler_uri": "${workflow.input.crawler_uri}"
                 },
-                "type": "INLINE"
-              },
-              {
-                "name": "switch_companies_chunk_0",
-                "taskReferenceName": "switch_companies_chunk_0_ref",
-                "inputParameters": {
-                  "size": "${companies_chunk_0_size_ref.output.result}"
-                },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                  {
-                    "name": "start_rule_workflow_chunck_0",
-                    "taskReferenceName": "start_rule_workflow_chunck_0_ref",
-                    "inputParameters": {
-                      "companies": "${companies_chunk_0_ref.output.result}",
-                      "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                      "crawler_save_object": "${workflow.input.crawler_save_object}",
-                      "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                      "save_method": "PUT",
-                      "rule_name": "${workflow.input.rule_name}",
-                      "execute_child": "${workflow.input.execute_child}",
-                      "connection_timeout": "${workflow.input.connection_timeout}",
-                      "read_timeout": "${workflow.input.read_timeout}",
-                      "crawling_mode": "httpStream",
-                      "result_base_url": "${workflow.input.result_base_url}",
-                      "crawler_child_type": "${workflow.input.crawler_child_type}"
-                    },
-                    "subWorkflowParam": {
-                      "name": "rule_workflow",
-                      "version": 1
-                    },                
-                    "type": "SUB_WORKFLOW"
-                  }
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
+                },                
+                "type": "SUB_WORKFLOW"
               }
             ],
             [
@@ -146,52 +130,28 @@
               "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "companies_chunk_1_size",
-                "taskReferenceName": "companies_chunk_1_size_ref",
+                "name": "start_rule_workflow_chunck_1",
+                "taskReferenceName": "start_rule_workflow_chunck_1_ref",
                 "inputParameters": {
-                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                  "evaluatorType": "javascript",
-                  "s": "${companies_chunk_1_ref.output.result}"
+                  "companies": "${companies_chunk_1_ref.output.result}",
+                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "PUT",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}",
+                  "connection_timeout": "${workflow.input.connection_timeout}",
+                  "read_timeout": "${workflow.input.read_timeout}",
+                  "crawling_mode": "httpStream",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                  "crawler_uri": "${workflow.input.crawler_uri}"
                 },
-                "type": "INLINE"
-              },
-              {
-                "name": "switch_companies_chunk_1",
-                "taskReferenceName": "switch_companies_chunk_1_ref",
-                "inputParameters": {
-                  "size": "${companies_chunk_1_size_ref.output.result}"
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
                 },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                  {
-                    "name": "start_rule_workflow_chunck_1",
-                    "taskReferenceName": "start_rule_workflow_chunck_1_ref",
-                    "inputParameters": {
-                      "companies": "${companies_chunk_1_ref.output.result}",
-                      "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                      "crawler_save_object": "${workflow.input.crawler_save_object}",
-                      "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                      "save_method": "PUT",
-                      "rule_name": "${workflow.input.rule_name}",
-                      "execute_child": "${workflow.input.execute_child}",
-                      "connection_timeout": "${workflow.input.connection_timeout}",
-                      "read_timeout": "${workflow.input.read_timeout}",
-                      "crawling_mode": "httpStream",
-                      "result_base_url": "${workflow.input.result_base_url}",
-                      "crawler_child_type": "${workflow.input.crawler_child_type}"
-                    },
-                    "subWorkflowParam": {
-                      "name": "rule_workflow",
-                      "version": 1
-                    },                
-                    "type": "SUB_WORKFLOW"
-                  }                   
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
+                "type": "SUB_WORKFLOW"
               }
             ],
             [
@@ -204,53 +164,29 @@
               },
               "type": "JSON_JQ_TRANSFORM"
               },
-            {
-              "name": "companies_chunk_2_size",
-              "taskReferenceName": "companies_chunk_2_size_ref",
-              "inputParameters": {
-                "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                "evaluatorType": "javascript",
-                "s": "${companies_chunk_2_ref.output.result}"
-              },
-              "type": "INLINE"
-            },              
               {
-                "name": "switch_companies_chunk_2",
-                "taskReferenceName": "switch_companies_chunk_2_ref",
+                "name": "start_rule_workflow_chunck_2",
+                "taskReferenceName": "start_rule_workflow_chunck_2_ref",
                 "inputParameters": {
-                  "size": "${companies_chunk_2_size_ref.output.result}"
+                  "companies": "${companies_chunk_2_ref.output.result}",
+                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "PUT",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}",
+                  "connection_timeout": "${workflow.input.connection_timeout}",
+                  "read_timeout": "${workflow.input.read_timeout}",
+                  "crawling_mode": "httpStream",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                  "crawler_uri": "${workflow.input.crawler_uri}"
                 },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                  {
-                    "name": "start_rule_workflow_chunck_2",
-                    "taskReferenceName": "start_rule_workflow_chunck_2_ref",
-                    "inputParameters": {
-                      "companies": "${companies_chunk_2_ref.output.result}",
-                      "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                      "crawler_save_object": "${workflow.input.crawler_save_object}",
-                      "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                      "save_method": "PUT",
-                      "rule_name": "${workflow.input.rule_name}",
-                      "execute_child": "${workflow.input.execute_child}",
-                      "connection_timeout": "${workflow.input.connection_timeout}",
-                      "read_timeout": "${workflow.input.read_timeout}",
-                      "crawling_mode": "httpStream",
-                      "result_base_url": "${workflow.input.result_base_url}",
-                      "crawler_child_type": "${workflow.input.crawler_child_type}"
-                    },
-                    "subWorkflowParam": {
-                      "name": "rule_workflow",
-                      "version": 1
-                    },                
-                    "type": "SUB_WORKFLOW"
-                  }                   
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
+                },                
+                "type": "SUB_WORKFLOW"
               }
             ],
             [
@@ -264,52 +200,28 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "companies_chunk_3_size",
-                "taskReferenceName": "companies_chunk_3_size_ref",
+                "name": "start_rule_workflow_chunck_3",
+                "taskReferenceName": "start_rule_workflow_chunck_3_ref",
                 "inputParameters": {
-                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                  "evaluatorType": "javascript",
-                  "s": "${companies_chunk_3_ref.output.result}"
+                  "companies": "${companies_chunk_3_ref.output.result}",
+                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "PUT",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}",
+                  "connection_timeout": "${workflow.input.connection_timeout}",
+                  "read_timeout": "${workflow.input.read_timeout}",
+                  "crawling_mode": "httpStream",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                  "crawler_uri": "${workflow.input.crawler_uri}"
                 },
-                "type": "INLINE"
-              },
-              {
-                "name": "switch_companies_chunk_3",
-                "taskReferenceName": "switch_companies_chunk_3_ref",
-                "inputParameters": {
-                  "size": "${companies_chunk_3_size_ref.output.result}"
-                },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                    {
-                      "name": "start_rule_workflow_chunck_3",
-                      "taskReferenceName": "start_rule_workflow_chunck_3_ref",
-                      "inputParameters": {
-                        "companies": "${companies_chunk_3_ref.output.result}",
-                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                        "crawler_save_object": "${workflow.input.crawler_save_object}",
-                        "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                        "save_method": "PUT",
-                        "rule_name": "${workflow.input.rule_name}",
-                        "execute_child": "${workflow.input.execute_child}",
-                        "connection_timeout": "${workflow.input.connection_timeout}",
-                        "read_timeout": "${workflow.input.read_timeout}",
-                        "crawling_mode": "httpStream",
-                        "result_base_url": "${workflow.input.result_base_url}",
-                        "crawler_child_type": "${workflow.input.crawler_child_type}"
-                      },
-                      "subWorkflowParam": {
-                        "name": "rule_workflow",
-                        "version": 1
-                      },                
-                      "type": "SUB_WORKFLOW"
-                    }
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
+                },                
+                "type": "SUB_WORKFLOW"
               }
             ],
             [
@@ -323,52 +235,28 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "companies_chunk_4_size",
-                "taskReferenceName": "companies_chunk_4_size_ref",
+                "name": "start_rule_workflow_chunck_4",
+                "taskReferenceName": "start_rule_workflow_chunck_4_ref",
                 "inputParameters": {
-                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                  "evaluatorType": "javascript",
-                  "s": "${companies_chunk_4_ref.output.result}"
+                  "companies": "${companies_chunk_4_ref.output.result}",
+                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "PUT",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}",
+                  "connection_timeout": "${workflow.input.connection_timeout}",
+                  "read_timeout": "${workflow.input.read_timeout}",
+                  "crawling_mode": "httpStream",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                  "crawler_uri": "${workflow.input.crawler_uri}"
                 },
-                "type": "INLINE"
-              },
-              {
-                "name": "switch_companies_chunk_4",
-                "taskReferenceName": "switch_companies_chunk_4_ref",
-                "inputParameters": {
-                  "size": "${companies_chunk_4_size_ref.output.result}"
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
                 },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                    {
-                      "name": "start_rule_workflow_chunck_4",
-                      "taskReferenceName": "start_rule_workflow_chunck_4_ref",
-                      "inputParameters": {
-                        "companies": "${companies_chunk_4_ref.output.result}",
-                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                        "crawler_save_object": "${workflow.input.crawler_save_object}",
-                        "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                        "save_method": "PUT",
-                        "rule_name": "${workflow.input.rule_name}",
-                        "execute_child": "${workflow.input.execute_child}",
-                        "connection_timeout": "${workflow.input.connection_timeout}",
-                        "read_timeout": "${workflow.input.read_timeout}",
-                        "crawling_mode": "httpStream",
-                        "result_base_url": "${workflow.input.result_base_url}",
-                        "crawler_child_type": "${workflow.input.crawler_child_type}"
-                      },
-                      "subWorkflowParam": {
-                        "name": "rule_workflow",
-                        "version": 1
-                      },                
-                      "type": "SUB_WORKFLOW"
-                    }
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
+                "type": "SUB_WORKFLOW"
               }
             ],
             [
@@ -382,52 +270,28 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "companies_chunk_5_size",
-                "taskReferenceName": "companies_chunk_5_size_ref",
+                "name": "start_rule_workflow_chunck_5",
+                "taskReferenceName": "start_rule_workflow_chunck_5_ref",
                 "inputParameters": {
-                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                  "evaluatorType": "javascript",
-                  "s": "${companies_chunk_5_ref.output.result}"
+                  "companies": "${companies_chunk_5_ref.output.result}",
+                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "PUT",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}",
+                  "connection_timeout": "${workflow.input.connection_timeout}",
+                  "read_timeout": "${workflow.input.read_timeout}",
+                  "crawling_mode": "httpStream",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                  "crawler_uri": "${workflow.input.crawler_uri}"
                 },
-                "type": "INLINE"
-              },
-              {
-                "name": "switch_companies_chunk_5",
-                "taskReferenceName": "switch_companies_chunk_5_ref",
-                "inputParameters": {
-                  "size": "${companies_chunk_5_size_ref.output.result}"
-                },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                    {
-                      "name": "start_rule_workflow_chunck_5",
-                      "taskReferenceName": "start_rule_workflow_chunck_5_ref",
-                      "inputParameters": {
-                        "companies": "${companies_chunk_5_ref.output.result}",
-                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                        "crawler_save_object": "${workflow.input.crawler_save_object}",
-                        "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                        "save_method": "PUT",
-                        "rule_name": "${workflow.input.rule_name}",
-                        "execute_child": "${workflow.input.execute_child}",
-                        "connection_timeout": "${workflow.input.connection_timeout}",
-                        "read_timeout": "${workflow.input.read_timeout}",
-                        "crawling_mode": "httpStream",
-                        "result_base_url": "${workflow.input.result_base_url}",
-                        "crawler_child_type": "${workflow.input.crawler_child_type}"
-                      },
-                      "subWorkflowParam": {
-                        "name": "rule_workflow",
-                        "version": 1
-                      },                
-                      "type": "SUB_WORKFLOW"
-                    }
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
+                },                
+                "type": "SUB_WORKFLOW"
               }
             ],
             [
@@ -441,52 +305,28 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "companies_chunk_6_size",
-                "taskReferenceName": "companies_chunk_6_size_ref",
+                "name": "start_rule_workflow_chunck_6",
+                "taskReferenceName": "start_rule_workflow_chunck_6_ref",
                 "inputParameters": {
-                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                  "evaluatorType": "javascript",
-                  "s": "${companies_chunk_6_ref.output.result}"
+                  "companies": "${companies_chunk_6_ref.output.result}",
+                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "PUT",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}",
+                  "connection_timeout": "${workflow.input.connection_timeout}",
+                  "read_timeout": "${workflow.input.read_timeout}",
+                  "crawling_mode": "httpStream",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                  "crawler_uri": "${workflow.input.crawler_uri}"
                 },
-                "type": "INLINE"
-              },
-              {
-                "name": "switch_companies_chunk_6",
-                "taskReferenceName": "switch_companies_chunk_6_ref",
-                "inputParameters": {
-                  "size": "${companies_chunk_6_size_ref.output.result}"
-                },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                    {
-                      "name": "start_rule_workflow_chunck_6",
-                      "taskReferenceName": "start_rule_workflow_chunck_6_ref",
-                      "inputParameters": {
-                        "companies": "${companies_chunk_6_ref.output.result}",
-                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                        "crawler_save_object": "${workflow.input.crawler_save_object}",
-                        "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                        "save_method": "PUT",
-                        "rule_name": "${workflow.input.rule_name}",
-                        "execute_child": "${workflow.input.execute_child}",
-                        "connection_timeout": "${workflow.input.connection_timeout}",
-                        "read_timeout": "${workflow.input.read_timeout}",
-                        "crawling_mode": "httpStream",
-                        "result_base_url": "${workflow.input.result_base_url}",
-                        "crawler_child_type": "${workflow.input.crawler_child_type}"
-                      },
-                      "subWorkflowParam": {
-                        "name": "rule_workflow",
-                        "version": 1
-                      },                
-                      "type": "SUB_WORKFLOW"
-                    }
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
+                },                
+                "type": "SUB_WORKFLOW"
               }
             ],
             [
@@ -500,52 +340,28 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "companies_chunk_7_size",
-                "taskReferenceName": "companies_chunk_7_size_ref",
+                "name": "start_rule_workflow_chunck_7",
+                "taskReferenceName": "start_rule_workflow_chunck_7_ref",
                 "inputParameters": {
-                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                  "evaluatorType": "javascript",
-                  "s": "${companies_chunk_7_ref.output.result}"
+                  "companies": "${companies_chunk_7_ref.output.result}",
+                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "PUT",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}",
+                  "connection_timeout": "${workflow.input.connection_timeout}",
+                  "read_timeout": "${workflow.input.read_timeout}",
+                  "crawling_mode": "httpStream",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                  "crawler_uri": "${workflow.input.crawler_uri}"
                 },
-                "type": "INLINE"
-              },
-              {
-                "name": "switch_companies_chunk_7",
-                "taskReferenceName": "switch_companies_chunk_7_ref",
-                "inputParameters": {
-                  "size": "${companies_chunk_7_size_ref.output.result}"
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
                 },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                    {
-                      "name": "start_rule_workflow_chunck_7",
-                      "taskReferenceName": "start_rule_workflow_chunck_7_ref",
-                      "inputParameters": {
-                        "companies": "${companies_chunk_7_ref.output.result}",
-                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                        "crawler_save_object": "${workflow.input.crawler_save_object}",
-                        "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                        "save_method": "PUT",
-                        "rule_name": "${workflow.input.rule_name}",
-                        "execute_child": "${workflow.input.execute_child}",
-                        "connection_timeout": "${workflow.input.connection_timeout}",
-                        "read_timeout": "${workflow.input.read_timeout}",
-                        "crawling_mode": "httpStream",
-                        "result_base_url": "${workflow.input.result_base_url}",
-                        "crawler_child_type": "${workflow.input.crawler_child_type}"
-                      },
-                      "subWorkflowParam": {
-                        "name": "rule_workflow",
-                        "version": 1
-                      },                
-                      "type": "SUB_WORKFLOW"
-                    }
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
+                "type": "SUB_WORKFLOW"
               }
             ],
             [
@@ -559,52 +375,28 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "companies_chunk_8_size",
-                "taskReferenceName": "companies_chunk_8_size_ref",
+                "name": "start_rule_workflow_chunck_8",
+                "taskReferenceName": "start_rule_workflow_chunck_8_ref",
                 "inputParameters": {
-                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                  "evaluatorType": "javascript",
-                  "s": "${companies_chunk_8_ref.output.result}"
+                  "companies": "${companies_chunk_8_ref.output.result}",
+                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "PUT",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}",
+                  "connection_timeout": "${workflow.input.connection_timeout}",
+                  "read_timeout": "${workflow.input.read_timeout}",
+                  "crawling_mode": "httpStream",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                  "crawler_uri": "${workflow.input.crawler_uri}"
                 },
-                "type": "INLINE"
-              },
-              {
-                "name": "switch_companies_chunk_8",
-                "taskReferenceName": "switch_companies_chunk_8_ref",
-                "inputParameters": {
-                  "size": "${companies_chunk_8_size_ref.output.result}"
-                },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                    {
-                      "name": "start_rule_workflow_chunck_8",
-                      "taskReferenceName": "start_rule_workflow_chunck_8_ref",
-                      "inputParameters": {
-                        "companies": "${companies_chunk_8_ref.output.result}",
-                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                        "crawler_save_object": "${workflow.input.crawler_save_object}",
-                        "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                        "save_method": "PUT",
-                        "rule_name": "${workflow.input.rule_name}",
-                        "execute_child": "${workflow.input.execute_child}",
-                        "connection_timeout": "${workflow.input.connection_timeout}",
-                        "read_timeout": "${workflow.input.read_timeout}",
-                        "crawling_mode": "httpStream",
-                        "result_base_url": "${workflow.input.result_base_url}",
-                        "crawler_child_type": "${workflow.input.crawler_child_type}"
-                      },
-                      "subWorkflowParam": {
-                        "name": "rule_workflow",
-                        "version": 1
-                      },                
-                      "type": "SUB_WORKFLOW"
-                    }
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
+                },                
+                "type": "SUB_WORKFLOW"
               }
             ],
             [
@@ -618,54 +410,30 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "companies_chunk_9_size",
-                "taskReferenceName": "companies_chunk_9_size_ref",
+                "name": "start_rule_workflow_chunck_9",
+                "taskReferenceName": "start_rule_workflow_chunck_9_ref",
                 "inputParameters": {
-                  "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
-                  "evaluatorType": "javascript",
-                  "s": "${companies_chunk_9_ref.output.result}"
+                  "companies": "${companies_chunk_9_ref.output.result}",
+                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                  "crawler_save_object": "${workflow.input.crawler_save_object}",
+                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                  "save_method": "PUT",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}",
+                  "connection_timeout": "${workflow.input.connection_timeout}",
+                  "read_timeout": "${workflow.input.read_timeout}",
+                  "crawling_mode": "httpStream",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                  "crawler_uri": "${workflow.input.crawler_uri}"
                 },
-                "type": "INLINE"
-              },
-              {
-                "name": "switch_companies_chunk_9",
-                "taskReferenceName": "switch_companies_chunk_9_ref",
-                "inputParameters": {
-                  "size": "${companies_chunk_9_size_ref.output.result}"
-                },
-                "type": "SWITCH",
-                "decisionCases": {
-                  "true": [
-                    {
-                      "name": "start_rule_workflow_chunck_9",
-                      "taskReferenceName": "start_rule_workflow_chunck_9_ref",
-                      "inputParameters": {
-                        "companies": "${companies_chunk_9_ref.output.result}",
-                        "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                        "crawler_save_object": "${workflow.input.crawler_save_object}",
-                        "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                        "save_method": "PUT",
-                        "rule_name": "${workflow.input.rule_name}",
-                        "execute_child": "${workflow.input.execute_child}",
-                        "connection_timeout": "${workflow.input.connection_timeout}",
-                        "read_timeout": "${workflow.input.read_timeout}",
-                        "crawling_mode": "httpStream",
-                        "result_base_url": "${workflow.input.result_base_url}",
-                        "crawler_child_type": "${workflow.input.crawler_child_type}"
-                      },
-                      "subWorkflowParam": {
-                        "name": "rule_workflow",
-                        "version": 1
-                      },                
-                      "type": "SUB_WORKFLOW"
-                    }
-                  ]
-                },
-                "defaultCase": [],
-                "evaluatorType": "value-param",
-                "expression": "size"
+                "subWorkflowParam": {
+                  "name": "rule_workflow",
+                  "version": 1
+                },                
+                "type": "SUB_WORKFLOW"
               }
-            ]          
+            ]
           ]
         },
         {
@@ -677,21 +445,24 @@
           "defaultCase": [],
           "forkTasks": [],
           "startDelay": 0,
-          "joinOn": [],
+          "joinOn": [
+            "start_rule_workflow_chunck_0_ref",
+            "start_rule_workflow_chunck_1_ref",
+            "start_rule_workflow_chunck_2_ref",
+            "start_rule_workflow_chunck_3_ref",
+            "start_rule_workflow_chunck_4_ref",
+            "start_rule_workflow_chunck_5_ref",
+            "start_rule_workflow_chunck_6_ref",
+            "start_rule_workflow_chunck_7_ref",
+            "start_rule_workflow_chunck_8_ref",
+            "start_rule_workflow_chunck_9_ref"
+          ],
           "optional": false,
           "defaultExclusiveJoinTask": [],
           "asyncComplete": false,
           "loopOver": [],
           "onStateChange": {}
-        },
-        {
-          "name": "Set Last Page",
-          "taskReferenceName": "set_last_page_ref",
-          "inputParameters": {
-            "last_page": "${companies_task_ref.output.response.body.last}"
-          },
-          "type": "SET_VARIABLE"
-        }        
+        }
       ],
       "evaluatorType": "value-param",
       "onStateChange": {}
@@ -719,32 +490,11 @@
         "decisionCases": {
             "false": [
               {
-                  "name": "Start Crawler 400 HTTP Stream",
-                  "taskReferenceName": "start_crawler_400_http_stream_ref",
-                  "inputParameters": {
-                    "status": "400",
-                    "workflowId": "${parent_workflow_id_ref.output.result}",
-                    "crawler_save_object": "true",
-                    "crawler_save_screenshot": "true",
-                    "rule_name": "${workflow.input.rule_name}",
-                    "execute_child": "${workflow.input.execute_child}",
-                    "connection_timeout": "${workflow.input.connection_timeout_max}",
-                    "read_timeout": "${workflow.input.read_timeout_max}",
-                    "crawling_mode": "httpStream",
-                    "result_base_url": "${workflow.input.result_base_url}",
-                    "crawler_child_type": "${workflow.input.crawler_child_type}"
-                  },
-                  "subWorkflowParam": {
-                    "name": "crawler_result_failed",
-                    "version": 1
-                  },                
-                  "type": "SUB_WORKFLOW"
-              },
-              {
-                "name": "Start Crawler Failed HTTP Stream",
-                "taskReferenceName": "start_crawler_failed_http_stream_ref",
+                "name": "Start Crawler 400 HTTP Stream",
+                "taskReferenceName": "start_crawler_400_http_stream_ref",
                 "inputParameters": {
-                  "status": "407",
+                  "status": "400",
+                  "codice_ipa": "%",
                   "workflowId": "${parent_workflow_id_ref.output.result}",
                   "crawler_save_object": "true",
                   "crawler_save_screenshot": "true",
@@ -754,7 +504,34 @@
                   "read_timeout": "${workflow.input.read_timeout_max}",
                   "crawling_mode": "httpStream",
                   "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}"
+                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                  "crawler_uri": "${workflow.input.crawler_uri}",
+                  "filter_by_rule": "true"
+                },
+                "subWorkflowParam": {
+                  "name": "crawler_result_failed",
+                  "version": 1
+                },
+                "type": "SUB_WORKFLOW"
+              },
+              {
+                "name": "Start Crawler Failed 407",
+                "taskReferenceName": "start_crawler_failed_407_ref",
+                "inputParameters": {
+                  "status": "407",
+                  "codice_ipa": "%",
+                  "workflowId": "${parent_workflow_id_ref.output.result}",
+                  "crawler_save_object": "true",
+                  "crawler_save_screenshot": "true",
+                  "rule_name": "${workflow.input.rule_name}",
+                  "execute_child": "${workflow.input.execute_child}",
+                  "connection_timeout": "${workflow.input.connection_timeout_max}",
+                  "read_timeout": "${workflow.input.read_timeout_max}",
+                  "crawling_mode": "htmlSource",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                  "crawler_uri": "${workflow.input.crawler_uri}",
+                  "filter_by_rule": "false"
                 },
                 "subWorkflowParam": {
                   "name": "crawler_result_failed",
@@ -763,20 +540,20 @@
                 "type": "SUB_WORKFLOW"
               },
               {
-                  "name": "Create Map",
-                  "taskReferenceName": "create_map_ref",
-                  "inputParameters": {
-                      "http_request": {
-                          "uri": "https://dica33.ba.cnr.it/result-aggregator-service/v1/aggregator/geojson?workflowId=${parent_workflow_id_ref.output.result}",
-                          "method": "PUT",
-                          "connectionTimeOut": 1000,
-                          "readTimeOut": 1000
-                      }
-                  },
-                  "type": "HTTP",
-                  "startDelay": 0,
-                  "optional": true,
-                  "asyncComplete": false
+                "name": "Create Map",
+                "taskReferenceName": "create_map_ref",
+                "inputParameters": {
+                  "http_request": {
+                      "uri": "https://dica33.ba.cnr.it/result-aggregator-service/v1/aggregator/geojson?workflowId=${parent_workflow_id_ref.output.result}",
+                      "method": "PUT",
+                      "connectionTimeOut": 1000,
+                      "readTimeOut": 1000
+                  }
+                },
+                "type": "HTTP",
+                "startDelay": 0,
+                "optional": true,
+                "asyncComplete": false
               }
             ]
         }
@@ -797,7 +574,8 @@
     "connection_timeout_max",
     "read_timeout_max",
     "result_base_url",
-    "crawler_child_type"
+    "crawler_child_type",
+    "crawler_uri"
   ],
   "outputParameters": {},
   "schemaVersion": 2,

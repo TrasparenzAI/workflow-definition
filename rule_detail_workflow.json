@@ -40,7 +40,7 @@
                         "taskReferenceName": "crawler_http_stream_ref",
                         "inputParameters": {
                             "http_request": {
-                                "uri": "https://monitorai.ba.cnr.it/crawler/crawl",
+                                "uri": "${workflow.input.crawler_uri}",
                                 "body": "{\"crawlingMode\": \"${workflow.input.crawling_mode}\", \"saveObject\": ${workflow.input.crawler_save_object}, \"saveScreenshot\":false,\"url\": \"${workflow.input.ipa.sitoIstituzionale}\"}",
                                 "method": "POST",
                                 "connectionTimeOut": "${workflow.input.connection_timeout}",
@@ -78,7 +78,7 @@
                                                 "taskReferenceName": "rule_http_stream_ref",
                                                 "inputParameters": {
                                                     "http_request": {
-                                                        "uri": "https://dica33.ba.cnr.it/rule-service/v1/rules?ruleName=${workflow.input.rule_name}",
+                                                        "uri": "https://monitorai.ba.cnr.it/rule-service/v1/rules?ruleName=${workflow.input.rule_name}",
                                                         "body": "${crawler_http_stream_ref.output.response.body.htmlPage}",
                                                         "method": "POST",
                                                         "connectionTimeOut": 1000,
@@ -104,7 +104,7 @@
                                                             "taskReferenceName": "crawler_html_source_ref",
                                                             "inputParameters": {
                                                                 "http_request": {
-                                                                    "uri": "https://monitorai.ba.cnr.it/crawler/crawl",
+                                                                    "uri": "${workflow.input.crawler_uri}",
                                                                     "body": "{\"crawlingMode\": \"htmlSource\", \"saveObject\": ${workflow.input.crawler_save_object}, \"saveScreenshot\":${workflow.input.crawler_save_screenshot},\"url\": \"${workflow.input.ipa.sitoIstituzionale}\"}",
                                                                     "method": "POST",
                                                                     "connectionTimeOut": "${workflow.input.connection_timeout}",
@@ -139,7 +139,7 @@
                                                                                     "taskReferenceName": "rule_html_source_ref",
                                                                                     "inputParameters": {
                                                                                         "http_request": {
-                                                                                            "uri": "https://dica33.ba.cnr.it/rule-service/v1/rules?ruleName=${workflow.input.rule_name}",
+                                                                                            "uri": "https://monitorai.ba.cnr.it/rule-service/v1/rules?ruleName=${workflow.input.rule_name}",
                                                                                             "body": "${crawler_html_source_ref.output.response.body.htmlPage}",
                                                                                             "method": "POST",
                                                                                             "connectionTimeOut": 1000,
@@ -196,10 +196,10 @@
                                                                                                 "taskReferenceName": "result_rule_html_source_failed_ref",
                                                                                                 "inputParameters": {
                                                                                                     "http_request": {
-                                                                                                        "uri": "${workflow.input.result_base_url}/result-service/v1/results",
+                                                                                                        "uri": "${workflow.input.result_base_url}",
                                                                                                         "body": "${company_jq_html_source_failed_ref.output.result}",
                                                                                                         "method": "${workflow.input.save_method}",
-                                                                                                        "connectionTimeOut": 10000,
+                                                                                                        "connectionTimeOut": 120000,
                                                                                                         "readTimeOut": 120000
                                                                                                     }
                                                                                                 },
@@ -263,10 +263,10 @@
                                                                                                 "taskReferenceName": "result_rule_html_source_completed_ref",
                                                                                                 "inputParameters": {
                                                                                                     "http_request": {
-                                                                                                        "uri": "${workflow.input.result_base_url}/result-service/v1/results",
+                                                                                                        "uri": "${workflow.input.result_base_url}",
                                                                                                         "body": "${company_jq_html_source_completed_ref.output.result}",
                                                                                                         "method": "${workflow.input.save_method}",
-                                                                                                        "connectionTimeOut": 10000,
+                                                                                                        "connectionTimeOut": 120000,
                                                                                                         "readTimeOut": 120000
                                                                                                     }
                                                                                                 },
@@ -307,7 +307,8 @@
                                                                                                                             "connection_timeout": "${workflow.input.connection_timeout}",
                                                                                                                             "read_timeout": "${workflow.input.read_timeout}",
                                                                                                                             "crawling_mode": "${workflow.input.crawling_mode}",
-                                                                                                                            "result_base_url": "${workflow.input.result_base_url}"
+                                                                                                                            "result_base_url": "${workflow.input.result_base_url}",
+                                                                                                                            "crawler_uri": "${workflow.input.crawler_uri}"
                                                                                                                         },
                                                                                                                         "subWorkflowParam": {
                                                                                                                           "name": "rule_detail_child_workflow",
@@ -334,7 +335,8 @@
                                                                                                                                 "connection_timeout": "${workflow.input.connection_timeout}",
                                                                                                                                 "read_timeout": "${workflow.input.read_timeout}",
                                                                                                                                 "crawling_mode": "${workflow.input.crawling_mode}",
-                                                                                                                                "result_base_url": "${workflow.input.result_base_url}"
+                                                                                                                                "result_base_url": "${workflow.input.result_base_url}",
+                                                                                                                                "crawler_uri": "${workflow.input.crawler_uri}"
                                                                                                                               },
                                                                                                                               "version": 1
                                                                                                                             }
@@ -409,10 +411,10 @@
                                                                                     "taskReferenceName": "result_rule_html_source_407_failed_ref",
                                                                                     "inputParameters": {
                                                                                         "http_request": {
-                                                                                            "uri": "${workflow.input.result_base_url}/result-service/v1/results",
+                                                                                            "uri": "${workflow.input.result_base_url}",
                                                                                             "body": "${company_jq_html_source_failed_407_ref.output.result}",
                                                                                             "method": "${workflow.input.save_method}",
-                                                                                            "connectionTimeOut": 10000,
+                                                                                            "connectionTimeOut": 120000,
                                                                                             "readTimeOut": 120000
                                                                                         }
                                                                                     },
@@ -472,10 +474,10 @@
                                                                         "taskReferenceName": "result_html_source_407_failed_ref",
                                                                         "inputParameters": {
                                                                             "http_request": {
-                                                                                "uri": "${workflow.input.result_base_url}/result-service/v1/results",
+                                                                                "uri": "${workflow.input.result_base_url}",
                                                                                 "body": "${company_jq_html_source_407_failed_ref.output.result}",
                                                                                 "method": "${workflow.input.save_method}",
-                                                                                "connectionTimeOut": 10000,
+                                                                                "connectionTimeOut": 120000,
                                                                                 "readTimeOut": 120000
                                                                             }
                                                                         },
@@ -548,10 +550,10 @@
                                                             "taskReferenceName": "result_rule_http_stream_completed_ref",
                                                             "inputParameters": {
                                                                 "http_request": {
-                                                                    "uri": "${workflow.input.result_base_url}/result-service/v1/results",
+                                                                    "uri": "${workflow.input.result_base_url}",
                                                                     "body": "${company_jq_http_stream_completed_ref.output.result}",
                                                                     "method": "${workflow.input.save_method}",
-                                                                    "connectionTimeOut": 10000,
+                                                                    "connectionTimeOut": 120000,
                                                                     "readTimeOut": 120000
                                                                 }
                                                             },
@@ -592,7 +594,8 @@
                                                                                         "connection_timeout": "${workflow.input.connection_timeout}",
                                                                                         "read_timeout": "${workflow.input.read_timeout}",
                                                                                         "crawling_mode": "${workflow.input.crawling_mode}",
-                                                                                        "result_base_url": "${workflow.input.result_base_url}"
+                                                                                        "result_base_url": "${workflow.input.result_base_url}",
+                                                                                        "crawler_uri": "${workflow.input.crawler_uri}"
                                                                                     },
                                                                                     "subWorkflowParam": {
                                                                                       "name": "rule_detail_child_workflow",
@@ -619,7 +622,8 @@
                                                                                             "connection_timeout": "${workflow.input.connection_timeout}",
                                                                                             "read_timeout": "${workflow.input.read_timeout}",
                                                                                             "crawling_mode": "${workflow.input.crawling_mode}",
-                                                                                            "result_base_url": "${workflow.input.result_base_url}"
+                                                                                            "result_base_url": "${workflow.input.result_base_url}",
+                                                                                            "crawler_uri": "${workflow.input.crawler_uri}"
                                                                                           },
                                                                                           "version": 1
                                                                                         }
@@ -695,7 +699,7 @@
                                                 "taskReferenceName": "result_http_stream_failed_ref",
                                                 "inputParameters": {
                                                     "http_request": {
-                                                        "uri": "${workflow.input.result_base_url}/result-service/v1/results",
+                                                        "uri": "${workflow.input.result_base_url}",
                                                         "body": "${company_jq_http_stream_failed_ref.output.result}",
                                                         "method": "${workflow.input.save_method}",
                                                         "connectionTimeOut": 10000,
@@ -756,7 +760,7 @@
                                     "taskReferenceName": "result_http_stream_407_failed_ref",
                                     "inputParameters": {
                                         "http_request": {
-                                            "uri": "${workflow.input.result_base_url}/result-service/v1/results",
+                                            "uri": "${workflow.input.result_base_url}",
                                             "body": "${company_jq_http_stream_407_failed_ref.output.result}",
                                             "method": "${workflow.input.save_method}",
                                             "connectionTimeOut": 10000,
@@ -811,7 +815,7 @@
                         "taskReferenceName": "result_sito_istituzionale_failed_ref",
                         "inputParameters": {
                             "http_request": {
-                                "uri": "${workflow.input.result_base_url}/result-service/v1/results",
+                                "uri": "${workflow.input.result_base_url}",
                                 "body": "${sito_istituzionale_jq_failed_ref.output.result}",
                                 "method": "${workflow.input.save_method}",
                                 "connectionTimeOut": 10000,
@@ -852,7 +856,8 @@
         "read_timeout",
         "crawling_mode",
         "result_base_url",
-        "crawler_child_type"
+        "crawler_child_type",
+        "crawler_uri"
     ],
     "outputParameters": {},
     "schemaVersion": 2,

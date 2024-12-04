@@ -16,7 +16,8 @@
     "read_timeout": 30000,
     "connection_timeout_max": 60000,
     "read_timeout_max": 60000,
-    "result_base_url": "https://dica33.ba.cnr.it",
-    "crawler_child_type": "START_WORKFLOW"
+    "crawler_child_type": "START_WORKFLOW",
+    "result_base_url": "https://dica33.ba.cnr.it/result-service/v1/results",
+    "crawler_uri": "http://150.145.95.77:8080/crawl"    
   }
 }
