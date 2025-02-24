@@ -1,38 +1,81 @@
 version: '2.3'
 
 services:
+  conductor-ui:
+    environment:
+      - CUSTOM_LOCATION=/conductor-ui
+    image: ghcr.io/cnr-anac/conductor-community-ui:latest
+    container_name: conductor-ui
+    restart: unless-stopped     
+    ports:
+      - 5000    
+    networks:
+      - traefik_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.conductor-ui.entrypoints=websecure"
+      - "traefik.http.routers.conductor-ui.rule=Host(`monitorai.ba.cnr.it`) && PathPrefix(`/conductor-ui`)"
+      - "traefik.http.middlewares.strip-conductor.stripprefix.prefixes=/conductor-ui"
+      - "traefik.http.routers.conductor-ui.middlewares=strip-conductor@docker"
+      - "traefik.http.services.conductor-ui.loadbalancer.server.port=5000"
+      - "traefik.http.routers.conductor-ui.tls.certresolver=myresolver"
   conductor-server:
     environment:
       - CONFIG_PROP=config-postgres.properties
-      - JAVA_OPTS=-Xms1g -Xmx4g
+      - JAVA_OPTS=-Xms5g -Xmx30g
       - server.servlet.context-path=/conductor-server
     volumes:
       - ./config-postgres.properties:/app/config/config-postgres.properties    
-    image: ghcr.io/cnr-anac/conductor-community-server:latest
+    image: ghcr.io/cnr-anac/conductor:anac #ghcr.io/cnr-anac/conductor-community-server:oss3
+    restart: unless-stopped
     container_name: conductor-server
     ports:
-      - 9080:8080
-    extra_hosts:
-      - "dica33.ba.cnr.it:150.145.95.73"      
+      - 8080
+    networks:
+      - traefik_default
     links:
       - conductor-postgres:postgresdb
     depends_on:
       conductor-postgres:
         condition: service_healthy
+    healthcheck:
+      # https://stackoverflow.com/a/47722899/5008962
+      test: ["CMD", "wget", "--no-verbose", "-T","1", "http://localhost:8080/conductor-server/health","-O","-" ]
+      interval: 60s
+      timeout: 30s
+      retries: 10
+      start_period: 40s
     logging:
       driver: "json-file"
       options:
         max-size: "100m"
         max-file: "3"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.conductor-server.entrypoints=websecure"
+      - "traefik.http.routers.conductor-server.rule=Host(`monitorai.ba.cnr.it`) && PathPrefix(`/conductor-server`)"
+      - "traefik.http.routers.conductor-server.tls.certresolver=myresolver"
+      - "traefik.http.routers.conductor-server.middlewares=cors-conductor-server"
+      - "traefik.http.middlewares.cors-conductor-server.headers.accessControlAllowOriginListRegex=(.*?)"        
+      - "traefik.http.middlewares.cors-conductor-server.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST"
+      - "traefik.http.middlewares.cors-conductor-server.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.cors-conductor-server.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.cors-conductor-server.headers.addvaryheader=true"
 
   conductor-postgres:
-    image: postgres
+    image: postgres #:16.4
     ports:
       - 5432
-    command: postgres -c max_connections=1000      
+    shm_size: 32gb
+    command: postgres -c max_connections=2000 -c shared_buffers=4GB -c work_mem=16GB -c maintenance_work_mem=512MB -c max_stack_depth=7680kB      
+    restart: unless-stopped  
     environment:
       - POSTGRES_USER=conductor
       - POSTGRES_PASSWORD=conductor
+    volumes:
+      - ./pgdata-conductor:/var/lib/postgresql/data
+    networks:
+      - traefik_default
     healthcheck:
       test: timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/5432'
       interval: 5s
@@ -43,3 +86,7 @@ services:
       options:
         max-size: "1k"
         max-file: "3"
+
+networks:
+  traefik_default:
+    external: true
