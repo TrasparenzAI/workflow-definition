@@ -47,7 +47,7 @@
                                 "readTimeOut": "${workflow.input.read_timeout}"
                             }
                         },
-                        "type": "HTTP",
+                        "type": "HTTP_WEBCLIENT",
                         "optional": true
                     },
                     {
@@ -78,14 +78,14 @@
                                                 "taskReferenceName": "rule_http_stream_ref",
                                                 "inputParameters": {
                                                     "http_request": {
-                                                        "uri": "https://monitorai.ba.cnr.it/rule-service/v1/rules?ruleName=${workflow.input.rule_name}",
+                                                        "uri": "${workflow.input.rule_base_url}/v1/rules?rootRule=${workflow.input.root_rule}&ruleName=${workflow.input.root_rule}",
                                                         "body": "${crawler_http_stream_ref.output.response.body.htmlPage}",
                                                         "method": "POST",
                                                         "connectionTimeOut": 1000,
                                                         "readTimeOut": 5000
                                                     }
                                                 },
-                                                "type": "HTTP",
+                                                "type": "HTTP_WEBCLIENT",
                                                 "startDelay": 0,
                                                 "optional": true,
                                                 "asyncComplete": false
@@ -111,7 +111,7 @@
                                                                     "readTimeOut": "${workflow.input.read_timeout}"
                                                                 }
                                                             },
-                                                            "type": "HTTP",
+                                                            "type": "HTTP_WEBCLIENT",
                                                             "startDelay": 0,
                                                             "optional": true,
                                                             "asyncComplete": false
@@ -139,14 +139,14 @@
                                                                                     "taskReferenceName": "rule_html_source_ref",
                                                                                     "inputParameters": {
                                                                                         "http_request": {
-                                                                                            "uri": "https://monitorai.ba.cnr.it/rule-service/v1/rules?ruleName=${workflow.input.rule_name}",
+                                                                                            "uri": "${workflow.input.rule_base_url}/v1/rules?rootRule=${workflow.input.root_rule}&ruleName=${workflow.input.root_rule}",
                                                                                             "body": "${crawler_html_source_ref.output.response.body.htmlPage}",
                                                                                             "method": "POST",
                                                                                             "connectionTimeOut": 1000,
-                                                                                            "readTimeOut": 1000
+                                                                                            "readTimeOut": 5000
                                                                                         }
                                                                                     },
-                                                                                    "type": "HTTP",
+                                                                                    "type": "HTTP_WEBCLIENT",
                                                                                     "startDelay": 0,
                                                                                     "optional": true,
                                                                                     "asyncComplete": false
@@ -196,14 +196,14 @@
                                                                                                 "taskReferenceName": "result_rule_html_source_failed_ref",
                                                                                                 "inputParameters": {
                                                                                                     "http_request": {
-                                                                                                        "uri": "${workflow.input.result_base_url}",
+                                                                                                        "uri": "${workflow.input.result_base_url}/v1/results",
                                                                                                         "body": "${company_jq_html_source_failed_ref.output.result}",
                                                                                                         "method": "${workflow.input.save_method}",
                                                                                                         "connectionTimeOut": 120000,
                                                                                                         "readTimeOut": 120000
                                                                                                     }
                                                                                                 },
-                                                                                                "type": "HTTP",
+                                                                                                "type": "HTTP_WEBCLIENT",
                                                                                                 "startDelay": 0,
                                                                                                 "optional": true,
                                                                                                 "asyncComplete": false
@@ -243,7 +243,7 @@
                                                                                                     "screenshotId": "${crawler_html_source_ref.output.response.body.screenShotId}",
                                                                                                     "screenshotResult": "${crawler_html_source_ref.output.response.body.screenShotResult}",
                                                                                                     "url": "${rule_html_source_ref.output.response.body.url}",
-                                                                                                    "ruleName": "${rule_html_source_ref.output.response.body.ruleName}",
+                                                                                                    "ruleName": "${workflow.input.rule_name}",
                                                                                                     "term": "${rule_html_source_ref.output.response.body.term}",
                                                                                                     "content": "${rule_html_source_ref.output.response.body.content}",
                                                                                                     "status": "${rule_html_source_ref.output.response.body.status}",
@@ -263,14 +263,14 @@
                                                                                                 "taskReferenceName": "result_rule_html_source_completed_ref",
                                                                                                 "inputParameters": {
                                                                                                     "http_request": {
-                                                                                                        "uri": "${workflow.input.result_base_url}",
+                                                                                                        "uri": "${workflow.input.result_base_url}/v1/results",
                                                                                                         "body": "${company_jq_html_source_completed_ref.output.result}",
                                                                                                         "method": "${workflow.input.save_method}",
                                                                                                         "connectionTimeOut": 120000,
                                                                                                         "readTimeOut": 120000
                                                                                                     }
                                                                                                 },
-                                                                                                "type": "HTTP",
+                                                                                                "type": "HTTP_WEBCLIENT",
                                                                                                 "startDelay": 0,
                                                                                                 "optional": true,
                                                                                                 "asyncComplete": false
@@ -299,7 +299,8 @@
                                                                                                                         "inputParameters": {
                                                                                                                             "ipa": "${workflow.input.ipa}",
                                                                                                                             "resultURL": "${result_rule_html_source_completed_ref.output.response.body.destinationUrl}",
-                                                                                                                            "rule_name": "${result_rule_html_source_completed_ref.output.response.body.ruleName}",
+                                                                                                                            "rule_name": "${workflow.input.root_rule}",
+                                                                                                                            "root_rule": "${workflow.input.root_rule}",
                                                                                                                             "parent_workflow_id": "${workflow.input.parent_workflow_id}",
                                                                                                                             "crawler_save_object": "${workflow.input.crawler_save_object}",
                                                                                                                             "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
@@ -308,7 +309,8 @@
                                                                                                                             "read_timeout": "${workflow.input.read_timeout}",
                                                                                                                             "crawling_mode": "${workflow.input.crawling_mode}",
                                                                                                                             "result_base_url": "${workflow.input.result_base_url}",
-                                                                                                                            "crawler_uri": "${workflow.input.crawler_uri}"
+                                                                                                                            "crawler_uri": "${workflow.input.crawler_uri}",
+                                                                                                                            "rule_base_url": "${workflow.input.rule_base_url}"
                                                                                                                         },
                                                                                                                         "subWorkflowParam": {
                                                                                                                           "name": "rule_detail_child_workflow",
@@ -327,7 +329,8 @@
                                                                                                                               "input": {
                                                                                                                                 "ipa": "${workflow.input.ipa}",
                                                                                                                                 "resultURL": "${result_rule_html_source_completed_ref.output.response.body.destinationUrl}",
-                                                                                                                                "rule_name": "${result_rule_html_source_completed_ref.output.response.body.ruleName}",
+                                                                                                                                "rule_name": "${workflow.input.root_rule}",
+                                                                                                                                "root_rule": "${workflow.input.root_rule}",
                                                                                                                                 "parent_workflow_id": "${workflow.input.parent_workflow_id}",
                                                                                                                                 "crawler_save_object": "${workflow.input.crawler_save_object}",
                                                                                                                                 "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
@@ -336,7 +339,8 @@
                                                                                                                                 "read_timeout": "${workflow.input.read_timeout}",
                                                                                                                                 "crawling_mode": "${workflow.input.crawling_mode}",
                                                                                                                                 "result_base_url": "${workflow.input.result_base_url}",
-                                                                                                                                "crawler_uri": "${workflow.input.crawler_uri}"
+                                                                                                                                "crawler_uri": "${workflow.input.crawler_uri}",
+                                                                                                                                "rule_base_url": "${workflow.input.rule_base_url}"
                                                                                                                               },
                                                                                                                               "version": 1
                                                                                                                             }
@@ -411,14 +415,14 @@
                                                                                     "taskReferenceName": "result_rule_html_source_407_failed_ref",
                                                                                     "inputParameters": {
                                                                                         "http_request": {
-                                                                                            "uri": "${workflow.input.result_base_url}",
+                                                                                            "uri": "${workflow.input.result_base_url}/v1/results",
                                                                                             "body": "${company_jq_html_source_failed_407_ref.output.result}",
                                                                                             "method": "${workflow.input.save_method}",
                                                                                             "connectionTimeOut": 120000,
                                                                                             "readTimeOut": 120000
                                                                                         }
                                                                                     },
-                                                                                    "type": "HTTP",
+                                                                                    "type": "HTTP_WEBCLIENT",
                                                                                     "startDelay": 0,
                                                                                     "optional": true,
                                                                                     "asyncComplete": false
@@ -474,14 +478,14 @@
                                                                         "taskReferenceName": "result_html_source_407_failed_ref",
                                                                         "inputParameters": {
                                                                             "http_request": {
-                                                                                "uri": "${workflow.input.result_base_url}",
+                                                                                "uri": "${workflow.input.result_base_url}/v1/results",
                                                                                 "body": "${company_jq_html_source_407_failed_ref.output.result}",
                                                                                 "method": "${workflow.input.save_method}",
                                                                                 "connectionTimeOut": 120000,
                                                                                 "readTimeOut": 120000
                                                                             }
                                                                         },
-                                                                        "type": "HTTP",
+                                                                        "type": "HTTP_WEBCLIENT",
                                                                         "startDelay": 0,
                                                                         "optional": true,
                                                                         "asyncComplete": false
@@ -530,7 +534,7 @@
                                                                 "screenshotId": "${crawler_http_stream_ref.output.response.body.screenshotId}",
                                                                 "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenshotResult}",
                                                                 "url": "${rule_http_stream_ref.output.response.body.url}",
-                                                                "ruleName": "${rule_http_stream_ref.output.response.body.ruleName}",
+                                                                "ruleName": "${workflow.input.rule_name}",
                                                                 "term": "${rule_http_stream_ref.output.response.body.term}",
                                                                 "content": "${rule_http_stream_ref.output.response.body.content}",
                                                                 "status": "${rule_http_stream_ref.output.response.body.status}",
@@ -550,14 +554,14 @@
                                                             "taskReferenceName": "result_rule_http_stream_completed_ref",
                                                             "inputParameters": {
                                                                 "http_request": {
-                                                                    "uri": "${workflow.input.result_base_url}",
+                                                                    "uri": "${workflow.input.result_base_url}/v1/results",
                                                                     "body": "${company_jq_http_stream_completed_ref.output.result}",
                                                                     "method": "${workflow.input.save_method}",
                                                                     "connectionTimeOut": 120000,
                                                                     "readTimeOut": 120000
                                                                 }
                                                             },
-                                                            "type": "HTTP",
+                                                            "type": "HTTP_WEBCLIENT",
                                                             "startDelay": 0,
                                                             "optional": true,
                                                             "asyncComplete": false
@@ -586,7 +590,8 @@
                                                                                     "inputParameters": {
                                                                                         "ipa": "${workflow.input.ipa}",
                                                                                         "resultURL": "${result_rule_http_stream_completed_ref.output.response.body.destinationUrl}",
-                                                                                        "rule_name": "${result_rule_http_stream_completed_ref.output.response.body.ruleName}",
+                                                                                        "rule_name": "${workflow.input.root_rule}",
+                                                                                        "root_rule": "${workflow.input.root_rule}",
                                                                                         "parent_workflow_id": "${workflow.input.parent_workflow_id}",
                                                                                         "crawler_save_object": "${workflow.input.crawler_save_object}",
                                                                                         "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
@@ -595,7 +600,8 @@
                                                                                         "read_timeout": "${workflow.input.read_timeout}",
                                                                                         "crawling_mode": "${workflow.input.crawling_mode}",
                                                                                         "result_base_url": "${workflow.input.result_base_url}",
-                                                                                        "crawler_uri": "${workflow.input.crawler_uri}"
+                                                                                        "crawler_uri": "${workflow.input.crawler_uri}",
+                                                                                        "rule_base_url": "${workflow.input.rule_base_url}"
                                                                                     },
                                                                                     "subWorkflowParam": {
                                                                                       "name": "rule_detail_child_workflow",
@@ -614,7 +620,8 @@
                                                                                           "input": {
                                                                                             "ipa": "${workflow.input.ipa}",
                                                                                             "resultURL": "${result_rule_http_stream_completed_ref.output.response.body.destinationUrl}",
-                                                                                            "rule_name": "${result_rule_http_stream_completed_ref.output.response.body.ruleName}",
+                                                                                            "rule_name": "${workflow.input.root_rule}",
+                                                                                            "root_rule": "${workflow.input.root_rule}",
                                                                                             "parent_workflow_id": "${workflow.input.parent_workflow_id}",
                                                                                             "crawler_save_object": "${workflow.input.crawler_save_object}",
                                                                                             "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
@@ -623,7 +630,8 @@
                                                                                             "read_timeout": "${workflow.input.read_timeout}",
                                                                                             "crawling_mode": "${workflow.input.crawling_mode}",
                                                                                             "result_base_url": "${workflow.input.result_base_url}",
-                                                                                            "crawler_uri": "${workflow.input.crawler_uri}"
+                                                                                            "crawler_uri": "${workflow.input.crawler_uri}",
+                                                                                            "rule_base_url": "${workflow.input.rule_base_url}"
                                                                                           },
                                                                                           "version": 1
                                                                                         }
@@ -699,14 +707,14 @@
                                                 "taskReferenceName": "result_http_stream_failed_ref",
                                                 "inputParameters": {
                                                     "http_request": {
-                                                        "uri": "${workflow.input.result_base_url}",
+                                                        "uri": "${workflow.input.result_base_url}/v1/results",
                                                         "body": "${company_jq_http_stream_failed_ref.output.result}",
                                                         "method": "${workflow.input.save_method}",
-                                                        "connectionTimeOut": 10000,
+                                                        "connectionTimeOut": 120000,
                                                         "readTimeOut": 120000
                                                     }
                                                 },
-                                                "type": "HTTP",
+                                                "type": "HTTP_WEBCLIENT",
                                                 "startDelay": 0,
                                                 "optional": true,
                                                 "asyncComplete": false
@@ -760,14 +768,14 @@
                                     "taskReferenceName": "result_http_stream_407_failed_ref",
                                     "inputParameters": {
                                         "http_request": {
-                                            "uri": "${workflow.input.result_base_url}",
+                                            "uri": "${workflow.input.result_base_url}/v1/results",
                                             "body": "${company_jq_http_stream_407_failed_ref.output.result}",
                                             "method": "${workflow.input.save_method}",
-                                            "connectionTimeOut": 10000,
+                                            "connectionTimeOut": 120000,
                                             "readTimeOut": 120000
                                         }
                                     },
-                                    "type": "HTTP",
+                                    "type": "HTTP_WEBCLIENT",
                                     "startDelay": 0,
                                     "optional": true,
                                     "asyncComplete": false
@@ -815,14 +823,14 @@
                         "taskReferenceName": "result_sito_istituzionale_failed_ref",
                         "inputParameters": {
                             "http_request": {
-                                "uri": "${workflow.input.result_base_url}",
+                                "uri": "${workflow.input.result_base_url}/v1/results",
                                 "body": "${sito_istituzionale_jq_failed_ref.output.result}",
                                 "method": "${workflow.input.save_method}",
-                                "connectionTimeOut": 10000,
+                                "connectionTimeOut": 120000,
                                 "readTimeOut": 120000
                             }
                         },
-                        "type": "HTTP",
+                        "type": "HTTP_WEBCLIENT",
                         "startDelay": 0,
                         "optional": true,
                         "asyncComplete": false
@@ -851,13 +859,15 @@
         "parent_workflow_id",
         "save_method",
         "rule_name",
+        "root_rule",
         "execute_child",
         "connection_timeout",
         "read_timeout",
         "crawling_mode",
         "result_base_url",
         "crawler_child_type",
-        "crawler_uri"
+        "crawler_uri",
+        "rule_base_url"
     ],
     "outputParameters": {},
     "schemaVersion": 2,

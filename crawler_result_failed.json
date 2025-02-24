@@ -21,7 +21,7 @@
       "taskReferenceName": "results_task_ref",
       "inputParameters": {
         "http_request": {
-          "uri": "https://dica33.ba.cnr.it/result-service/v1/results/all?noCache=true&workflowId=${workflow.input.workflowId}${rule_name_input_ref.output.result}&status=${workflow.input.status}",
+          "uri": "${workflow.input.result_base_url}/v1/results/all?noCache=true&workflowId=${workflow.input.workflowId}${rule_name_input_ref.output.result}&status=${workflow.input.status}",
           "method": "GET",
           "connectionTimeOut": 30000,
           "readTimeOut": 60000,
@@ -29,7 +29,7 @@
           "contentType": "application/json"
         }
       },
-      "type": "HTTP"
+      "type": "HTTP_WEBCLIENT"
     },
     {
       "name": "results_divide_size",
@@ -69,13 +69,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -105,13 +107,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -141,13 +145,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -177,13 +183,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -213,13 +221,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -249,13 +259,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -285,13 +297,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -321,13 +335,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -357,13 +373,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -393,13 +411,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -429,13 +449,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -465,13 +487,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -501,13 +525,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -537,13 +563,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -573,13 +601,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -609,13 +639,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -645,13 +677,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -681,13 +715,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -717,13 +753,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -753,13 +791,15 @@
               "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
               "save_method": "POST",
               "rule_name": "${workflow.input.rule_name}",
+              "root_rule": "${workflow.input.root_rule}",
               "execute_child": "${workflow.input.execute_child}",
               "connection_timeout": "${workflow.input.connection_timeout}",
               "read_timeout": "${workflow.input.read_timeout}",
               "crawling_mode": "${workflow.input.crawling_mode}",
               "result_base_url": "${workflow.input.result_base_url}",
               "crawler_child_type": "${workflow.input.crawler_child_type}",
-              "crawler_uri": "${workflow.input.crawler_uri}"                
+              "crawler_uri": "${workflow.input.crawler_uri}",
+              "rule_base_url": "${workflow.input.rule_base_url}"
             },
             "subWorkflowParam": {
               "name": "rule_workflow",
@@ -816,6 +856,7 @@
     "crawler_save_screenshot",
     "codice_ipa",
     "rule_name",
+    "root_rule",
     "execute_child",
     "connection_timeout",
     "read_timeout",
@@ -823,7 +864,8 @@
     "result_base_url",
     "crawler_child_type",
     "filter_by_rule",
-    "crawler_uri"
+    "crawler_uri",
+    "rule_base_url"
    ],
   "outputParameters": {},
   "schemaVersion": 2,
