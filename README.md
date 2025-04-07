@@ -6,7 +6,7 @@ Nel progetto sono presenti le definizioni in formato *json* dei flussi necessari
 
 ## Main - Amministrazione Trasparente
 
-Il flusso [principale](crawler_amministrazione_trasparente.json) ha bisogno dei seguinti parametri di input per la sua corretta invocazione:
+Il flusso [principale](crawler_amministrazione_trasparente.json) ha bisogno dei seguenti parametri di input per la sua corretta invocazione:
 
 | Nome                       | Descrizione                                                    | Valore consigliato/default  | Vuoto? |
 |----------------------------|----------------------------------------------------------------|-----------------------------|--------|
@@ -31,7 +31,7 @@ Il flusso [principale](crawler_amministrazione_trasparente.json) ha bisogno dei 
 | result_base_url            | URL di base del microservizio dei Risultati                    | *URL*                       | No     |
 | crawler_uri                | URL di base del microservizio Crawler                          | *URL*                       | No     |
 
-
+Il primo [TASK](crawler_amministrazione_trasparente.json#L8-L22) del flusso si occupa di invocare l'aggiornamento della configurazione del microservizio delle regole.   
 
 
 
