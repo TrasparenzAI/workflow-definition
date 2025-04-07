@@ -1,12 +1,12 @@
 # Coordinatore delle attività di crawling
 
-Il coordinatore è basato su [Netflix - Conductor](https://conductor-oss.org) una piattaforma gratuita e open source per l'orchestrazione dei microservizi, attraverso flussi di lavoro che definiscono le interazioni tra servizi, il progetto principale è sttao [forkato](https://github.com/cnr-anac/conductor) per permettere e gestire l'autenticazione e l'autorizzazione sull'esecuzione dei flussi e sul passaggio della stessa ai microservizi invocati dal flusso. 
+Il coordinatore è basato su [Netflix - Conductor](https://conductor-oss.org) una piattaforma gratuita e open source per l'orchestrazione dei microservizi, attraverso flussi di lavoro che definiscono le interazioni tra servizi, il progetto principale è stato [forkato](https://github.com/cnr-anac/conductor) per permettere e gestire l'autenticazione e l'autorizzazione sull'esecuzione dei flussi e sul passaggio della stessa ai microservizi invocati dal flusso. 
 
-Nel progetto sono presenti le definizioni in formato *json* dei flussi necessari al completamento degli obiettivi della piattaforma.
+Nel progetto sono presenti le definizioni in formato *json* dei flussi necessari al completamento degli obiettivi del progetto.
 
 ## Main - Amministrazione Trasparente
 
-Il flusso [principale](crawler_amministrazione_trasparente.json) ha bisogno dei seguenti parametri di input per la sua corretta invocazione:
+Il flusso [principale](crawler_amministrazione_trasparente.json) necessita dei seguenti parametri di input per la sua corretta invocazione:
 
 | Nome                       | Descrizione                                                    | Valore consigliato/default  | Vuoto? |
 |----------------------------|----------------------------------------------------------------|-----------------------------|--------|
@@ -25,13 +25,13 @@ Il flusso [principale](crawler_amministrazione_trasparente.json) ha bisogno dei 
 | connection_timeout_max     | Timeout massimo in millisecondi della connessione              | 120000                      | No     | 
 | read_timeout_max           | Timeout massimo in millisecondi della lettura                  | 120000                      | No     | 
 | crawler_child_type         | Modalità di esecuzione dei flussi figli (SUB/START)_WORKFLOW   | START_WORKFLOW              | No     |
-| rule_base_url              | URL di base del microservizio delle regole                     | *URL*                       | No     |
+| rule_base_url              | URL di base del microservizio delle Regole                     | *URL*                       | No     |
 | public_company_base_url    | URL di base del microservizio delle PA                         | *URL*                       | No     |
 | result_aggregator_base_url | URL di base del microservizio Aggregato                        | *URL*                       | No     |
 | result_base_url            | URL di base del microservizio dei Risultati                    | *URL*                       | No     |
 | crawler_uri                | URL di base del microservizio Crawler                          | *URL*                       | No     |
 
-Il primo [TASK](crawler_amministrazione_trasparente.json#L8-L22) del flusso si occupa di invocare l'aggiornamento della configurazione del microservizio delle regole; Dopo aver valorizzato la variabile necessaria al controllo delle pagine elaborate, il flusso invoca il [microservizio delle PA](crawler_amministrazione_trasparente.json#L71-L85) e recupera le informazioni necessarie.
+Il primo [TASK](crawler_amministrazione_trasparente.json#L8-L22) del flusso si occupa di invocare l'aggiornamento della configurazione del microservizio delle regole, dopo aver valorizzato la variabile necessaria al controllo delle pagine elaborate, il flusso invoca il [microservizio delle PA](crawler_amministrazione_trasparente.json#L71-L85) e recupera le informazioni necessarie.
 
 Il blocco recuperato contentente le informazioni di *n* PA viene parcellizzato in base al parametro fornito in input **page_size** e diviso per *10*, utilizzando infine il [TASK FORK/JOIN](https://orkes.io/content/reference-docs/operators/fork-join) vengono eseguiti in parallello *10* istanze del flusso [Rule](rule_workflow.json) valorizzando il parametro in input [companies](rule_workflow.json#L278).        
 
@@ -43,4 +43,15 @@ Infine viene eseguito il [TASK](crawler_amministrazione_trasparente.json#L581-L5
 
 ## RULE DETAIL
 
+Il flusso [Rule Detail](rule_detail_workflow.json) eseguito per una singola PA passata come parametro in input [ipa](rule_detail_workflow.json#L860)  
+
+
+
 ![Rule Detail- Amministrazione Trasparente](rule_detail_workflow.png)
+
+
+## SCRIPT UTILI
+
+- [Crea e avvia](create_and_start.sh)
+- [Cancella workflow](delete_workflow.sh)
+- [Avvia workflow](start.sh)
