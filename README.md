@@ -31,7 +31,8 @@ Il flusso [principale](crawler_amministrazione_trasparente.json) ha bisogno dei 
 | result_base_url            | URL di base del microservizio dei Risultati                    | *URL*                       | No     |
 | crawler_uri                | URL di base del microservizio Crawler                          | *URL*                       | No     |
 
-Il primo [TASK](crawler_amministrazione_trasparente.json#L8-L22) del flusso si occupa di invocare l'aggiornamento della configurazione del microservizio delle regole.   
+Il primo [TASK](crawler_amministrazione_trasparente.json#L8-L22) del flusso si occupa di invocare l'aggiornamento della configurazione del microservizio delle regole.
+Dopo aver valorizzato la variabile necessaria al controllo delle pagine elaborate, il flusso invoca il [microservizio delle PA](crawler_amministrazione_trasparente.json#L71-L85) e recupera le informazioni necessarie. Il blocco recuperato viene parcellizzato in base al parametro fornito in input **page_size** diviso per *10* e utilizzando il [TASK FORK/JOIN](https://orkes.io/content/reference-docs/operators/fork-join) vengono eseguiti in parallello *10* flussi [Rule Workflow](rule_workflow.json).        
 
 
 
