@@ -39,19 +39,22 @@ All'uscita del [TASK delle PA](crawler_amministrazione_trasparente.json#L52-L60)
 
 Infine viene eseguito il [TASK](crawler_amministrazione_trasparente.json#L581-L596) per elaborare la Mappa geolocalizzata dei risultati.  
 
+Di seguito l'immagine del flusso:
+
 ![Main - Amministrazione Trasparente](crawler_amministrazione_trasparente.png)
 
 ## RULE DETAIL
 
-Il flusso [Rule Detail](rule_detail_workflow.json) eseguito per una singola PA passata come parametro in input [ipa](rule_detail_workflow.json#L860)  
+Il flusso [Rule Detail](rule_detail_workflow.json) eseguito per una singola PA passata come parametro in input [ipa](rule_detail_workflow.json#L860) controlla inizialmente la [presenza della URL istituzionale](rule_detail_workflow.json#L19-L28) e successivamente invoca il [crawler](rule_detail_workflow.json#L38-L52) il cui risultato viene passato al [microservizio delle regole](rule_detail_workflow.json#L76-L92) la cui risposta è utilizzata come input al [Task dei risultati](rule_detail_workflow.json#L261-L277)    
 
 
+Di seguito l'immagine del flusso:
 
 ![Rule Detail- Amministrazione Trasparente](rule_detail_workflow.png)
 
 
 ## SCRIPT UTILI
 
-- [Crea e avvia](create_and_start.sh)
+- [Crea e avvia](create_and_start.sh) Può essere utilizzato per il SETUP iniziale.
 - [Cancella workflow](delete_workflow.sh)
 - [Avvia workflow](start.sh)
