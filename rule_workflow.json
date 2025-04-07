@@ -145,7 +145,7 @@
                               "name": "Manage Real URL",
                               "taskReferenceName": "manage_real_url_ref",
                               "inputParameters": {
-                                  "expression": "(function(){ if ($.url.length > 0 && $.url.startsWith('http')){return true;} else { return false;} })();",
+                                  "expression": "(function(){ if ($.url && $.url.length > 0 && $.url.startsWith('http')){return true;} else { return false;} })();",
                                   "evaluatorType": "javascript",
                                   "url": "${ipa_ref.output.result.realUrl}"
                               },

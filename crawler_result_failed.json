@@ -17,7 +17,7 @@
       "type": "INLINE"
     },
     {
-      "name": "results_task",
+      "name": "Results Task",
       "taskReferenceName": "results_task_ref",
       "inputParameters": {
         "http_request": {
@@ -32,7 +32,7 @@
       "type": "HTTP_WEBCLIENT"
     },
     {
-      "name": "results_divide_size",
+      "name": "Results divide size",
       "taskReferenceName": "results_divide_size_ref",
       "inputParameters": {
         "expression": "(function(){ return Math.floor($.s / 20) })();",
@@ -42,7 +42,7 @@
       "type": "INLINE"
     },
     {
-      "name": "fork",
+      "name": "Fork",
       "taskReferenceName": "fork_ref",
       "inputParameters": {},
       "type": "FORK_JOIN",
@@ -51,7 +51,7 @@
       "forkTasks": [
         [
           {
-            "name": "results_chunk_0",
+            "name": "Results chunk 0",
             "taskReferenceName": "results_chunk_0_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -60,7 +60,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_0",
+            "name": "Start rule workflow chunk 0",
             "taskReferenceName": "start_rule_workflow_chunk_0_ref",
             "inputParameters": {
               "companies": "${results_chunk_0_ref.output.result}",
@@ -89,7 +89,7 @@
         ],
         [
           {
-            "name": "results_chunk_1",
+            "name": "Results chunk 1",
             "taskReferenceName": "results_chunk_1_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -98,7 +98,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_1",
+            "name": "Start rule workflow chunk 1",
             "taskReferenceName": "start_rule_workflow_chunk_1_ref",
             "inputParameters": {
               "companies": "${results_chunk_1_ref.output.result}",
@@ -127,7 +127,7 @@
         ],
         [
           {
-            "name": "results_chunk_2",
+            "name": "Results chunk 2",
             "taskReferenceName": "results_chunk_2_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -136,7 +136,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_2",
+            "name": "Start rule workflow chunk 2",
             "taskReferenceName": "start_rule_workflow_chunk_2_ref",
             "inputParameters": {
               "companies": "${results_chunk_2_ref.output.result}",
@@ -165,7 +165,7 @@
         ],
         [
           {
-            "name": "results_chunk_3",
+            "name": "Results chunk 3",
             "taskReferenceName": "results_chunk_3_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -174,7 +174,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_3",
+            "name": "Start rule workflow chunk 3",
             "taskReferenceName": "start_rule_workflow_chunk_3_ref",
             "inputParameters": {
               "companies": "${results_chunk_3_ref.output.result}",
@@ -203,7 +203,7 @@
         ],
         [
           {
-            "name": "results_chunk_4",
+            "name": "Results chunk 4",
             "taskReferenceName": "results_chunk_4_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -212,7 +212,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_4",
+            "name": "Start rule workflow chunk 4",
             "taskReferenceName": "start_rule_workflow_chunk_4_ref",
             "inputParameters": {
               "companies": "${results_chunk_4_ref.output.result}",
@@ -241,7 +241,7 @@
         ],
         [
           {
-            "name": "results_chunk_5",
+            "name": "Results chunk 5",
             "taskReferenceName": "results_chunk_5_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -250,7 +250,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_5",
+            "name": "Start rule workflow chunk 5",
             "taskReferenceName": "start_rule_workflow_chunk_5_ref",
             "inputParameters": {
               "companies": "${results_chunk_5_ref.output.result}",
@@ -279,7 +279,7 @@
         ],
         [
           {
-            "name": "results_chunk_6",
+            "name": "Results chunk 6",
             "taskReferenceName": "results_chunk_6_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -288,7 +288,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_6",
+            "name": "Start rule workflow chunk 6",
             "taskReferenceName": "start_rule_workflow_chunk_6_ref",
             "inputParameters": {
               "companies": "${results_chunk_6_ref.output.result}",
@@ -317,7 +317,7 @@
         ],
         [
           {
-            "name": "results_chunk_7",
+            "name": "Results chunk 7",
             "taskReferenceName": "results_chunk_7_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -326,7 +326,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_7",
+            "name": "Start rule workflow chunk 7",
             "taskReferenceName": "start_rule_workflow_chunk_7_ref",
             "inputParameters": {
               "companies": "${results_chunk_7_ref.output.result}",
@@ -355,7 +355,7 @@
         ],
         [
           {
-            "name": "results_chunk_8",
+            "name": "Results chunk 8",
             "taskReferenceName": "results_chunk_8_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -364,7 +364,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_8",
+            "name": "Start rule workflow chunk 8",
             "taskReferenceName": "start_rule_workflow_chunk_8_ref",
             "inputParameters": {
               "companies": "${results_chunk_8_ref.output.result}",
@@ -393,7 +393,7 @@
         ],
         [
           {
-            "name": "results_chunk_9",
+            "name": "Results chunk 9",
             "taskReferenceName": "results_chunk_9_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -402,7 +402,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_9",
+            "name": "Start rule workflow chunk 9",
             "taskReferenceName": "start_rule_workflow_chunk_9_ref",
             "inputParameters": {
               "companies": "${results_chunk_9_ref.output.result}",
@@ -431,7 +431,7 @@
         ],
         [
           {
-            "name": "results_chunk_10",
+            "name": "Results chunk 10",
             "taskReferenceName": "results_chunk_10_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -440,7 +440,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_10",
+            "name": "Start rule workflow chunk 10",
             "taskReferenceName": "start_rule_workflow_chunk_10_ref",
             "inputParameters": {
               "companies": "${results_chunk_10_ref.output.result}",
@@ -469,7 +469,7 @@
         ],
         [
           {
-            "name": "results_chunk_11",
+            "name": "Results chunk 11",
             "taskReferenceName": "results_chunk_11_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -478,7 +478,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_11",
+            "name": "Start rule workflow chunk 11",
             "taskReferenceName": "start_rule_workflow_chunk_11_ref",
             "inputParameters": {
               "companies": "${results_chunk_11_ref.output.result}",
@@ -507,7 +507,7 @@
         ],
         [
           {
-            "name": "results_chunk_12",
+            "name": "Results chunk 12",
             "taskReferenceName": "results_chunk_12_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -516,7 +516,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_12",
+            "name": "Start rule workflow chunk 12",
             "taskReferenceName": "start_rule_workflow_chunk_12_ref",
             "inputParameters": {
               "companies": "${results_chunk_12_ref.output.result}",
@@ -545,7 +545,7 @@
         ],
         [
           {
-            "name": "results_chunk_13",
+            "name": "Results chunk 13",
             "taskReferenceName": "results_chunk_13_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -554,7 +554,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_13",
+            "name": "Start rule workflow chunk 13",
             "taskReferenceName": "start_rule_workflow_chunk_13_ref",
             "inputParameters": {
               "companies": "${results_chunk_13_ref.output.result}",
@@ -583,7 +583,7 @@
         ],
         [
           {
-            "name": "results_chunk_14",
+            "name": "Results chunk 14",
             "taskReferenceName": "results_chunk_14_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -592,7 +592,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_14",
+            "name": "Start rule workflow chunk 14",
             "taskReferenceName": "start_rule_workflow_chunk_14_ref",
             "inputParameters": {
               "companies": "${results_chunk_14_ref.output.result}",
@@ -621,7 +621,7 @@
         ],
         [
           {
-            "name": "results_chunk_15",
+            "name": "Results chunk 15",
             "taskReferenceName": "results_chunk_15_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -630,7 +630,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_15",
+            "name": "Start rule workflow chunk 15",
             "taskReferenceName": "start_rule_workflow_chunk_15_ref",
             "inputParameters": {
               "companies": "${results_chunk_15_ref.output.result}",
@@ -659,7 +659,7 @@
         ],
         [
           {
-            "name": "results_chunk_16",
+            "name": "Results chunk 16",
             "taskReferenceName": "results_chunk_16_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -668,7 +668,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_16",
+            "name": "Start rule workflow chunk 16",
             "taskReferenceName": "start_rule_workflow_chunk_16_ref",
             "inputParameters": {
               "companies": "${results_chunk_16_ref.output.result}",
@@ -697,7 +697,7 @@
         ],
         [
           {
-            "name": "results_chunk_17",
+            "name": "Results chunk 17",
             "taskReferenceName": "results_chunk_17_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -706,7 +706,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_17",
+            "name": "Start rule workflow chunk 17",
             "taskReferenceName": "start_rule_workflow_chunk_17_ref",
             "inputParameters": {
               "companies": "${results_chunk_17_ref.output.result}",
@@ -735,7 +735,7 @@
         ],
         [
           {
-            "name": "results_chunk_18",
+            "name": "Results chunk 18",
             "taskReferenceName": "results_chunk_18_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -744,7 +744,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_18",
+            "name": "Start rule workflow chunk 18",
             "taskReferenceName": "start_rule_workflow_chunk_18_ref",
             "inputParameters": {
               "companies": "${results_chunk_18_ref.output.result}",
@@ -773,7 +773,7 @@
         ],
         [
           {
-            "name": "results_chunk_19",
+            "name": "Results chunk 19",
             "taskReferenceName": "results_chunk_19_ref",
             "inputParameters": {
               "companies": "${results_task_ref.output.response.body}",
@@ -782,7 +782,7 @@
             "type": "JSON_JQ_TRANSFORM"
           },
           {
-            "name": "start_rule_workflow_chunk_19",
+            "name": "Start rule workflow chunk 19",
             "taskReferenceName": "start_rule_workflow_chunk_19_ref",
             "inputParameters": {
               "companies": "${results_chunk_19_ref.output.result}",

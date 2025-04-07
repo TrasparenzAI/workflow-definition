@@ -40,7 +40,7 @@
       "type": "INLINE"
     },
     {
-      "name": "page_divide_size",
+      "name": "Page divide size",
       "taskReferenceName": "page_divide_size_ref",
       "inputParameters": {
         "expression": "(function(){ return Math.floor($.s / 10) })();",
@@ -50,7 +50,7 @@
       "type": "INLINE"
     },
     {
-      "name": "pagination_task",
+      "name": "Pagination task",
       "taskReferenceName": "pagination_task_ref",
       "inputParameters": {
         "last_page": "${workflow.variables.last_page}"
@@ -69,7 +69,7 @@
           "type": "INLINE"
         },
         {
-          "name": "companies_task",
+          "name": "Companies task",
           "taskReferenceName": "companies_task_ref",
           "inputParameters": {
             "http_request": {
@@ -92,7 +92,7 @@
           "type": "SET_VARIABLE"
         },
         {
-          "name": "fork",
+          "name": "Fork Companies",
           "taskReferenceName": "fork_ref",
           "inputParameters": {},
           "type": "FORK_JOIN",
@@ -101,7 +101,7 @@
           "forkTasks": [
             [
               {
-                "name": "companies_chunk_0",
+                "name": "Companies chunk 0",
                 "taskReferenceName": "companies_chunk_0_ref",
                 "inputParameters": {
                   "companies": "${companies_task_ref.output.response.body.content}",
@@ -110,7 +110,7 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "start_rule_workflow_chunck_0",
+                "name": "Start rule workflow chunck 0",
                 "taskReferenceName": "start_rule_workflow_chunck_0_ref",
                 "inputParameters": {
                   "companies": "${companies_chunk_0_ref.output.result}",
@@ -138,7 +138,7 @@
             ],
             [
               {
-                "name": "companies_chunk_1",
+                "name": "Companies chunk 1",
                 "taskReferenceName": "companies_chunk_1_ref",
                 "inputParameters": {
                 "companies": "${companies_task_ref.output.response.body.content}",
@@ -147,7 +147,7 @@
               "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "start_rule_workflow_chunck_1",
+                "name": "Start rule workflow chunck 1",
                 "taskReferenceName": "start_rule_workflow_chunck_1_ref",
                 "inputParameters": {
                   "companies": "${companies_chunk_1_ref.output.result}",
@@ -175,7 +175,7 @@
             ],
             [
               {
-                "name": "companies_chunk_2",
+                "name": "Companies chunk 2",
                 "taskReferenceName": "companies_chunk_2_ref",
                 "inputParameters": {
                 "companies": "${companies_task_ref.output.response.body.content}",
@@ -184,7 +184,7 @@
               "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "start_rule_workflow_chunck_2",
+                "name": "Start rule workflow chunck 2",
                 "taskReferenceName": "start_rule_workflow_chunck_2_ref",
                 "inputParameters": {
                   "companies": "${companies_chunk_2_ref.output.result}",
@@ -212,7 +212,7 @@
             ],
             [
               {
-                "name": "companies_chunk_3",
+                "name": "Companies chunk 3",
                 "taskReferenceName": "companies_chunk_3_ref",
                 "inputParameters": {
                  "companies": "${companies_task_ref.output.response.body.content}",
@@ -221,7 +221,7 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "start_rule_workflow_chunck_3",
+                "name": "Start rule workflow chunck 3",
                 "taskReferenceName": "start_rule_workflow_chunck_3_ref",
                 "inputParameters": {
                   "companies": "${companies_chunk_3_ref.output.result}",
@@ -249,7 +249,7 @@
             ],
             [
               {
-                "name": "companies_chunk_4",
+                "name": "Companies chunk 4",
                 "taskReferenceName": "companies_chunk_4_ref",
                 "inputParameters": {
                  "companies": "${companies_task_ref.output.response.body.content}",
@@ -258,7 +258,7 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "start_rule_workflow_chunck_4",
+                "name": "Start rule workflow chunck 4",
                 "taskReferenceName": "start_rule_workflow_chunck_4_ref",
                 "inputParameters": {
                   "companies": "${companies_chunk_4_ref.output.result}",
@@ -286,7 +286,7 @@
             ],
             [
               {
-                "name": "companies_chunk_5",
+                "name": "Companies chunk 5",
                 "taskReferenceName": "companies_chunk_5_ref",
                 "inputParameters": {
                  "companies": "${companies_task_ref.output.response.body.content}",
@@ -295,7 +295,7 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "start_rule_workflow_chunck_5",
+                "name": "Start rule workflow chunck 5",
                 "taskReferenceName": "start_rule_workflow_chunck_5_ref",
                 "inputParameters": {
                   "companies": "${companies_chunk_5_ref.output.result}",
@@ -323,7 +323,7 @@
             ],
             [
               {
-                "name": "companies_chunk_6",
+                "name": "Companies chunk 6",
                 "taskReferenceName": "companies_chunk_6_ref",
                 "inputParameters": {
                  "companies": "${companies_task_ref.output.response.body.content}",
@@ -332,7 +332,7 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "start_rule_workflow_chunck_6",
+                "name": "Start rule workflow chunck 6",
                 "taskReferenceName": "start_rule_workflow_chunck_6_ref",
                 "inputParameters": {
                   "companies": "${companies_chunk_6_ref.output.result}",
@@ -360,7 +360,7 @@
             ],
             [
               {
-                "name": "companies_chunk_7",
+                "name": "Companies chunk 7",
                 "taskReferenceName": "companies_chunk_7_ref",
                 "inputParameters": {
                  "companies": "${companies_task_ref.output.response.body.content}",
@@ -369,7 +369,7 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "start_rule_workflow_chunck_7",
+                "name": "Start rule workflow chunck 7",
                 "taskReferenceName": "start_rule_workflow_chunck_7_ref",
                 "inputParameters": {
                   "companies": "${companies_chunk_7_ref.output.result}",
@@ -397,7 +397,7 @@
             ],
             [
               {
-                "name": "companies_chunk_8",
+                "name": "Companies chunk 8",
                 "taskReferenceName": "companies_chunk_8_ref",
                 "inputParameters": {
                  "companies": "${companies_task_ref.output.response.body.content}",
@@ -406,7 +406,7 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "start_rule_workflow_chunck_8",
+                "name": "Start rule workflow chunck 8",
                 "taskReferenceName": "start_rule_workflow_chunck_8_ref",
                 "inputParameters": {
                   "companies": "${companies_chunk_8_ref.output.result}",
@@ -434,7 +434,7 @@
             ],
             [
               {
-                "name": "companies_chunk_9",
+                "name": "Companies chunk 9",
                 "taskReferenceName": "companies_chunk_9_ref",
                 "inputParameters": {
                  "companies": "${companies_task_ref.output.response.body.content}",
@@ -443,7 +443,7 @@
                 "type": "JSON_JQ_TRANSFORM"
               },
               {
-                "name": "start_rule_workflow_chunck_9",
+                "name": "Start rule workflow chunck 9",
                 "taskReferenceName": "start_rule_workflow_chunck_9_ref",
                 "inputParameters": {
                   "companies": "${companies_chunk_9_ref.output.result}",
@@ -472,7 +472,7 @@
           ]
         },
         {
-          "name": "join",
+          "name": "Join",
           "taskReferenceName": "join_ref",
           "inputParameters": {},
           "type": "JOIN",
@@ -503,7 +503,7 @@
       "onStateChange": {}
     },
     {
-        "name": "codice_ipa_present",
+        "name": "Codice IPA present",
         "taskReferenceName": "codice_ipa_present_ref",
         "inputParameters": {
             "expression": "(function(){ if ($.s != undefined && $.s.length > 0){return true;} else { return false;} })();",
@@ -513,7 +513,7 @@
         "type": "INLINE"
     },
     {
-        "name": "switch_codice_ipa",
+        "name": "Switch codice IPA",
         "taskReferenceName": "switch_codice_ipa_ref",
         "inputParameters": {
             "exists": "${codice_ipa_present_ref.output.result}"

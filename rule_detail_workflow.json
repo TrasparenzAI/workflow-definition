@@ -17,7 +17,7 @@
             "type": "INLINE"
         },
         {
-            "name": "sito_istituzionale_present",
+            "name": "Sito istituzionale present",
             "taskReferenceName": "sito_istituzionale_present_ref",
             "inputParameters": {
                 "expression": "(function(){ if ($.s != undefined && $.s.length > 0){return true;} else { return false;} })();",
@@ -27,7 +27,7 @@
             "type": "INLINE"
         },
         {
-            "name": "switch_sito_istituzionale",
+            "name": "Switch sito istituzionale",
             "taskReferenceName": "switch_sito_istituzionale_ref",
             "inputParameters": {
                 "exists": "${sito_istituzionale_present_ref.output.result}"
@@ -299,6 +299,7 @@
                                                                                                                         "inputParameters": {
                                                                                                                             "ipa": "${workflow.input.ipa}",
                                                                                                                             "resultURL": "${result_rule_html_source_completed_ref.output.response.body.destinationUrl}",
+                                                                                                                            "base_rule_name": "${workflow.input.rule_name}",
                                                                                                                             "rule_name": "${workflow.input.root_rule}",
                                                                                                                             "root_rule": "${workflow.input.root_rule}",
                                                                                                                             "parent_workflow_id": "${workflow.input.parent_workflow_id}",
@@ -329,6 +330,7 @@
                                                                                                                               "input": {
                                                                                                                                 "ipa": "${workflow.input.ipa}",
                                                                                                                                 "resultURL": "${result_rule_html_source_completed_ref.output.response.body.destinationUrl}",
+                                                                                                                                "base_rule_name": "${workflow.input.rule_name}",
                                                                                                                                 "rule_name": "${workflow.input.root_rule}",
                                                                                                                                 "root_rule": "${workflow.input.root_rule}",
                                                                                                                                 "parent_workflow_id": "${workflow.input.parent_workflow_id}",
@@ -590,6 +592,7 @@
                                                                                     "inputParameters": {
                                                                                         "ipa": "${workflow.input.ipa}",
                                                                                         "resultURL": "${result_rule_http_stream_completed_ref.output.response.body.destinationUrl}",
+                                                                                        "base_rule_name": "${workflow.input.rule_name}",
                                                                                         "rule_name": "${workflow.input.root_rule}",
                                                                                         "root_rule": "${workflow.input.root_rule}",
                                                                                         "parent_workflow_id": "${workflow.input.parent_workflow_id}",
@@ -620,6 +623,7 @@
                                                                                           "input": {
                                                                                             "ipa": "${workflow.input.ipa}",
                                                                                             "resultURL": "${result_rule_http_stream_completed_ref.output.response.body.destinationUrl}",
+                                                                                            "base_rule_name": "${workflow.input.rule_name}",
                                                                                             "rule_name": "${workflow.input.root_rule}",
                                                                                             "root_rule": "${workflow.input.root_rule}",
                                                                                             "parent_workflow_id": "${workflow.input.parent_workflow_id}",

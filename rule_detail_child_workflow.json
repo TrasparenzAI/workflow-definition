@@ -6,431 +6,473 @@
   "version": 1,
   "tasks": [
     {
-      "name": "Crawler HTTP Stream",
-      "taskReferenceName": "crawler_http_stream_ref",
-      "inputParameters": {
-        "http_request": {
-          "uri": "${workflow.input.crawler_uri}",
-          "body": "{\"crawlingMode\": \"${workflow.input.crawling_mode}\", \"saveObject\": ${workflow.input.crawler_save_object}, \"saveScreenshot\":false,\"url\": \"${workflow.input.resultURL}\"}",
-          "method": "POST",
-          "connectionTimeOut": "${workflow.input.connection_timeout}",
-          "readTimeOut": "${workflow.input.read_timeout}"
-        }
-      },
-      "type": "HTTP_WEBCLIENT",
-      "decisionCases": {},
-      "defaultCase": [],
-      "forkTasks": [],
-      "startDelay": 0,
-      "joinOn": [],
-      "optional": true,
-      "defaultExclusiveJoinTask": [],
-      "asyncComplete": false,
-      "loopOver": [],
-      "onStateChange": {}
+        "name": "Result URL Present",
+        "taskReferenceName": "result_url_present_ref",
+        "inputParameters": {
+        "expression": "(function(){ if ($.s && $.s.length > 0){return true;} else { return false;} })();",
+            "evaluatorType": "javascript",
+            "s": "${workflow.input.resultURL}"
+        },
+        "type": "INLINE"
     },
     {
-      "name": "Switch Crawler HTTP Stream Completed",
-      "taskReferenceName": "switch_crawler_http_stream_completed_ref",
+      "name": "SWITCH Result URL Present",
+      "taskReferenceName": "switch_result_url_present_ref",
       "inputParameters": {
-        "switchCaseValue": "${crawler_http_stream_ref.status}"
+        "present": "${result_url_present_ref.output.result}"
       },
       "type": "SWITCH",
       "decisionCases": {
-        "COMPLETED": [
-          {
-            "name": "Switch Crawler HTTP Stream",
-            "taskReferenceName": "switch_crawler_http_stream_ref",
-            "inputParameters": {
-              "switchCaseValue": "${crawler_http_stream_ref.output.response.body.result}"
-            },
-            "type": "SWITCH",
-            "decisionCases": {
-              "200": [
-                {
-                  "name": "Rule HTTP Stream",
-                  "taskReferenceName": "rule_http_stream_ref",
-                  "inputParameters": {
-                    "http_request": {
-                      "uri": "${workflow.input.rule_base_url}/v1/rules/child?rootRule=${workflow.input.root_rule}&ruleName=${workflow.input.rule_name}&allRuleMustBePresent=true",
-                      "body": "${crawler_http_stream_ref.output.response.body.htmlPage}",
-                      "method": "POST",
-                      "connectionTimeOut": 1000,
-                      "readTimeOut": 5000
-                    }
-                  },
-                  "type": "HTTP_WEBCLIENT",
-                  "decisionCases": {},
-                  "defaultCase": [],
-                  "forkTasks": [],
-                  "startDelay": 0,
-                  "joinOn": [],
-                  "optional": true,
-                  "defaultExclusiveJoinTask": [],
-                  "asyncComplete": false,
-                  "loopOver": [],
-                  "onStateChange": {}
+        "true": [
+            {
+                "name": "Child Rule",
+                "taskReferenceName": "child_rule_ref",
+                "inputParameters": {
+                    "expression": "(function(){ if ($.rule_name == $.root_rule){return $.base_rule_name + '/child';} else { return $.rule_name + '/child';} })();",
+                    "evaluatorType": "javascript",
+                    "base_rule_name": "${workflow.input.base_rule_name}",                
+                    "rule_name": "${workflow.input.rule_name}",
+                    "root_rule": "${workflow.input.root_rule}"
                 },
-                {
-                  "name": "Switch Rule HTTP Stream",
-                  "taskReferenceName": "switch_rule_http_stream_ref",
-                  "inputParameters": {
-                    "switchCaseValue": "${rule_http_stream_ref.status}"
-                  },
-                  "type": "SWITCH",
-                  "decisionCases": {
-                    "COMPLETED_WITH_ERRORS": [
-                      {
-                          "name": "SUB Rule Child Workflow HTTP Source",
-                          "taskReferenceName": "sub_rule_child_workflow_http_source_ref",
+                "type": "INLINE"
+            },    
+            {
+              "name": "Crawler HTTP Stream",
+              "taskReferenceName": "crawler_http_stream_ref",
+              "inputParameters": {
+                "http_request": {
+                  "uri": "${workflow.input.crawler_uri}",
+                  "body": "{\"crawlingMode\": \"${workflow.input.crawling_mode}\", \"saveObject\": ${workflow.input.crawler_save_object}, \"saveScreenshot\":false,\"url\": \"${workflow.input.resultURL}\"}",
+                  "method": "POST",
+                  "connectionTimeOut": "${workflow.input.connection_timeout}",
+                  "readTimeOut": "${workflow.input.read_timeout}"
+                }
+              },
+              "type": "HTTP_WEBCLIENT",
+              "decisionCases": {},
+              "defaultCase": [],
+              "forkTasks": [],
+              "startDelay": 0,
+              "joinOn": [],
+              "optional": true,
+              "defaultExclusiveJoinTask": [],
+              "asyncComplete": false,
+              "loopOver": [],
+              "onStateChange": {}
+            },
+            {
+              "name": "Switch Crawler HTTP Stream Completed",
+              "taskReferenceName": "switch_crawler_http_stream_completed_ref",
+              "inputParameters": {
+                "switchCaseValue": "${crawler_http_stream_ref.status}"
+              },
+              "type": "SWITCH",
+              "decisionCases": {
+                "COMPLETED": [
+                  {
+                    "name": "Switch Crawler HTTP Stream",
+                    "taskReferenceName": "switch_crawler_http_stream_ref",
+                    "inputParameters": {
+                      "switchCaseValue": "${crawler_http_stream_ref.output.response.body.result}"
+                    },
+                    "type": "SWITCH",
+                    "decisionCases": {
+                      "200": [
+                        {
+                          "name": "Rule HTTP Stream",
+                          "taskReferenceName": "rule_http_stream_ref",
                           "inputParameters": {
-                              "ipa": "${workflow.input.ipa}",
-                              "resultURL": "${workflow.input.resultURL}",
-                              "rule_name": "${workflow.input.root_rule}",
-                              "root_rule": "${workflow.input.root_rule}",
-                              "parent_workflow_id": "${workflow.input.parent_workflow_id}",
-                              "crawler_save_object": "${workflow.input.crawler_save_object}",
-                              "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                              "save_method": "PUT",
-                              "connection_timeout": "${workflow.input.connection_timeout}",
-                              "read_timeout": "${workflow.input.read_timeout}",
-                              "crawling_mode": "${workflow.input.crawling_mode}",
-                              "result_base_url": "${workflow.input.result_base_url}",
-                              "crawler_uri": "${workflow.input.crawler_uri}",
-                              "rule_base_url": "${workflow.input.rule_base_url}"
+                            "http_request": {
+                              "uri": "${workflow.input.rule_base_url}/v1/rules/child?rootRule=${workflow.input.root_rule}&ruleName=${workflow.input.rule_name}&allRuleMustBePresent=true",
+                              "body": "${crawler_http_stream_ref.output.response.body.htmlPage}",
+                              "method": "POST",
+                              "connectionTimeOut": 1000,
+                              "readTimeOut": 5000
+                            }
                           },
-                          "subWorkflowParam": {
-                            "name": "rule_detail_child_html_source_workflow",
-                            "version": 1
-                          },                
-                          "type": "SUB_WORKFLOW"
-                      }
-                    ],
-                    "COMPLETED": [
-                      {
-                        "name": "Company JQ HTTP Stream Completed",
-                        "taskReferenceName": "company_jq_http_stream_completed_ref",
-                        "inputParameters": {
-                          "id": "${workflow.input.ipa.idResult}",
-                          "idIpa": "${workflow.input.ipa.id}",
-                          "codiceIpa": "${workflow.input.ipa.codiceIpa}",
-                          "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
-                          "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
-                          "tipologia": "${workflow.input.ipa.tipologia}",
-                          "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
-                          "codiceNatura": "${workflow.input.ipa.codiceNatura}",
-                          "acronimo": "${workflow.input.ipa.acronimo}",
-                          "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
-                          "sorgente": "${workflow.input.ipa.sorgente}",
-                          "objectBucket": "${crawler_http_stream_ref.output.response.body.objectBucket}",
-                          "objectId": "${crawler_http_stream_ref.output.response.body.objectId}",
-                          "objectResult": "${crawler_http_stream_ref.output.response.body.objectResult}",
-                          "screenshotBucket": "${crawler_http_stream_ref.output.response.body.screenshotBucket}",
-                          "screenshotId": "${crawler_http_stream_ref.output.response.body.screenshotId}",
-                          "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenshotResult}",
-                          "realUrl": "${crawler_http_stream_ref.output.response.body.realUrl}",
-                          "parent_workflow_id": "${workflow.input.parent_workflow_id}",
-                          "workflow_child_id": "${workflow.workflowId}",
-                          "length": "${crawler_http_stream_ref.output.response.body.length}",
-                          "resultRuleCreateDtos": "${rule_http_stream_ref.output.response.body}",
-                          "queryExpression": "{company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, resultRuleCreateDtos: .resultRuleCreateDtos, realUrl: .realUrl, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length }"
+                          "type": "HTTP_WEBCLIENT",
+                          "decisionCases": {},
+                          "defaultCase": [],
+                          "forkTasks": [],
+                          "startDelay": 0,
+                          "joinOn": [],
+                          "optional": true,
+                          "defaultExclusiveJoinTask": [],
+                          "asyncComplete": false,
+                          "loopOver": [],
+                          "onStateChange": {}
                         },
-                        "type": "JSON_JQ_TRANSFORM",
-                        "decisionCases": {},
-                        "defaultCase": [],
-                        "forkTasks": [],
-                        "startDelay": 0,
-                        "joinOn": [],
-                        "optional": true,
-                        "defaultExclusiveJoinTask": [],
-                        "asyncComplete": false,
-                        "loopOver": [],
-                        "onStateChange": {}
-                      },
-                      {
-                        "name": "Result Rule HTTP Stream Completed",
-                        "taskReferenceName": "result_rule_http_stream_completed_ref",
-                        "inputParameters": {
-                          "http_request": {
-                            "uri": "${workflow.input.result_base_url}/v1/results/bulk",
-                            "body": "${company_jq_http_stream_completed_ref.output.result}",
-                            "method": "PUT",
-                            "connectionTimeOut": 120000,
-                            "readTimeOut": 120000
-                          }
-                        },
-                        "type": "HTTP_WEBCLIENT",
-                        "optional": true,
-                        "asyncComplete": false
-                      },
-                      {
-                        "name": "Result JQ HTTP Stream Completed Filter",
-                        "taskReferenceName": "result_jq_http_stream_completed_filter_ref",
-                        "inputParameters": {
-                          "results": "${result_rule_http_stream_completed_ref.output.response.body}",
-                          "queryExpression": "[.results[] | select (.leaf == false and (.status == 200 or .status == 202))]"
-                        },
-                        "type": "JSON_JQ_TRANSFORM",
-                        "optional": true,
-                        "asyncComplete": false
-                      },
-                      {
-                        "name": "HTTP Stream Leaf",
-                        "taskReferenceName": "http_stream_ref",
-                        "inputParameters": {
-                          "expression": "(function(){ if ($.s > 0){return true;} else { return false;} })();",
-                          "evaluatorType": "javascript",
-                          "s": "${result_jq_http_stream_completed_filter_ref.output.result.length()}"
-                        },
-                        "type": "INLINE",
-                        "optional": true,
-                        "asyncComplete": false
-                      },
-                      {
-                        "name": "SWITCH HTTP Stream Leaf",
-                        "taskReferenceName": "switch_http_stream_leaf_ref",
-                        "inputParameters": {
-                          "exists": "${http_stream_ref.output.result}"
-                        },
-                        "type": "SWITCH",
-                        "decisionCases": {
-                          "true": [
-                            {
-                              "name": "DO While HTTP Stream Rule ",
-                              "taskReferenceName": "do_while_httpstream_rule_ref",
-                              "inputParameters": {
-                                "rule_count": "${result_jq_http_stream_completed_filter_ref.output.result.length()}"
-                              },
-                              "type": "DO_WHILE",
-                              "decisionCases": {},
-                              "defaultCase": [],
-                              "forkTasks": [],
-                              "startDelay": 0,
-                              "joinOn": [],
-                              "optional": true,
-                              "defaultExclusiveJoinTask": [],
-                              "asyncComplete": false,
-                              "loopCondition": "(function () {if ($.do_while_httpstream_rule_ref['iteration'] < $.rule_count) {    return true;  }  return false;})();",
-                              "loopOver": [
-                                {
-                                    "name": "INDEX DO While HTTP Stream Rule ",
-                                    "taskReferenceName": "index_do_while_httpstream_rule_ref",
-                                    "inputParameters": {
-                                        "expression": "(function(){ return $.s; })();",
-                                        "evaluatorType": "javascript",
-                                        "s": "${do_while_httpstream_rule_ref.output.iteration}"
-                                    },
-                                    "type": "INLINE"
-                                },
-                                {
-                                  "name": "Rule HTTP Stream JSON Transform",
-                                  "taskReferenceName": "rule_http_stream_json_transform_ref",
+                        {
+                          "name": "Switch Rule HTTP Stream",
+                          "taskReferenceName": "switch_rule_http_stream_ref",
+                          "inputParameters": {
+                            "switchCaseValue": "${rule_http_stream_ref.status}"
+                          },
+                          "type": "SWITCH",
+                          "decisionCases": {
+                            "COMPLETED_WITH_ERRORS": [
+                              {
+                                  "name": "SUB Rule Child Workflow HTTP Source",
+                                  "taskReferenceName": "sub_rule_child_workflow_http_source_ref",
                                   "inputParameters": {
-                                    "rules": "${result_jq_http_stream_completed_filter_ref.output.result}",
-                                    "queryExpression": ".rules | .[${index_do_while_httpstream_rule_ref.output.result} - 1:${index_do_while_httpstream_rule_ref.output.result}]| .[]"
-                                  },
-                                  "type": "JSON_JQ_TRANSFORM",
-                                  "optional": true,
-                                  "asyncComplete": false
-                                },
-                                {
-                                  "name": "Start Rule Child Workflow HTTP Stream",
-                                  "taskReferenceName": "start_rule_child_workflow_http_stream_ref",
-                                  "inputParameters": {
-                                    "ipa": "${workflow.input.ipa}",
-                                    "resultURL": "${rule_http_stream_json_transform_ref.output.result.destinationUrl}",
-                                    "rule_name": "${rule_http_stream_json_transform_ref.output.result.ruleName}",
-                                    "root_rule": "${workflow.input.root_rule}",
-                                    "parent_workflow_id": "${workflow.input.parent_workflow_id}",
-                                    "crawler_save_object": "${workflow.input.crawler_save_object}",
-                                    "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                                    "save_method": "PUT",
-                                    "connection_timeout": "${workflow.input.connection_timeout}",
-                                    "read_timeout": "${workflow.input.read_timeout}",
-                                    "crawling_mode": "${workflow.input.crawling_mode}",
-                                    "result_base_url": "${workflow.input.result_base_url}",
-                                    "crawler_uri": "${workflow.input.crawler_uri}",
-                                    "rule_base_url": "${workflow.input.rule_base_url}"
+                                      "ipa": "${workflow.input.ipa}",
+                                      "resultURL": "${workflow.input.resultURL}",
+                                      "base_rule_name": "${workflow.input.base_rule_name}",
+                                      "rule_name": "${workflow.input.rule_name}",
+                                      "root_rule": "${workflow.input.root_rule}",
+                                      "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                      "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                      "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                      "save_method": "PUT",
+                                      "connection_timeout": "${workflow.input.connection_timeout}",
+                                      "read_timeout": "${workflow.input.read_timeout}",
+                                      "crawling_mode": "${workflow.input.crawling_mode}",
+                                      "result_base_url": "${workflow.input.result_base_url}",
+                                      "crawler_uri": "${workflow.input.crawler_uri}",
+                                      "rule_base_url": "${workflow.input.rule_base_url}"
                                   },
                                   "subWorkflowParam": {
-                                    "name": "rule_detail_child_workflow",
+                                    "name": "rule_detail_child_html_source_workflow",
                                     "version": 1
-                                  },
+                                  },                
                                   "type": "SUB_WORKFLOW",
                                   "retryCount": 0
-                                }
-                              ]
+                              }
+                            ],
+                            "COMPLETED": [
+                              {
+                                "name": "Company JQ HTTP Stream Completed",
+                                "taskReferenceName": "company_jq_http_stream_completed_ref",
+                                "inputParameters": {
+                                  "id": "${workflow.input.ipa.idResult}",
+                                  "idIpa": "${workflow.input.ipa.id}",
+                                  "codiceIpa": "${workflow.input.ipa.codiceIpa}",
+                                  "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
+                                  "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
+                                  "tipologia": "${workflow.input.ipa.tipologia}",
+                                  "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
+                                  "codiceNatura": "${workflow.input.ipa.codiceNatura}",
+                                  "acronimo": "${workflow.input.ipa.acronimo}",
+                                  "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
+                                  "sorgente": "${workflow.input.ipa.sorgente}",
+                                  "objectBucket": "${crawler_http_stream_ref.output.response.body.objectBucket}",
+                                  "objectId": "${crawler_http_stream_ref.output.response.body.objectId}",
+                                  "objectResult": "${crawler_http_stream_ref.output.response.body.objectResult}",
+                                  "screenshotBucket": "${crawler_http_stream_ref.output.response.body.screenshotBucket}",
+                                  "screenshotId": "${crawler_http_stream_ref.output.response.body.screenshotId}",
+                                  "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenshotResult}",
+                                  "realUrl": "${crawler_http_stream_ref.output.response.body.realUrl}",
+                                  "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                  "workflow_child_id": "${workflow.workflowId}",
+                                  "length": "${crawler_http_stream_ref.output.response.body.length}",
+                                  "resultRuleCreateDtos": "${rule_http_stream_ref.output.response.body}",
+                                  "queryExpression": "{company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, resultRuleCreateDtos: .resultRuleCreateDtos, realUrl: .realUrl, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length }"
+                                },
+                                "type": "JSON_JQ_TRANSFORM",
+                                "decisionCases": {},
+                                "defaultCase": [],
+                                "forkTasks": [],
+                                "startDelay": 0,
+                                "joinOn": [],
+                                "optional": true,
+                                "defaultExclusiveJoinTask": [],
+                                "asyncComplete": false,
+                                "loopOver": [],
+                                "onStateChange": {}
+                              },
+                              {
+                                "name": "Result Rule HTTP Stream Completed",
+                                "taskReferenceName": "result_rule_http_stream_completed_ref",
+                                "inputParameters": {
+                                  "http_request": {
+                                    "uri": "${workflow.input.result_base_url}/v1/results/bulk",
+                                    "body": "${company_jq_http_stream_completed_ref.output.result}",
+                                    "method": "PUT",
+                                    "connectionTimeOut": 120000,
+                                    "readTimeOut": 120000
+                                  }
+                                },
+                                "type": "HTTP_WEBCLIENT",
+                                "optional": true,
+                                "asyncComplete": false
+                              },
+                              {
+                                "name": "Result JQ HTTP Stream Completed Filter",
+                                "taskReferenceName": "result_jq_http_stream_completed_filter_ref",
+                                "inputParameters": {
+                                  "results": "${result_rule_http_stream_completed_ref.output.response.body}",
+                                  "queryExpression": "[.results[] | select (.leaf == false and (.status == 200 or .status == 202))]"
+                                },
+                                "type": "JSON_JQ_TRANSFORM",
+                                "optional": true,
+                                "asyncComplete": false
+                              },
+                              {
+                                "name": "HTTP Stream Leaf",
+                                "taskReferenceName": "http_stream_ref",
+                                "inputParameters": {
+                                  "expression": "(function(){ if ($.s > 0){return true;} else { return false;} })();",
+                                  "evaluatorType": "javascript",
+                                  "s": "${result_jq_http_stream_completed_filter_ref.output.result.length()}"
+                                },
+                                "type": "INLINE",
+                                "optional": true,
+                                "asyncComplete": false
+                              },
+                              {
+                                "name": "SWITCH HTTP Stream Leaf",
+                                "taskReferenceName": "switch_http_stream_leaf_ref",
+                                "inputParameters": {
+                                  "exists": "${http_stream_ref.output.result}"
+                                },
+                                "type": "SWITCH",
+                                "decisionCases": {
+                                  "true": [
+                                    {
+                                      "name": "DO While HTTP Stream Rule ",
+                                      "taskReferenceName": "do_while_httpstream_rule_ref",
+                                      "inputParameters": {
+                                        "rule_count": "${result_jq_http_stream_completed_filter_ref.output.result.length()}"
+                                      },
+                                      "type": "DO_WHILE",
+                                      "decisionCases": {},
+                                      "defaultCase": [],
+                                      "forkTasks": [],
+                                      "startDelay": 0,
+                                      "joinOn": [],
+                                      "optional": true,
+                                      "defaultExclusiveJoinTask": [],
+                                      "asyncComplete": false,
+                                      "loopCondition": "(function () {if ($.do_while_httpstream_rule_ref['iteration'] < $.rule_count) {    return true;  }  return false;})();",
+                                      "loopOver": [
+                                        {
+                                            "name": "INDEX DO While HTTP Stream Rule ",
+                                            "taskReferenceName": "index_do_while_httpstream_rule_ref",
+                                            "inputParameters": {
+                                                "expression": "(function(){ return $.s; })();",
+                                                "evaluatorType": "javascript",
+                                                "s": "${do_while_httpstream_rule_ref.output.iteration}"
+                                            },
+                                            "type": "INLINE"
+                                        },
+                                        {
+                                          "name": "Rule HTTP Stream JSON Transform",
+                                          "taskReferenceName": "rule_http_stream_json_transform_ref",
+                                          "inputParameters": {
+                                            "rules": "${result_jq_http_stream_completed_filter_ref.output.result}",
+                                            "queryExpression": ".rules | .[${index_do_while_httpstream_rule_ref.output.result} - 1:${index_do_while_httpstream_rule_ref.output.result}]| .[]"
+                                          },
+                                          "type": "JSON_JQ_TRANSFORM",
+                                          "optional": true,
+                                          "asyncComplete": false
+                                        },
+                                        {
+                                          "name": "Start Rule Child Workflow HTTP Stream",
+                                          "taskReferenceName": "start_rule_child_workflow_http_stream_ref",
+                                          "inputParameters": {
+                                            "ipa": "${workflow.input.ipa}",
+                                            "resultURL": "${rule_http_stream_json_transform_ref.output.result.destinationUrl}",
+                                            "base_rule_name": "${workflow.input.base_rule_name}",
+                                            "rule_name": "${rule_http_stream_json_transform_ref.output.result.ruleName}",
+                                            "root_rule": "${workflow.input.root_rule}",
+                                            "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                            "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                            "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                            "save_method": "PUT",
+                                            "connection_timeout": "${workflow.input.connection_timeout}",
+                                            "read_timeout": "${workflow.input.read_timeout}",
+                                            "crawling_mode": "${workflow.input.crawling_mode}",
+                                            "result_base_url": "${workflow.input.result_base_url}",
+                                            "crawler_uri": "${workflow.input.crawler_uri}",
+                                            "rule_base_url": "${workflow.input.rule_base_url}"
+                                          },
+                                          "subWorkflowParam": {
+                                            "name": "rule_detail_child_workflow",
+                                            "version": 1
+                                          },
+                                          "type": "SUB_WORKFLOW",
+                                          "retryCount": 0
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "defaultCase": [],
+                                "evaluatorType": "value-param",
+                                "expression": "exists"
+                              },
+                              {
+                                "name": "Terminate Rule HTTP Stream Completed",
+                                "taskReferenceName": "terminate_rule_http_stream_completed_ref",
+                                "inputParameters": {
+                                  "terminationStatus": "COMPLETED"
+                                },
+                                "type": "TERMINATE",
+                                "decisionCases": {},
+                                "defaultCase": [],
+                                "forkTasks": [],
+                                "startDelay": 0,
+                                "joinOn": [],
+                                "optional": false,
+                                "defaultExclusiveJoinTask": [],
+                                "asyncComplete": false,
+                                "loopOver": [],
+                                "onStateChange": {}
+                              }
+                            ]
+                          },
+                          "defaultCase": [],
+                          "forkTasks": [],
+                          "startDelay": 0,
+                          "joinOn": [],
+                          "optional": true,
+                          "defaultExclusiveJoinTask": [],
+                          "asyncComplete": false,
+                          "loopOver": [],
+                          "evaluatorType": "value-param",
+                          "expression": "switchCaseValue",
+                          "onStateChange": {}
+                        }
+                      ],
+                      "407": [
+                        {
+                          "name": "Company JQ HTTP Stream Failed",
+                          "taskReferenceName": "company_jq_http_stream_failed_ref",
+                          "inputParameters": {
+                            "id": "${workflow.input.ipa.idResult}",
+                            "idIpa": "${workflow.input.ipa.id}",
+                            "codiceIpa": "${workflow.input.ipa.codiceIpa}",
+                            "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
+                            "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
+                            "tipologia": "${workflow.input.ipa.tipologia}",
+                            "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
+                            "codiceNatura": "${workflow.input.ipa.codiceNatura}",
+                            "acronimo": "${workflow.input.ipa.acronimo}",
+                            "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
+                            "sorgente": "${workflow.input.ipa.sorgente}",
+                            "realUrl": "${crawler_http_stream_ref.output.response.body.requestedUrl}",
+                            "objectBucket": "${crawler_http_stream_ref.output.response.body.objectBucket}",
+                            "objectId": "${crawler_http_stream_ref.output.response.body.objectId}",
+                            "objectResult": "${crawler_http_stream_ref.output.response.body.objectResult}",
+                            "screenshotBucket": "${crawler_http_stream_ref.output.response.body.screenshotBucket}",
+                            "screenshotId": "${crawler_http_stream_ref.output.response.body.screenshotId}",
+                            "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenshotResult}",
+                            "status": "${crawler_http_stream_ref.output.response.body.result}",
+                            "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                            "workflow_child_id": "${workflow.workflowId}",
+                            "error_message": "${crawler_http_stream_ref.output.response.body.message}",
+                            "length": "${crawler_http_stream_ref.output.response.body.length}",
+                            "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, status: .status, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, ruleName: .ruleName}",
+                            "ruleName": "${child_rule_ref.output.result}"
+                          },
+                          "type": "JSON_JQ_TRANSFORM",
+                          "decisionCases": {},
+                          "defaultCase": [],
+                          "forkTasks": [],
+                          "startDelay": 0,
+                          "joinOn": [],
+                          "optional": true,
+                          "defaultExclusiveJoinTask": [],
+                          "asyncComplete": false,
+                          "loopOver": [],
+                          "onStateChange": {}
+                        },
+                        {
+                          "name": "Result HTTP Stream Failed",
+                          "taskReferenceName": "result_http_stream_failed_ref",
+                          "inputParameters": {
+                            "http_request": {
+                              "uri": "${workflow.input.result_base_url}/v1/results",
+                              "body": "${company_jq_http_stream_failed_ref.output.result}",
+                              "method": "PUT",
+                              "connectionTimeOut": 120000,
+                              "readTimeOut": 120000
                             }
-                          ]
+                          },
+                          "type": "HTTP_WEBCLIENT",
+                          "optional": true,
+                          "asyncComplete": false
                         },
-                        "defaultCase": [],
-                        "evaluatorType": "value-param",
-                        "expression": "exists"
+                        {
+                          "name": "Terminate Result HTTP Stream Failed",
+                          "taskReferenceName": "terminate_result_http_stream_failed_ref",
+                          "inputParameters": {
+                            "terminationStatus": "COMPLETED"
+                          },
+                          "type": "TERMINATE",
+                          "decisionCases": {},
+                          "defaultCase": [],
+                          "forkTasks": [],
+                          "startDelay": 0,
+                          "joinOn": [],
+                          "optional": false,
+                          "defaultExclusiveJoinTask": [],
+                          "asyncComplete": false,
+                          "loopOver": [],
+                          "onStateChange": {}
+                        }
+                      ]
+                    },
+                    "defaultCase": [],
+                    "forkTasks": [],
+                    "startDelay": 0,
+                    "joinOn": [],
+                    "optional": true,
+                    "defaultExclusiveJoinTask": [],
+                    "asyncComplete": false,
+                    "loopOver": [],
+                    "evaluatorType": "value-param",
+                    "expression": "switchCaseValue",
+                    "onStateChange": {}
+                  }
+                ],
+                "COMPLETED_WITH_ERRORS": [
+                  {
+                      "name": "SUB Rule Child STREAM Failed Workflow HTTP Source",
+                      "taskReferenceName": "sub_rule_child_stream_failed_workflow_http_source_ref",
+                      "inputParameters": {
+                          "ipa": "${workflow.input.ipa}",
+                          "resultURL": "${workflow.input.resultURL}",
+                          "base_rule_name": "${workflow.input.base_rule_name}",
+                          "rule_name": "${workflow.input.rule_name}",
+                          "root_rule": "${workflow.input.root_rule}",
+                          "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                          "crawler_save_object": "${workflow.input.crawler_save_object}",
+                          "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                          "save_method": "PUT",
+                          "connection_timeout": "${workflow.input.connection_timeout}",
+                          "read_timeout": "${workflow.input.read_timeout}",
+                          "crawling_mode": "${workflow.input.crawling_mode}",
+                          "result_base_url": "${workflow.input.result_base_url}",
+                          "crawler_uri": "${workflow.input.crawler_uri}",
+                          "rule_base_url": "${workflow.input.rule_base_url}"
                       },
-                      {
-                        "name": "Terminate Rule HTTP Stream Completed",
-                        "taskReferenceName": "terminate_rule_http_stream_completed_ref",
-                        "inputParameters": {
-                          "terminationStatus": "COMPLETED"
-                        },
-                        "type": "TERMINATE",
-                        "decisionCases": {},
-                        "defaultCase": [],
-                        "forkTasks": [],
-                        "startDelay": 0,
-                        "joinOn": [],
-                        "optional": false,
-                        "defaultExclusiveJoinTask": [],
-                        "asyncComplete": false,
-                        "loopOver": [],
-                        "onStateChange": {}
-                      }
-                    ]
-                  },
-                  "defaultCase": [],
-                  "forkTasks": [],
-                  "startDelay": 0,
-                  "joinOn": [],
-                  "optional": true,
-                  "defaultExclusiveJoinTask": [],
-                  "asyncComplete": false,
-                  "loopOver": [],
-                  "evaluatorType": "value-param",
-                  "expression": "switchCaseValue",
-                  "onStateChange": {}
-                }
-              ],
-              "407": [
-                {
-                  "name": "Company JQ HTTP Stream Failed",
-                  "taskReferenceName": "company_jq_http_stream_failed_ref",
-                  "inputParameters": {
-                    "id": "${workflow.input.ipa.idResult}",
-                    "idIpa": "${workflow.input.ipa.id}",
-                    "codiceIpa": "${workflow.input.ipa.codiceIpa}",
-                    "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
-                    "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
-                    "tipologia": "${workflow.input.ipa.tipologia}",
-                    "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
-                    "codiceNatura": "${workflow.input.ipa.codiceNatura}",
-                    "acronimo": "${workflow.input.ipa.acronimo}",
-                    "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
-                    "sorgente": "${workflow.input.ipa.sorgente}",
-                    "realUrl": "${crawler_http_stream_ref.output.response.body.requestedUrl}",
-                    "objectBucket": "${crawler_http_stream_ref.output.response.body.objectBucket}",
-                    "objectId": "${crawler_http_stream_ref.output.response.body.objectId}",
-                    "objectResult": "${crawler_http_stream_ref.output.response.body.objectResult}",
-                    "screenshotBucket": "${crawler_http_stream_ref.output.response.body.screenshotBucket}",
-                    "screenshotId": "${crawler_http_stream_ref.output.response.body.screenshotId}",
-                    "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenshotResult}",
-                    "status": "${crawler_http_stream_ref.output.response.body.result}",
-                    "parent_workflow_id": "${workflow.input.parent_workflow_id}",
-                    "workflow_child_id": "${workflow.workflowId}",
-                    "error_message": "${crawler_http_stream_ref.output.response.body.message}",
-                    "length": "${crawler_http_stream_ref.output.response.body.length}",
-                    "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, status: .status, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, ruleName: .ruleName}",
-                    "ruleName": "${workflow.input.rule_name}/child"
-                  },
-                  "type": "JSON_JQ_TRANSFORM",
-                  "decisionCases": {},
-                  "defaultCase": [],
-                  "forkTasks": [],
-                  "startDelay": 0,
-                  "joinOn": [],
-                  "optional": true,
-                  "defaultExclusiveJoinTask": [],
-                  "asyncComplete": false,
-                  "loopOver": [],
-                  "onStateChange": {}
-                },
-                {
-                  "name": "Result HTTP Stream Failed",
-                  "taskReferenceName": "result_http_stream_failed_ref",
-                  "inputParameters": {
-                    "http_request": {
-                      "uri": "${workflow.input.result_base_url}/v1/results",
-                      "body": "${company_jq_http_stream_failed_ref.output.result}",
-                      "method": "PUT",
-                      "connectionTimeOut": 120000,
-                      "readTimeOut": 120000
-                    }
-                  },
-                  "type": "HTTP_WEBCLIENT",
-                  "optional": true,
-                  "asyncComplete": false
-                },
-                {
-                  "name": "Terminate Result HTTP Stream Failed",
-                  "taskReferenceName": "terminate_result_http_stream_failed_ref",
-                  "inputParameters": {
-                    "terminationStatus": "COMPLETED"
-                  },
-                  "type": "TERMINATE",
-                  "decisionCases": {},
-                  "defaultCase": [],
-                  "forkTasks": [],
-                  "startDelay": 0,
-                  "joinOn": [],
-                  "optional": false,
-                  "defaultExclusiveJoinTask": [],
-                  "asyncComplete": false,
-                  "loopOver": [],
-                  "onStateChange": {}
-                }
-              ]
-            },
-            "defaultCase": [],
-            "forkTasks": [],
-            "startDelay": 0,
-            "joinOn": [],
-            "optional": true,
-            "defaultExclusiveJoinTask": [],
-            "asyncComplete": false,
-            "loopOver": [],
-            "evaluatorType": "value-param",
-            "expression": "switchCaseValue",
-            "onStateChange": {}
-          }
-        ],
-        "COMPLETED_WITH_ERRORS": [
-          {
-              "name": "SUB Rule Child STREAM Failed Workflow HTTP Source",
-              "taskReferenceName": "sub_rule_child_stream_failde_workflow_http_source_ref",
-              "inputParameters": {
-                  "ipa": "${workflow.input.ipa}",
-                  "resultURL": "${workflow.input.resultURL}",
-                  "rule_name": "${workflow.input.root_rule}",
-                  "root_rule": "${workflow.input.root_rule}",
-                  "parent_workflow_id": "${workflow.input.parent_workflow_id}",
-                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "PUT",
-                  "connection_timeout": "${workflow.input.connection_timeout}",
-                  "read_timeout": "${workflow.input.read_timeout}",
-                  "crawling_mode": "${workflow.input.crawling_mode}",
-                  "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}"
+                      "subWorkflowParam": {
+                        "name": "rule_detail_child_html_source_workflow",
+                        "version": 1
+                      },                
+                      "type": "SUB_WORKFLOW",
+                      "retryCount": 0
+                  }
+                ]
               },
-              "subWorkflowParam": {
-                "name": "rule_detail_child_html_source_workflow",
-                "version": 1
-              },                
-              "type": "SUB_WORKFLOW"
-          }
+              "defaultCase": [],
+              "forkTasks": [],
+              "startDelay": 0,
+              "joinOn": [],
+              "optional": true,
+              "defaultExclusiveJoinTask": [],
+              "asyncComplete": false,
+              "loopOver": [],
+              "evaluatorType": "value-param",
+              "expression": "switchCaseValue",
+              "onStateChange": {}
+            }
         ]
       },
       "defaultCase": [],
-      "forkTasks": [],
-      "startDelay": 0,
-      "joinOn": [],
-      "optional": true,
-      "defaultExclusiveJoinTask": [],
-      "asyncComplete": false,
-      "loopOver": [],
       "evaluatorType": "value-param",
-      "expression": "switchCaseValue",
-      "onStateChange": {}
+      "expression": "present"
     }
   ],
   "inputParameters": [
@@ -439,6 +481,7 @@
     "crawler_save_screenshot",
     "parent_workflow_id",
     "save_method",
+    "base_rule_name",
     "rule_name",
     "root_rule",
     "connection_timeout",
