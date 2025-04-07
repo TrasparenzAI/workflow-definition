@@ -35,16 +35,12 @@ Il primo [TASK](crawler_amministrazione_trasparente.json#L8-L22) del flusso si o
 
 Il blocco recuperato contentente le informazioni di *n* PA viene parcellizzato in base al parametro fornito in input **page_size** e diviso per *10*, utilizzando infine il [TASK FORK/JOIN](https://orkes.io/content/reference-docs/operators/fork-join) vengono eseguiti in parallello *10* istanze del flusso [Rule](rule_workflow.json) valorizzando il parametro in input [companies](rule_workflow.json#L278).        
 
+All'uscita del [TASK delle PA](crawler_amministrazione_trasparente.json#L52-L60), se il flusso è stato eseguito non per una singola PA, allora vengono rielaborati i risultati con i codici *400* e *407* con i timeout massimi ed eseguiti i flussi [Crawler Result Failed](crawler_result_failed.json).
 
-
-
+Infine viene eseguito il [TASK](crawler_amministrazione_trasparente.json#L581-L596) per elaborare la Mappa geolocalizzata dei risultati.  
 
 ![Main - Amministrazione Trasparente](crawler_amministrazione_trasparente.png)
 
-
-
-
-
-![Rule - Amministrazione Trasparente](rule_workflow.png)
+## RULE DETAIL
 
 ![Rule Detail- Amministrazione Trasparente](rule_detail_workflow.png)
