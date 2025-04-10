@@ -28,11 +28,6 @@ TOKEN=$(curl $1/protocol/openid-connect/token \
   -H 'accept: application/json, text/plain, */*' \
   --data 'grant_type=client_credentials&client_id='$2'&client_secret='$3''| jq -r '.access_token')
 
-declare -a arr=("cnr" "cvtiap")
-
-## now loop through the above array
-for i in "${arr[@]}"
-do
 printf "\n"
 
 curl -v -X POST $4/api/workflow -H 'Content-type:application/json' \
@@ -40,15 +35,16 @@ curl -v -X POST $4/api/workflow -H 'Content-type:application/json' \
 -H 'Content-type:application/json' \
 --data '{
   "name": "crawler_amministrazione_trasparente",
-  "correlationId": "'$i'",  
+  "correlationId": "crawler_amministrazione_trasparente",  
   "version": 1,
   "input": {
     "page_size": 2000,
     "codice_categoria": "",
-    "codice_ipa": "'$i'",
+    "codice_ipa": "",
     "id_ipa_from": 0,
     "parent_workflow_id": "",
     "execute_child": true,
+    "crawling_mode": "httpStream",
     "crawler_save_object": false,
     "crawler_save_screenshot": false,
     "root_rule": "AT_TO-BE_23-12-2024",
@@ -65,5 +61,3 @@ curl -v -X POST $4/api/workflow -H 'Content-type:application/json' \
     "result_aggregator_base_url": "https://dica33.ba.cnr.it/result-aggregator-service"
   }
 }'
-
-done

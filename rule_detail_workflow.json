@@ -41,7 +41,7 @@
                         "inputParameters": {
                             "http_request": {
                                 "uri": "${workflow.input.crawler_uri}",
-                                "body": "{\"crawlingMode\": \"${workflow.input.crawling_mode}\", \"saveObject\": ${workflow.input.crawler_save_object}, \"saveScreenshot\":false,\"url\": \"${workflow.input.ipa.sitoIstituzionale}\"}",
+                                "body": "{\"crawlingMode\": \"${workflow.input.crawling_mode}\", \"saveObject\": ${workflow.input.crawler_save_object}, \"saveScreenshot\": ${workflow.input.crawler_save_screenshot},\"url\": \"${workflow.input.ipa.sitoIstituzionale}\"}",
                                 "method": "POST",
                                 "connectionTimeOut": "${workflow.input.connection_timeout}",
                                 "readTimeOut": "${workflow.input.read_timeout}"
@@ -533,8 +533,8 @@
                                                                 "objectId": "${crawler_http_stream_ref.output.response.body.objectId}",
                                                                 "objectResult": "${crawler_http_stream_ref.output.response.body.objectResult}",
                                                                 "screenshotBucket": "${crawler_http_stream_ref.output.response.body.screenshotBucket}",
-                                                                "screenshotId": "${crawler_http_stream_ref.output.response.body.screenshotId}",
-                                                                "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenshotResult}",
+                                                                "screenshotId": "${crawler_http_stream_ref.output.response.body.screenShotId}",
+                                                                "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenShotResult}",
                                                                 "url": "${rule_http_stream_ref.output.response.body.url}",
                                                                 "ruleName": "${workflow.input.rule_name}",
                                                                 "term": "${rule_http_stream_ref.output.response.body.term}",
@@ -694,8 +694,8 @@
                                                     "objectId": "${crawler_http_stream_ref.output.response.body.objectId}",
                                                     "objectResult": "${crawler_http_stream_ref.output.response.body.objectResult}",
                                                     "screenshotBucket": "${crawler_http_stream_ref.output.response.body.screenshotBucket}",
-                                                    "screenshotId": "${crawler_http_stream_ref.output.response.body.screenshotId}",
-                                                    "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenshotResult}",
+                                                    "screenshotId": "${crawler_http_stream_ref.output.response.body.screenShotId}",
+                                                    "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenShotResult}",
                                                     "status": "${crawler_http_stream_ref.output.response.body.result}",
                                                     "ruleName": "${workflow.input.rule_name}",
                                                     "parent_workflow_id": "${workflow.input.parent_workflow_id}",
