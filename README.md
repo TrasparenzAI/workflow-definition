@@ -57,6 +57,6 @@ Di seguito l'immagine del flusso:
 ## SCRIPT UTILI
 
 - [Inizializzazione del sistema](init.sh) Utilizzato per il SETUP iniziale.
-- [Cancella workflow](delete_workflow.sh) 
-- [Avvia workflow Totale](start.sh)
-- [Avvia workflow per singola Amministrazione](start_single_pa.sh)
+- [Cancella workflow](delete_workflow.sh) Data una lista di workflow itera e cancella i dati
+- [Avvia workflow Totale](start.sh) Avvia un flusso totale con i parametri di default
+- [Avvia workflow per singola Amministrazione](start_single_pe.sh) Avvia il flusso per singola amministrazione indicate nella variabile *arr_pa*

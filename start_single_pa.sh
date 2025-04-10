@@ -28,10 +28,10 @@ TOKEN=$(curl $1/protocol/openid-connect/token \
   -H 'accept: application/json, text/plain, */*' \
   --data 'grant_type=client_credentials&client_id='$2'&client_secret='$3''| jq -r '.access_token')
 
-declare -a arr=("cnr" "cvtiap")
+declare -a arr_pa=("cnr" "cvtiap")
 
 ## now loop through the above array
-for i in "${arr[@]}"
+for i in "${arr_pa[@]}"
 do
 printf "\n"
 
