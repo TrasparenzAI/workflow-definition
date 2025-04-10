@@ -14,8 +14,7 @@ Il flusso [principale](crawler_amministrazione_trasparente.json) necessita dei s
 | parent_workflow_id         | Identificativo del flusso, viene valorizzato con UUID generato | vuoto                       | Si     |
 | codice_categoria           | Se valorizzato filtra le PA che fanno parte della categoria    | vuoto                       | Si     |
 | codice_ipa                 | Se valorizzato individua la singola PA                         | vuoto                       | Si     |
-| crawling_mode              | Modalità base di esecuzione del crawler può assumere i valori  | httpStream                  | No     |
-|                            |                                                                |                             |        |
+| crawling_mode              | Modalità base di esecuzione del crawler (httpStream/htmlSource)| httpStream                  | No     |
 | crawler_save_object        | Booleano indica se salvare sempre la pagina HTML               | false                       | No     |
 | crawler_save_screenshot    | Booleano indica se salvare sempre lo screenshot della pagina   | false                       | No     |
 | rule_name                  | Nome della regola                        					  | amministrazione-trasparente | No     |
