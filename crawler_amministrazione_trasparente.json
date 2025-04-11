@@ -538,7 +538,7 @@
                   "execute_child": "${workflow.input.execute_child}",
                   "connection_timeout": "${workflow.input.connection_timeout_max}",
                   "read_timeout": "${workflow.input.read_timeout_max}",
-                  "crawling_mode": "${workflow.input.crawling_mode}",
+                  "crawling_mode": "htmlSource",
                   "result_base_url": "${workflow.input.result_base_url}",
                   "crawler_child_type": "${workflow.input.crawler_child_type}",
                   "crawler_uri": "${workflow.input.crawler_uri}",

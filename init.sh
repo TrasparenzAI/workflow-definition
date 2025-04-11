@@ -41,3 +41,4 @@ printf "\nTry to create or update rule_detail_child_workflow\n"
 ( echo '['; cat rule_detail_child_workflow.json ; echo ']') | curl -X PUT $4/api/metadata/workflow -H "Authorization: Bearer $TOKEN" -H 'Content-type:application/json' --data @-
 printf "\nTry to create or update rule_detail_html_source_workflow\n"
 ( echo '['; cat rule_detail_child_html_source_workflow.json ; echo ']') | curl -X PUT $4/api/metadata/workflow -H "Authorization: Bearer $TOKEN" -H 'Content-type:application/json' --data @-
+printf "\nAll workflow is created"
