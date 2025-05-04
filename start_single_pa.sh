@@ -35,7 +35,7 @@ for i in "${arr_pa[@]}"
 do
 printf "\n"
 
-curl -v -X POST $4/api/workflow -H 'Content-type:application/json' \
+curl -X POST $4/api/workflow -H 'Content-type:application/json' \
 -H "Authorization: Bearer $TOKEN" \
 -H 'Content-type:application/json' \
 --data '{
@@ -47,7 +47,7 @@ curl -v -X POST $4/api/workflow -H 'Content-type:application/json' \
     "codice_categoria": "",
     "codice_ipa": "'$i'",
     "id_ipa_from": 0,
-    "parent_workflow_id": "",
+    "parent_workflow_id": "'$5'",
     "execute_child": true,
     "crawling_mode": "httpStream",
     "crawler_save_object": false,

@@ -627,7 +627,7 @@
   "workflowStatusListenerEnabled": false,
   "ownerEmail": "marco.spasiano@gmail.com",
   "timeoutPolicy": "ALERT_ONLY",
-  "timeoutSeconds": 36000,
+  "timeoutSeconds": 360000,
   "variables": {},
   "inputTemplate": {}
 }
