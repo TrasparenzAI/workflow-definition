@@ -236,31 +236,71 @@
                   ],
                   "PUT": [
                     {
-                      "name": "Start Rule Detail Workflow",
-                      "taskReferenceName": "start_rule_detail_workflow_ref",
+                      "name": "Results Task",
+                      "taskReferenceName": "results_task_ref",
                       "inputParameters": {
-                        "ipa": "${ipa_ref.output.result}",
-                        "parent_workflow_id": "${workflow.input.parent_workflow_id}",
-                        "crawler_save_object": "${workflow.input.crawler_save_object}",
-                        "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                        "save_method": "${workflow.input.save_method}",
-                        "rule_name": "${workflow.input.rule_name}",
-                        "root_rule": "${workflow.input.root_rule}",                        
-                        "execute_child": "${workflow.input.execute_child}",
-                        "connection_timeout": "${workflow.input.connection_timeout}",
-                        "read_timeout": "${workflow.input.read_timeout}",
-                        "crawling_mode": "${workflow.input.crawling_mode}",
-                        "result_base_url": "${workflow.input.result_base_url}",
-                        "crawler_child_type": "${workflow.input.crawler_child_type}",
-                        "crawler_uri": "${workflow.input.crawler_uri}",
-                        "rule_base_url": "${workflow.input.rule_base_url}"
+                        "http_request": {
+                          "uri": "${workflow.input.result_base_url}/v1/results/all?noCache=true&workflowId=${workflow.input.parent_workflow_id}&ruleName=${workflow.input.rule_name}&codiceIpa=${ipa_ref.output.result.codiceIpa}",
+                          "method": "GET",
+                          "connectionTimeOut": 30000,
+                          "readTimeOut": 60000,
+                          "accept": "application/json",
+                          "contentType": "application/json"
+                        }
                       },
-                      "subWorkflowParam": {
-                        "name": "rule_detail_workflow",
-                        "version": 1
-                      },                
-                      "type": "SUB_WORKFLOW",
-                      "optional": true
+                      "type": "HTTP_WEBCLIENT"
+                    },
+                    {
+                      "name": "Results Exists Task",
+                      "taskReferenceName": "results_exists_ref",
+                      "inputParameters": {
+                        "expression": "(function(){ if ($.s != undefined && $.s > 0){return true;} else { return false;} })();",
+                        "evaluatorType": "javascript",
+                        "s": "${results_task_ref.output.response.body.length()}"
+                      },
+                      "type": "INLINE"
+                    },
+                    {
+                      "name": "Switch Exists Task",
+                      "taskReferenceName": "switch_codice_ipa_ref",
+                      "inputParameters": {
+                          "exists": "${results_exists_ref.output.result}"
+                      },
+                      "type": "SWITCH",
+                      "defaultCase": [],
+                      "evaluatorType": "value-param",
+                      "expression": "exists",
+                      "decisionCases": {
+                        "false": [
+                          {
+                            "name": "Start Rule Detail Workflow",
+                            "taskReferenceName": "start_rule_detail_workflow_ref",
+                            "inputParameters": {
+                              "ipa": "${ipa_ref.output.result}",
+                              "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                              "crawler_save_object": "${workflow.input.crawler_save_object}",
+                              "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                              "save_method": "${workflow.input.save_method}",
+                              "rule_name": "${workflow.input.rule_name}",
+                              "root_rule": "${workflow.input.root_rule}",                        
+                              "execute_child": "${workflow.input.execute_child}",
+                              "connection_timeout": "${workflow.input.connection_timeout}",
+                              "read_timeout": "${workflow.input.read_timeout}",
+                              "crawling_mode": "${workflow.input.crawling_mode}",
+                              "result_base_url": "${workflow.input.result_base_url}",
+                              "crawler_child_type": "${workflow.input.crawler_child_type}",
+                              "crawler_uri": "${workflow.input.crawler_uri}",
+                              "rule_base_url": "${workflow.input.rule_base_url}"
+                            },
+                            "subWorkflowParam": {
+                              "name": "rule_detail_workflow",
+                              "version": 1
+                            },                
+                            "type": "SUB_WORKFLOW",
+                            "optional": true
+                          }
+                        ]
+                      }
                     }
                   ]
                 }

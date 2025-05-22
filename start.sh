@@ -30,7 +30,7 @@ TOKEN=$(curl $1/protocol/openid-connect/token \
 
 printf "\n"
 
-curl -v -X POST $4/api/workflow -H 'Content-type:application/json' \
+curl -X POST $4/api/workflow -H 'Content-type:application/json' \
 -H "Authorization: Bearer $TOKEN" \
 -H 'Content-type:application/json' \
 --data '{
