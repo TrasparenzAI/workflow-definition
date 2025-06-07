@@ -53,7 +53,7 @@ curl -X POST $4/api/workflow -H 'Content-type:application/json' \
     "read_timeout": 30000,
     "connection_timeout_max": 60000,
     "read_timeout_max": 60000,
-    "crawler_child_type": "SUB_WORKFLOW",
+    "crawler_child_type": "START_WORKFLOW",
     "result_base_url": "https://dica33.ba.cnr.it/result-service",
     "crawler_uri": "http://150.145.95.77:8080/crawl",
     "rule_base_url": "https://monitorai.ba.cnr.it/rule-service",
