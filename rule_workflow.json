@@ -55,7 +55,8 @@
                   "queryExpression": ".companies |.[(${index_do_while_execute_rule_ref.output.result} - 1)]"
                 },
                 "type": "JSON_JQ_TRANSFORM",
-                "optional": true
+                "optional": true,
+                "retryCount": 0
               },
               {
                 "name": "switch_save_method",
@@ -248,7 +249,8 @@
                           "contentType": "application/json"
                         }
                       },
-                      "type": "HTTP_WEBCLIENT"
+                      "type": "HTTP_WEBCLIENT",
+                      "optional": true
                     },
                     {
                       "name": "Results Exists Task",
@@ -258,7 +260,8 @@
                         "evaluatorType": "javascript",
                         "s": "${results_task_ref.output.response.body.length()}"
                       },
-                      "type": "INLINE"
+                      "type": "INLINE",
+                      "optional": true
                     },
                     {
                       "name": "Switch Exists Task",
