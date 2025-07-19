@@ -45,7 +45,8 @@
                       "evaluatorType": "javascript",
                       "s": "${execute_rule_ref.output.iteration}"
                   },
-                  "type": "INLINE"
+                  "type": "INLINE",
+                  "retryCount": 0
               },
               {
                 "name": "IPA Task",
