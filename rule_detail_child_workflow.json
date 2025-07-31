@@ -91,16 +91,8 @@
                             }
                           },
                           "type": "HTTP_WEBCLIENT",
-                          "decisionCases": {},
-                          "defaultCase": [],
-                          "forkTasks": [],
-                          "startDelay": 0,
-                          "joinOn": [],
                           "optional": true,
-                          "defaultExclusiveJoinTask": [],
-                          "asyncComplete": false,
-                          "loopOver": [],
-                          "onStateChange": {}
+                          "asyncComplete": false
                         },
                         {
                           "name": "Switch Rule HTTP Stream",
@@ -141,6 +133,29 @@
                             ],
                             "COMPLETED": [
                               {
+                                "name": "Start Rule HTTP Stream decide",
+                                "taskReferenceName": "start_rule_decide_workflow_ref",
+                                "inputParameters": {
+                                  "resultRuleCreateDtos": "${rule_http_stream_ref.output.response.body}",
+                                  "realUrl": "${crawler_http_stream_ref.output.response.body.realUrl}",
+                                  "rule_name": "${workflow.input.rule_name}",
+                                  "root_rule": "${workflow.input.root_rule}",
+                                  "execute_child": "${workflow.input.execute_child}",
+                                  "connection_timeout": "${workflow.input.connection_timeout}",
+                                  "read_timeout": "${workflow.input.read_timeout}",
+                                  "crawling_mode": "${workflow.input.crawling_mode}",
+                                  "result_base_url": "${workflow.input.result_base_url}",
+                                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                                  "crawler_uri": "${workflow.input.crawler_uri}",
+                                  "rule_base_url": "${workflow.input.rule_base_url}"
+                                },
+                                "subWorkflowParam": {
+                                  "name": "rule_decide_workflow",
+                                  "version": 1
+                                },                
+                                "type": "SUB_WORKFLOW"
+                              },
+                              {
                                 "name": "Company JQ HTTP Stream Completed",
                                 "taskReferenceName": "company_jq_http_stream_completed_ref",
                                 "inputParameters": {
@@ -165,7 +180,7 @@
                                   "parent_workflow_id": "${workflow.input.parent_workflow_id}",
                                   "workflow_child_id": "${workflow.workflowId}",
                                   "length": "${crawler_http_stream_ref.output.response.body.length}",
-                                  "resultRuleCreateDtos": "${rule_http_stream_ref.output.response.body}",
+                                  "resultRuleCreateDtos": "${start_rule_decide_workflow_ref.output.resultRuleCreateDtos}",
                                   "queryExpression": "{company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, resultRuleCreateDtos: .resultRuleCreateDtos, realUrl: .realUrl, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length }"
                                 },
                                 "type": "JSON_JQ_TRANSFORM",

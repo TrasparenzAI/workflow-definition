@@ -1,0 +1,282 @@
+{
+  "createTime": 1753950424368,
+  "updateTime": 1753954210829,
+  "name": "rule_decide_workflow",
+  "description": "Rule Decide Workflow",
+  "version": 1,
+  "tasks": [
+    {
+      "name": "Rule JQ HTTP Stream no 207",
+      "taskReferenceName": "rule_jq_http_stream_no_207_ref",
+      "inputParameters": {
+        "results": "${workflow.input.resultRuleCreateDtos}",
+        "queryExpression": "[.results[] | select (.status != 207)]"
+      },
+      "type": "JSON_JQ_TRANSFORM",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": true,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": [],
+      "onStateChange": {},
+      "permissive": false
+    },
+    {
+      "name": "Set Inital Result Rule Create Dtos",
+      "taskReferenceName": "set_inital_result_rule_create_dtos_ref",
+      "inputParameters": {
+        "resultRuleCreateDtos": "${rule_jq_http_stream_no_207_ref.output.result}"
+      },
+      "type": "SET_VARIABLE",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": [],
+      "onStateChange": {},
+      "permissive": false
+    },
+    {
+      "name": "Rule JQ HTTP Stream 207",
+      "taskReferenceName": "rule_jq_http_stream_207_ref",
+      "inputParameters": {
+        "results": "${workflow.input.resultRuleCreateDtos}",
+        "queryExpression": "[.results[] | select (.status == 207)]"
+      },
+      "type": "JSON_JQ_TRANSFORM",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": true,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": [],
+      "onStateChange": {},
+      "permissive": false
+    },
+    {
+      "name": "Rule Stream 207 Length",
+      "taskReferenceName": "rule_stream_207_length",
+      "inputParameters": {
+        "expression": "(function(){ if ($.s > 0){return true;} else { return false;} })();",
+        "evaluatorType": "javascript",
+        "s": "${rule_jq_http_stream_207_ref.output.result.length()}"
+      },
+      "type": "INLINE",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": true,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": [],
+      "onStateChange": {},
+      "permissive": false
+    },
+    {
+      "name": "SWITCH Rule Stream 207 Length",
+      "taskReferenceName": "switch_rule_stream_207_length",
+      "inputParameters": {
+        "exists": "${rule_stream_207_length.output.result}"
+      },
+      "type": "SWITCH",
+      "decisionCases": {
+        "true": [
+          {
+            "name": "DO WHILE Rule Stream 207",
+            "taskReferenceName": "do_while_rule_stream_207_ref",
+            "inputParameters": {
+              "rules_count": "${rule_jq_http_stream_207_ref.output.result.length()}"
+            },
+            "type": "DO_WHILE",
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopCondition": "if ($.do_while_rule_stream_207_ref['iteration'] < $.rules_count ) { true; } else { false; }",
+            "loopOver": [
+              {
+                "name": "INDEX DO While Rule Stream 207",
+                "taskReferenceName": "index_do_while_rule_stream_207_ref",
+                "inputParameters": {
+                  "expression": "(function(){ return $.s; })();",
+                  "evaluatorType": "javascript",
+                  "s": "${do_while_rule_stream_207_ref.output.iteration}"
+                },
+                "type": "INLINE",
+                "decisionCases": {},
+                "defaultCase": [],
+                "forkTasks": [],
+                "startDelay": 0,
+                "joinOn": [],
+                "optional": false,
+                "defaultExclusiveJoinTask": [],
+                "asyncComplete": false,
+                "loopOver": [],
+                "retryCount": 0,
+                "onStateChange": {},
+                "permissive": false
+              },
+              {
+                "name": "JSON JQ Rule Multiple",
+                "taskReferenceName": "json_jq_rule_multiple_ref",
+                "inputParameters": {
+                  "rules": "${rule_jq_http_stream_207_ref.output.result}",
+                  "queryExpression": ".rules |.[(${index_do_while_rule_stream_207_ref.output.result} - 1)]"
+                },
+                "type": "JSON_JQ_TRANSFORM",
+                "decisionCases": {},
+                "defaultCase": [],
+                "forkTasks": [],
+                "startDelay": 0,
+                "joinOn": [],
+                "optional": true,
+                "defaultExclusiveJoinTask": [],
+                "asyncComplete": false,
+                "loopOver": [],
+                "retryCount": 0,
+                "onStateChange": {},
+                "permissive": false
+              },
+              {
+                "name": "Start Rule HTTP Stream decide detail",
+                "taskReferenceName": "start_rule_decide_detail_workflow_ref",
+                "inputParameters": {
+                  "resultRuleCreateDtos": "${json_jq_rule_multiple_ref.output.result.multiple}",
+                  "realUrl": "${workflow.input.realUrl}",
+                  "rule_name": "${json_jq_rule_multiple_ref.output.result.ruleName}",
+                  "root_rule": "${workflow.input.root_rule}",
+                  "execute_child": "${workflow.input.execute_child}",
+                  "connection_timeout": "${workflow.input.connection_timeout}",
+                  "read_timeout": "${workflow.input.read_timeout}",
+                  "crawling_mode": "${workflow.input.crawling_mode}",
+                  "result_base_url": "${workflow.input.result_base_url}",
+                  "crawler_child_type": "${workflow.input.crawler_child_type}",
+                  "crawler_uri": "${workflow.input.crawler_uri}",
+                  "rule_base_url": "${workflow.input.rule_base_url}"
+                },
+                "type": "SUB_WORKFLOW",
+                "decisionCases": {},
+                "defaultCase": [],
+                "forkTasks": [],
+                "startDelay": 0,
+                "subWorkflowParam": {
+                  "name": "rule_decide_detail_workflow",
+                  "version": 1
+                },
+                "joinOn": [],
+                "optional": false,
+                "defaultExclusiveJoinTask": [],
+                "asyncComplete": false,
+                "loopOver": [],
+                "onStateChange": {},
+                "permissive": false
+              },
+              {
+                "name": "JSON JQ Add Result",
+                "taskReferenceName": "json_jq_add_result_ref",
+                "inputParameters": {
+                  "resultRuleCreateDto": "${start_rule_decide_detail_workflow_ref.output.resultRuleCreateDto}",
+                  "resultRuleCreateDtos": "${workflow.variables.resultRuleCreateDtos}",
+                  "queryExpression": ".resultRuleCreateDtos + [.resultRuleCreateDto]"
+                },
+                "type": "JSON_JQ_TRANSFORM",
+                "decisionCases": {},
+                "defaultCase": [],
+                "forkTasks": [],
+                "startDelay": 0,
+                "joinOn": [],
+                "optional": false,
+                "defaultExclusiveJoinTask": [],
+                "asyncComplete": false,
+                "loopOver": [],
+                "onStateChange": {},
+                "permissive": false
+              },
+              {
+                "name": "Add Result to Variable",
+                "taskReferenceName": "add_result_to_variable_ref",
+                "inputParameters": {
+                  "resultRuleCreateDtos": "${json_jq_add_result_ref.output.result}"
+                },
+                "type": "SET_VARIABLE",
+                "decisionCases": {},
+                "defaultCase": [],
+                "forkTasks": [],
+                "startDelay": 0,
+                "joinOn": [],
+                "optional": false,
+                "defaultExclusiveJoinTask": [],
+                "asyncComplete": false,
+                "loopOver": [],
+                "onStateChange": {},
+                "permissive": false
+              }
+            ],
+            "evaluatorType": "value-param",
+            "onStateChange": {},
+            "permissive": false
+          }
+        ]
+      },
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": [],
+      "evaluatorType": "value-param",
+      "expression": "exists",
+      "onStateChange": {},
+      "permissive": false
+    }
+  ],
+  "inputParameters": [
+    "resultRuleCreateDtos",
+    "realUrl",
+    "crawling_mode",
+    "rule_name",
+    "root_rule",
+    "connection_timeout",
+    "read_timeout",
+    "connection_timeout_max",
+    "read_timeout_max",
+    "rule_base_url",
+    "public_company_base_url",
+    "result_aggregator_base_url",
+    "result_base_url",
+    "crawler_uri"
+  ],
+  "outputParameters": {
+    "resultRuleCreateDtos": "${workflow.variables.resultRuleCreateDtos}"
+  },
+  "failureWorkflow": "",
+  "schemaVersion": 2,
+  "restartable": true,
+  "workflowStatusListenerEnabled": false,
+  "ownerEmail": "marco.spasiano@gmail.com",
+  "timeoutPolicy": "ALERT_ONLY",
+  "timeoutSeconds": 0,
+  "variables": {},
+  "inputTemplate": {},
+  "enforceSchema": true,
+  "metadata": {}
+}

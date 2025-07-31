@@ -1,0 +1,209 @@
+{
+  "createTime": 1753954985430,
+  "updateTime": 1753957724809,
+  "name": "rule_decide_detail_workflow",
+  "description": "Rule Decide Detail Workflow",
+  "version": 1,
+  "tasks": [
+    {
+      "name": "Initial Result to Variable",
+      "taskReferenceName": "initial_result_to_variable_ref",
+      "inputParameters": {
+        "resultRuleCreateDto": "${workflow.input.resultRuleCreateDtos[0]}"
+      },
+      "type": "SET_VARIABLE",
+      "optional": false,
+      "asyncComplete": false,
+      "permissive": false
+    },
+    {
+      "name": "DO WHILE Rule",
+      "taskReferenceName": "do_while_rule_ref",
+      "inputParameters": {
+        "rules_count": "${workflow.input.resultRuleCreateDtos.length()}"
+      },
+      "type": "DO_WHILE",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopCondition": "if ($.do_while_rule_ref['iteration'] < $.rules_count ) { true; } else { false; }",
+      "loopOver": [
+        {
+          "name": "INDEX DO While Rule",
+          "taskReferenceName": "index_do_while_rule_ref",
+          "inputParameters": {
+            "expression": "(function(){ return $.s; })();",
+            "evaluatorType": "javascript",
+            "s": "${do_while_rule_ref.output.iteration}"
+          },
+          "type": "INLINE",
+          "decisionCases": {},
+          "defaultCase": [],
+          "forkTasks": [],
+          "startDelay": 0,
+          "joinOn": [],
+          "optional": false,
+          "defaultExclusiveJoinTask": [],
+          "asyncComplete": false,
+          "loopOver": [],
+          "retryCount": 0,
+          "onStateChange": {},
+          "permissive": false
+        },
+        {
+          "name": "JSON JQ Rule Multiple",
+          "taskReferenceName": "json_jq_rule_multiple_ref",
+          "inputParameters": {
+            "rules": "${workflow.input.resultRuleCreateDtos}",
+            "queryExpression": ".rules |.[(${index_do_while_rule_ref.output.result} - 1)]"
+          },
+          "type": "JSON_JQ_TRANSFORM",
+          "decisionCases": {},
+          "defaultCase": [],
+          "forkTasks": [],
+          "startDelay": 0,
+          "joinOn": [],
+          "optional": true,
+          "defaultExclusiveJoinTask": [],
+          "asyncComplete": false,
+          "loopOver": [],
+          "retryCount": 0,
+          "onStateChange": {},
+          "permissive": false
+        },
+        {
+          "name": "HTTP Destination URL",
+          "taskReferenceName": "http_destination_url_ref",
+          "inputParameters": {
+            "http_request": {
+              "uri": "${workflow.input.result_base_url}/v1/utils/destinationURL",
+              "method": "POST",
+              "body": "{\"base\": \"${workflow.input.realUrl}\", \"target\": \"${json_jq_rule_multiple_ref.output.result.url}\"}",
+              "accept": "application/json",
+              "contentType": "application/json",
+              "connectionTimeOut": "${workflow.input.connection_timeout}",
+              "readTimeOut": "${workflow.input.read_timeout}"
+            }
+          },
+          "type": "HTTP_WEBCLIENT",
+          "decisionCases": {},
+          "defaultCase": [],
+          "forkTasks": [],
+          "startDelay": 0,
+          "joinOn": [],
+          "optional": false,
+          "defaultExclusiveJoinTask": [],
+          "asyncComplete": false,
+          "loopOver": [],
+          "onStateChange": {},
+          "permissive": false
+        },
+        {
+          "name": "Crawler HTTP Stream",
+          "taskReferenceName": "crawler_http_stream_ref",
+          "inputParameters": {
+            "http_request": {
+              "uri": "${workflow.input.crawler_uri}",
+              "body": "{\"crawlingMode\": \"htmlSource\", \"saveObject\": false, \"saveScreenshot\": false,\"url\": \"${http_destination_url_ref.output.response.body.result}\"}",
+              "method": "POST",
+              "connectionTimeOut": "${workflow.input.connection_timeout}",
+              "readTimeOut": "${workflow.input.read_timeout}"
+            }
+          },
+          "type": "HTTP_WEBCLIENT",
+          "optional": true,
+          "asyncComplete": false
+        },
+        {
+          "name": "Rule HTTP Stream",
+          "taskReferenceName": "rule_http_stream_ref",
+          "inputParameters": {
+            "http_request": {
+              "uri": "${workflow.input.rule_base_url}/v1/rules/child?rootRule=${workflow.input.root_rule}&ruleName=${workflow.input.rule_name}&atLeastHalf=true",
+              "body": "${crawler_http_stream_ref.output.response.body.htmlPage}",
+              "method": "POST",
+              "connectionTimeOut": 1000,
+              "readTimeOut": 5000
+            }
+          },
+          "type": "HTTP_WEBCLIENT",
+          "optional": true,
+          "asyncComplete": false
+        },
+        {
+          "name": "Switch Rule HTTP Stream",
+          "taskReferenceName": "switch_rule_http_stream_ref",
+          "inputParameters": {
+            "switchCaseValue": "${rule_http_stream_ref.status}"
+          },
+          "type": "SWITCH",
+          "optional": true,
+          "asyncComplete": false,
+          "evaluatorType": "value-param",
+          "expression": "switchCaseValue",          
+          "decisionCases": {
+            "COMPLETED": [
+              {
+                "name": "Add Result to Variable",
+                "taskReferenceName": "add_result_to_variable_ref",
+                "inputParameters": {
+                  "resultRuleCreateDto": "${json_jq_rule_multiple_ref.output.result}"
+                },
+                "type": "SET_VARIABLE",
+                "decisionCases": {},
+                "defaultCase": [],
+                "forkTasks": [],
+                "startDelay": 0,
+                "joinOn": [],
+                "optional": false,
+                "defaultExclusiveJoinTask": [],
+                "asyncComplete": false,
+                "loopOver": [],
+                "onStateChange": {},
+                "permissive": false
+              }
+            ]
+          }
+        }
+      ],
+      "evaluatorType": "value-param",
+      "onStateChange": {},
+      "permissive": false
+    }
+  ],
+  "inputParameters": [
+    "resultRuleCreateDtos",
+    "realUrl",
+    "crawling_mode",
+    "rule_name",
+    "root_rule",
+    "connection_timeout",
+    "read_timeout",
+    "connection_timeout_max",
+    "read_timeout_max",
+    "rule_base_url",
+    "public_company_base_url",
+    "result_aggregator_base_url",
+    "result_base_url",
+    "crawler_uri"
+  ],
+  "outputParameters": {
+    "resultRuleCreateDto": "${workflow.variables.resultRuleCreateDto}"
+  },
+  "failureWorkflow": "",
+  "schemaVersion": 2,
+  "restartable": true,
+  "workflowStatusListenerEnabled": false,
+  "ownerEmail": "marco.spasiano@gmail.com",
+  "timeoutPolicy": "ALERT_ONLY",
+  "timeoutSeconds": 0,
+  "variables": {},
+  "inputTemplate": {},
+  "enforceSchema": true,
+  "metadata": {}
+}
