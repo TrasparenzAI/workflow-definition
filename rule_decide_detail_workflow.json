@@ -128,7 +128,7 @@
               "body": "${crawler_http_stream_ref.output.response.body.htmlPage}",
               "method": "POST",
               "connectionTimeOut": 1000,
-              "readTimeOut": 5000
+              "readTimeOut": 10000
             }
           },
           "type": "HTTP_WEBCLIENT",
