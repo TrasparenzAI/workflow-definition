@@ -172,20 +172,12 @@
                   "rule_base_url": "${workflow.input.rule_base_url}"
                 },
                 "type": "SUB_WORKFLOW",
-                "decisionCases": {},
-                "defaultCase": [],
-                "forkTasks": [],
-                "startDelay": 0,
                 "subWorkflowParam": {
                   "name": "rule_decide_detail_workflow",
                   "version": 1
                 },
-                "joinOn": [],
-                "optional": false,
-                "defaultExclusiveJoinTask": [],
+                "optional": true,
                 "asyncComplete": false,
-                "loopOver": [],
-                "onStateChange": {},
                 "permissive": false
               },
               {
