@@ -166,6 +166,19 @@
                 "loopOver": [],
                 "onStateChange": {},
                 "permissive": false
+              },
+              {
+                  "name": "Terminate Finded result",
+                  "taskReferenceName": "terminate_finded_result_ref",
+                  "inputParameters": {
+                      "terminationStatus": "COMPLETED",
+                      "workflowOutput": {
+                        "resultRuleCreateDto": "${workflow.variables.resultRuleCreateDto}"
+                      }
+                  },
+                  "type": "TERMINATE",
+                  "optional": true,
+                  "asyncComplete": false
               }
             ]
           }

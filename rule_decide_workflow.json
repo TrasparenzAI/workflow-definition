@@ -162,12 +162,10 @@
                   "realUrl": "${workflow.input.realUrl}",
                   "rule_name": "${json_jq_rule_multiple_ref.output.result.ruleName}",
                   "root_rule": "${workflow.input.root_rule}",
-                  "execute_child": "${workflow.input.execute_child}",
                   "connection_timeout": "${workflow.input.connection_timeout}",
                   "read_timeout": "${workflow.input.read_timeout}",
                   "crawling_mode": "${workflow.input.crawling_mode}",
                   "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}",
                   "crawler_uri": "${workflow.input.crawler_uri}",
                   "rule_base_url": "${workflow.input.rule_base_url}"
                 },

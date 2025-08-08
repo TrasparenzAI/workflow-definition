@@ -586,13 +586,13 @@
                       "uri": "${workflow.input.result_aggregator_base_url}/v1/aggregator/geojson?workflowId=${parent_workflow_id_ref.output.result}",
                       "method": "PUT",
                       "connectionTimeOut": 1000,
-                      "readTimeOut": 300000
+                      "readTimeOut": 5000
                   }
                 },
                 "type": "HTTP_WEBCLIENT",
                 "startDelay": 0,
                 "optional": true,
-                "asyncComplete": true
+                "asyncComplete": false
               }
             ]
         }
