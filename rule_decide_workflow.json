@@ -167,7 +167,8 @@
                   "crawling_mode": "${workflow.input.crawling_mode}",
                   "result_base_url": "${workflow.input.result_base_url}",
                   "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}"
+                  "rule_base_url": "${workflow.input.rule_base_url}",
+                  "force_jsoup": "${workflow.input.force_jsoup}"
                 },
                 "type": "SUB_WORKFLOW",
                 "subWorkflowParam": {
@@ -249,7 +250,8 @@
     "read_timeout",
     "connection_timeout_max",
     "read_timeout_max",
-    "rule_base_url",
+    "force_jsoup",
+    "rule_base_url",    
     "public_company_base_url",
     "result_aggregator_base_url",
     "result_base_url",

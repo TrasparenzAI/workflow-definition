@@ -83,7 +83,7 @@
                           "taskReferenceName": "rule_http_stream_ref",
                           "inputParameters": {
                             "http_request": {
-                              "uri": "${workflow.input.rule_base_url}/v1/rules/child?rootRule=${workflow.input.root_rule}&ruleName=${workflow.input.rule_name}&allRuleMustBePresent=true",
+                              "uri": "${workflow.input.rule_base_url}/v1/rules/child?rootRule=${workflow.input.root_rule}&ruleName=${workflow.input.rule_name}&allRuleMustBePresent=true&forceJsoup=${workflow.input.force_jsoup}",
                               "body": "${crawler_http_stream_ref.output.response.body.htmlPage}",
                               "method": "POST",
                               "connectionTimeOut": 1000,
@@ -121,7 +121,8 @@
                                       "crawling_mode": "${workflow.input.crawling_mode}",
                                       "result_base_url": "${workflow.input.result_base_url}",
                                       "crawler_uri": "${workflow.input.crawler_uri}",
-                                      "rule_base_url": "${workflow.input.rule_base_url}"
+                                      "rule_base_url": "${workflow.input.rule_base_url}",
+                                      "force_jsoup": "${workflow.input.force_jsoup}"
                                   },
                                   "subWorkflowParam": {
                                     "name": "rule_detail_child_html_source_workflow",
@@ -147,7 +148,8 @@
                                   "result_base_url": "${workflow.input.result_base_url}",
                                   "crawler_child_type": "${workflow.input.crawler_child_type}",
                                   "crawler_uri": "${workflow.input.crawler_uri}",
-                                  "rule_base_url": "${workflow.input.rule_base_url}"
+                                  "rule_base_url": "${workflow.input.rule_base_url}",
+                                  "force_jsoup": "${workflow.input.force_jsoup}"
                                 },
                                 "subWorkflowParam": {
                                   "name": "rule_decide_workflow",
@@ -320,7 +322,8 @@
                                                   "crawling_mode": "${workflow.input.crawling_mode}",
                                                   "result_base_url": "${workflow.input.result_base_url}",
                                                   "crawler_uri": "${workflow.input.crawler_uri}",
-                                                  "rule_base_url": "${workflow.input.rule_base_url}"
+                                                  "rule_base_url": "${workflow.input.rule_base_url}",
+                                                  "force_jsoup": "${workflow.input.force_jsoup}"
                                                 },
                                                 "subWorkflowParam": {
                                                   "name": "rule_detail_child_workflow",
@@ -484,7 +487,8 @@
                           "crawling_mode": "${workflow.input.crawling_mode}",
                           "result_base_url": "${workflow.input.result_base_url}",
                           "crawler_uri": "${workflow.input.crawler_uri}",
-                          "rule_base_url": "${workflow.input.rule_base_url}"
+                          "rule_base_url": "${workflow.input.rule_base_url}",
+                          "force_jsoup": "${workflow.input.force_jsoup}"
                       },
                       "subWorkflowParam": {
                         "name": "rule_detail_child_html_source_workflow",
@@ -521,6 +525,7 @@
     "parent_workflow_id",
     "save_method",
     "base_rule_name",
+    "force_jsoup",
     "rule_name",
     "root_rule",
     "connection_timeout",

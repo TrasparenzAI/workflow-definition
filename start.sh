@@ -49,6 +49,7 @@ curl -X POST $4/api/workflow -H 'Content-type:application/json' \
     "crawler_save_screenshot": false,
     "root_rule": "AT_TO-BE_23-12-2024",
     "rule_name": "amministrazione-trasparente",
+    "force_jsoup": "true",
     "connection_timeout": 30000,
     "read_timeout": 30000,
     "connection_timeout_max": 60000,

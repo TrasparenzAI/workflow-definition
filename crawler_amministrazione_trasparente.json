@@ -1,633 +1,646 @@
 {
-  "createTime": 1706170915910,
-  "updateTime": 1706173716218,
-  "name": "crawler_amministrazione_trasparente",
-  "description": "Crawler Amministrazione Trasparente",
-  "version": 1,
-  "tasks": [
-    {
-      "name": "Refresh configuration of rules",
-      "taskReferenceName": "refresh_rule_config_task_ref",
-      "inputParameters": {
-        "http_request": {
-          "uri": "${workflow.input.rule_base_url}/actuator/refresh",
-          "method": "POST",
-          "connectionTimeOut": 30000,
-          "readTimeOut": 30000,
-          "accept": "application/json",
-          "contentType": "application/json"
-        }
-      },
-      "type": "HTTP_WEBCLIENT"
-    },
-    {
-      "name": "Set Initial Last Page",
-      "taskReferenceName": "set_initial_last_page_ref",
-      "inputParameters": {
-        "last_page": false
-      },
-      "type": "SET_VARIABLE"
-    },
-    {
-      "name": "Parent Workflow ID",
-      "taskReferenceName": "parent_workflow_id_ref",
-      "inputParameters": {
-        "expression": "(function(){if ($.s && $.s.length() > 0) { return $.s; } else { return  $.l; }})();",
-        "evaluatorType": "javascript",
-        "s": "${workflow.input.parent_workflow_id}",
-        "l": "${workflow.workflowId}"
-      },
-      "type": "INLINE"
-    },
-    {
-      "name": "Page divide size",
-      "taskReferenceName": "page_divide_size_ref",
-      "inputParameters": {
-        "expression": "(function(){ return Math.floor($.s / 10) })();",
-        "evaluatorType": "javascript",
-        "s": "${workflow.input.page_size}"
-      },
-      "type": "INLINE"
-    },
-    {
-      "name": "Pagination task",
-      "taskReferenceName": "pagination_task_ref",
-      "inputParameters": {
-        "last_page": "${workflow.variables.last_page}"
-      },
-      "type": "DO_WHILE",
-      "loopCondition": "if ($.last_page) { false; } else { true; }",
-      "loopOver": [
+    "createTime": 1706170915910,
+    "updateTime": 1706173716218,
+    "name": "crawler_amministrazione_trasparente",
+    "description": "Crawler Amministrazione Trasparente",
+    "version": 1,
+    "tasks": [
         {
-          "name": "iteration_task",
-          "taskReferenceName": "iteration_task_ref",
-          "inputParameters": {
-            "expression": "(function(){ return ($.i - 1 | 0);})();",
-            "evaluatorType": "javascript",
-            "i": "${pagination_task_ref.output.iteration}"
-          },
-          "type": "INLINE"
+            "name": "Refresh configuration of rules",
+            "taskReferenceName": "refresh_rule_config_task_ref",
+            "inputParameters": {
+                "http_request": {
+                    "uri": "${workflow.input.rule_base_url}/actuator/refresh",
+                    "method": "POST",
+                    "connectionTimeOut": 30000,
+                    "readTimeOut": 30000,
+                    "accept": "application/json",
+                    "contentType": "application/json"
+                }
+            },
+            "type": "HTTP_WEBCLIENT"
         },
         {
-          "name": "Companies task",
-          "taskReferenceName": "companies_task_ref",
-          "inputParameters": {
-            "http_request": {
-              "uri": "${workflow.input.public_company_base_url}/v1/companies?size=${workflow.input.page_size}&idIpaFrom=${workflow.input.id_ipa_from}&codiceIpa=${workflow.input.codice_ipa}&codiceCategoria=${workflow.input.codice_categoria}&page=${iteration_task_ref.output.result}&sort=id",
-              "method": "GET",
-              "connectionTimeOut": 30000,
-              "readTimeOut": 30000,
-              "accept": "application/json",
-              "contentType": "application/json"
+            "name": "Set Initial Last Page",
+            "taskReferenceName": "set_initial_last_page_ref",
+            "inputParameters": {
+                "last_page": false
+            },
+            "type": "SET_VARIABLE"
+        },
+        {
+            "name": "Parent Workflow ID",
+            "taskReferenceName": "parent_workflow_id_ref",
+            "inputParameters": {
+                "expression": "(function(){if ($.s && $.s.length() > 0) { return $.s; } else { return  $.l; }})();",
+                "evaluatorType": "javascript",
+                "s": "${workflow.input.parent_workflow_id}",
+                "l": "${workflow.workflowId}"
+            },
+            "type": "INLINE"
+        },
+        {
+            "name": "Page divide size",
+            "taskReferenceName": "page_divide_size_ref",
+            "inputParameters": {
+                "expression": "(function(){ return Math.floor($.s / 10) })();",
+                "evaluatorType": "javascript",
+                "s": "${workflow.input.page_size}"
+            },
+            "type": "INLINE"
+        },
+        {
+            "name": "Pagination task",
+            "taskReferenceName": "pagination_task_ref",
+            "inputParameters": {
+                "last_page": "${workflow.variables.last_page}"
+            },
+            "type": "DO_WHILE",
+            "loopCondition": "if ($.last_page) { false; } else { true; }",
+            "loopOver": [
+                {
+                    "name": "iteration_task",
+                    "taskReferenceName": "iteration_task_ref",
+                    "inputParameters": {
+                        "expression": "(function(){ return ($.i - 1 | 0);})();",
+                        "evaluatorType": "javascript",
+                        "i": "${pagination_task_ref.output.iteration}"
+                    },
+                    "type": "INLINE"
+                },
+                {
+                    "name": "Companies task",
+                    "taskReferenceName": "companies_task_ref",
+                    "inputParameters": {
+                        "http_request": {
+                            "uri": "${workflow.input.public_company_base_url}/v1/companies?size=${workflow.input.page_size}&idIpaFrom=${workflow.input.id_ipa_from}&codiceIpa=${workflow.input.codice_ipa}&codiceCategoria=${workflow.input.codice_categoria}&page=${iteration_task_ref.output.result}&sort=id",
+                            "method": "GET",
+                            "connectionTimeOut": 30000,
+                            "readTimeOut": 30000,
+                            "accept": "application/json",
+                            "contentType": "application/json"
+                        }
+                    },
+                    "type": "HTTP_WEBCLIENT"
+                },
+                {
+                    "name": "Set Last Page",
+                    "taskReferenceName": "set_last_page_ref",
+                    "inputParameters": {
+                        "last_page": "${companies_task_ref.output.response.body.last}"
+                    },
+                    "type": "SET_VARIABLE"
+                },
+                {
+                    "name": "Fork Companies",
+                    "taskReferenceName": "fork_ref",
+                    "inputParameters": {},
+                    "type": "FORK_JOIN",
+                    "decisionCases": {},
+                    "defaultCase": [],
+                    "forkTasks": [
+                        [
+                            {
+                                "name": "Companies chunk 0",
+                                "taskReferenceName": "companies_chunk_0_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_task_ref.output.response.body.content}",
+                                    "queryExpression": ".companies |.[0:${page_divide_size_ref.output.result}]"
+                                },
+                                "type": "JSON_JQ_TRANSFORM"
+                            },
+                            {
+                                "name": "Start rule workflow chunck 0",
+                                "taskReferenceName": "start_rule_workflow_chunck_0_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_chunk_0_ref.output.result}",
+                                    "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                                    "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                    "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                    "save_method": "PUT",
+                                    "rule_name": "${workflow.input.rule_name}",
+                                    "root_rule": "${workflow.input.root_rule}",
+                                    "execute_child": "${workflow.input.execute_child}",
+                                    "connection_timeout": "${workflow.input.connection_timeout}",
+                                    "read_timeout": "${workflow.input.read_timeout}",
+                                    "crawling_mode": "${workflow.input.crawling_mode}",
+                                    "result_base_url": "${workflow.input.result_base_url}",
+                                    "crawler_child_type": "${workflow.input.crawler_child_type}",
+                                    "crawler_uri": "${workflow.input.crawler_uri}",
+                                    "rule_base_url": "${workflow.input.rule_base_url}",
+                                    "force_jsoup": "${workflow.input.force_jsoup}"
+                                },
+                                "subWorkflowParam": {
+                                    "name": "rule_workflow",
+                                    "version": 1
+                                },
+                                "type": "SUB_WORKFLOW"
+                            }
+                        ],
+                        [
+                            {
+                                "name": "Companies chunk 1",
+                                "taskReferenceName": "companies_chunk_1_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_task_ref.output.response.body.content}",
+                                    "queryExpression": ".companies |.[${page_divide_size_ref.output.result}:${page_divide_size_ref.output.result} * 2]"
+                                },
+                                "type": "JSON_JQ_TRANSFORM"
+                            },
+                            {
+                                "name": "Start rule workflow chunck 1",
+                                "taskReferenceName": "start_rule_workflow_chunck_1_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_chunk_1_ref.output.result}",
+                                    "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                                    "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                    "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                    "save_method": "PUT",
+                                    "rule_name": "${workflow.input.rule_name}",
+                                    "root_rule": "${workflow.input.root_rule}",
+                                    "execute_child": "${workflow.input.execute_child}",
+                                    "connection_timeout": "${workflow.input.connection_timeout}",
+                                    "read_timeout": "${workflow.input.read_timeout}",
+                                    "crawling_mode": "${workflow.input.crawling_mode}",
+                                    "result_base_url": "${workflow.input.result_base_url}",
+                                    "crawler_child_type": "${workflow.input.crawler_child_type}",
+                                    "crawler_uri": "${workflow.input.crawler_uri}",
+                                    "rule_base_url": "${workflow.input.rule_base_url}",
+                                    "force_jsoup": "${workflow.input.force_jsoup}"
+                                },
+                                "subWorkflowParam": {
+                                    "name": "rule_workflow",
+                                    "version": 1
+                                },
+                                "type": "SUB_WORKFLOW"
+                            }
+                        ],
+                        [
+                            {
+                                "name": "Companies chunk 2",
+                                "taskReferenceName": "companies_chunk_2_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_task_ref.output.response.body.content}",
+                                    "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 2:${page_divide_size_ref.output.result} * 3]"
+                                },
+                                "type": "JSON_JQ_TRANSFORM"
+                            },
+                            {
+                                "name": "Start rule workflow chunck 2",
+                                "taskReferenceName": "start_rule_workflow_chunck_2_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_chunk_2_ref.output.result}",
+                                    "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                                    "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                    "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                    "save_method": "PUT",
+                                    "rule_name": "${workflow.input.rule_name}",
+                                    "root_rule": "${workflow.input.root_rule}",
+                                    "execute_child": "${workflow.input.execute_child}",
+                                    "connection_timeout": "${workflow.input.connection_timeout}",
+                                    "read_timeout": "${workflow.input.read_timeout}",
+                                    "crawling_mode": "${workflow.input.crawling_mode}",
+                                    "result_base_url": "${workflow.input.result_base_url}",
+                                    "crawler_child_type": "${workflow.input.crawler_child_type}",
+                                    "crawler_uri": "${workflow.input.crawler_uri}",
+                                    "rule_base_url": "${workflow.input.rule_base_url}",
+                                    "force_jsoup": "${workflow.input.force_jsoup}"
+                                },
+                                "subWorkflowParam": {
+                                    "name": "rule_workflow",
+                                    "version": 1
+                                },
+                                "type": "SUB_WORKFLOW"
+                            }
+                        ],
+                        [
+                            {
+                                "name": "Companies chunk 3",
+                                "taskReferenceName": "companies_chunk_3_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_task_ref.output.response.body.content}",
+                                    "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 3:${page_divide_size_ref.output.result} * 4]"
+                                },
+                                "type": "JSON_JQ_TRANSFORM"
+                            },
+                            {
+                                "name": "Start rule workflow chunck 3",
+                                "taskReferenceName": "start_rule_workflow_chunck_3_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_chunk_3_ref.output.result}",
+                                    "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                                    "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                    "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                    "save_method": "PUT",
+                                    "rule_name": "${workflow.input.rule_name}",
+                                    "root_rule": "${workflow.input.root_rule}",
+                                    "execute_child": "${workflow.input.execute_child}",
+                                    "connection_timeout": "${workflow.input.connection_timeout}",
+                                    "read_timeout": "${workflow.input.read_timeout}",
+                                    "crawling_mode": "${workflow.input.crawling_mode}",
+                                    "result_base_url": "${workflow.input.result_base_url}",
+                                    "crawler_child_type": "${workflow.input.crawler_child_type}",
+                                    "crawler_uri": "${workflow.input.crawler_uri}",
+                                    "rule_base_url": "${workflow.input.rule_base_url}",
+                                    "force_jsoup": "${workflow.input.force_jsoup}"
+                                },
+                                "subWorkflowParam": {
+                                    "name": "rule_workflow",
+                                    "version": 1
+                                },
+                                "type": "SUB_WORKFLOW"
+                            }
+                        ],
+                        [
+                            {
+                                "name": "Companies chunk 4",
+                                "taskReferenceName": "companies_chunk_4_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_task_ref.output.response.body.content}",
+                                    "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 4:${page_divide_size_ref.output.result} * 5]"
+                                },
+                                "type": "JSON_JQ_TRANSFORM"
+                            },
+                            {
+                                "name": "Start rule workflow chunck 4",
+                                "taskReferenceName": "start_rule_workflow_chunck_4_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_chunk_4_ref.output.result}",
+                                    "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                                    "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                    "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                    "save_method": "PUT",
+                                    "rule_name": "${workflow.input.rule_name}",
+                                    "root_rule": "${workflow.input.root_rule}",
+                                    "execute_child": "${workflow.input.execute_child}",
+                                    "connection_timeout": "${workflow.input.connection_timeout}",
+                                    "read_timeout": "${workflow.input.read_timeout}",
+                                    "crawling_mode": "${workflow.input.crawling_mode}",
+                                    "result_base_url": "${workflow.input.result_base_url}",
+                                    "crawler_child_type": "${workflow.input.crawler_child_type}",
+                                    "crawler_uri": "${workflow.input.crawler_uri}",
+                                    "rule_base_url": "${workflow.input.rule_base_url}",
+                                    "force_jsoup": "${workflow.input.force_jsoup}"
+                                },
+                                "subWorkflowParam": {
+                                    "name": "rule_workflow",
+                                    "version": 1
+                                },
+                                "type": "SUB_WORKFLOW"
+                            }
+                        ],
+                        [
+                            {
+                                "name": "Companies chunk 5",
+                                "taskReferenceName": "companies_chunk_5_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_task_ref.output.response.body.content}",
+                                    "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 5:${page_divide_size_ref.output.result} * 6]"
+                                },
+                                "type": "JSON_JQ_TRANSFORM"
+                            },
+                            {
+                                "name": "Start rule workflow chunck 5",
+                                "taskReferenceName": "start_rule_workflow_chunck_5_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_chunk_5_ref.output.result}",
+                                    "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                                    "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                    "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                    "save_method": "PUT",
+                                    "rule_name": "${workflow.input.rule_name}",
+                                    "root_rule": "${workflow.input.root_rule}",
+                                    "execute_child": "${workflow.input.execute_child}",
+                                    "connection_timeout": "${workflow.input.connection_timeout}",
+                                    "read_timeout": "${workflow.input.read_timeout}",
+                                    "crawling_mode": "${workflow.input.crawling_mode}",
+                                    "result_base_url": "${workflow.input.result_base_url}",
+                                    "crawler_child_type": "${workflow.input.crawler_child_type}",
+                                    "crawler_uri": "${workflow.input.crawler_uri}",
+                                    "rule_base_url": "${workflow.input.rule_base_url}",
+                                    "force_jsoup": "${workflow.input.force_jsoup}"
+                                },
+                                "subWorkflowParam": {
+                                    "name": "rule_workflow",
+                                    "version": 1
+                                },
+                                "type": "SUB_WORKFLOW"
+                            }
+                        ],
+                        [
+                            {
+                                "name": "Companies chunk 6",
+                                "taskReferenceName": "companies_chunk_6_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_task_ref.output.response.body.content}",
+                                    "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 6:${page_divide_size_ref.output.result} * 7]"
+                                },
+                                "type": "JSON_JQ_TRANSFORM"
+                            },
+                            {
+                                "name": "Start rule workflow chunck 6",
+                                "taskReferenceName": "start_rule_workflow_chunck_6_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_chunk_6_ref.output.result}",
+                                    "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                                    "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                    "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                    "save_method": "PUT",
+                                    "rule_name": "${workflow.input.rule_name}",
+                                    "root_rule": "${workflow.input.root_rule}",
+                                    "execute_child": "${workflow.input.execute_child}",
+                                    "connection_timeout": "${workflow.input.connection_timeout}",
+                                    "read_timeout": "${workflow.input.read_timeout}",
+                                    "crawling_mode": "${workflow.input.crawling_mode}",
+                                    "result_base_url": "${workflow.input.result_base_url}",
+                                    "crawler_child_type": "${workflow.input.crawler_child_type}",
+                                    "crawler_uri": "${workflow.input.crawler_uri}",
+                                    "rule_base_url": "${workflow.input.rule_base_url}",
+                                    "force_jsoup": "${workflow.input.force_jsoup}"
+                                },
+                                "subWorkflowParam": {
+                                    "name": "rule_workflow",
+                                    "version": 1
+                                },
+                                "type": "SUB_WORKFLOW"
+                            }
+                        ],
+                        [
+                            {
+                                "name": "Companies chunk 7",
+                                "taskReferenceName": "companies_chunk_7_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_task_ref.output.response.body.content}",
+                                    "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 7:${page_divide_size_ref.output.result} * 8]"
+                                },
+                                "type": "JSON_JQ_TRANSFORM"
+                            },
+                            {
+                                "name": "Start rule workflow chunck 7",
+                                "taskReferenceName": "start_rule_workflow_chunck_7_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_chunk_7_ref.output.result}",
+                                    "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                                    "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                    "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                    "save_method": "PUT",
+                                    "rule_name": "${workflow.input.rule_name}",
+                                    "root_rule": "${workflow.input.root_rule}",
+                                    "execute_child": "${workflow.input.execute_child}",
+                                    "connection_timeout": "${workflow.input.connection_timeout}",
+                                    "read_timeout": "${workflow.input.read_timeout}",
+                                    "crawling_mode": "${workflow.input.crawling_mode}",
+                                    "result_base_url": "${workflow.input.result_base_url}",
+                                    "crawler_child_type": "${workflow.input.crawler_child_type}",
+                                    "crawler_uri": "${workflow.input.crawler_uri}",
+                                    "rule_base_url": "${workflow.input.rule_base_url}",
+                                    "force_jsoup": "${workflow.input.force_jsoup}"
+                                },
+                                "subWorkflowParam": {
+                                    "name": "rule_workflow",
+                                    "version": 1
+                                },
+                                "type": "SUB_WORKFLOW"
+                            }
+                        ],
+                        [
+                            {
+                                "name": "Companies chunk 8",
+                                "taskReferenceName": "companies_chunk_8_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_task_ref.output.response.body.content}",
+                                    "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 8:${page_divide_size_ref.output.result} * 9]"
+                                },
+                                "type": "JSON_JQ_TRANSFORM"
+                            },
+                            {
+                                "name": "Start rule workflow chunck 8",
+                                "taskReferenceName": "start_rule_workflow_chunck_8_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_chunk_8_ref.output.result}",
+                                    "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                                    "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                    "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                    "save_method": "PUT",
+                                    "rule_name": "${workflow.input.rule_name}",
+                                    "root_rule": "${workflow.input.root_rule}",
+                                    "execute_child": "${workflow.input.execute_child}",
+                                    "connection_timeout": "${workflow.input.connection_timeout}",
+                                    "read_timeout": "${workflow.input.read_timeout}",
+                                    "crawling_mode": "${workflow.input.crawling_mode}",
+                                    "result_base_url": "${workflow.input.result_base_url}",
+                                    "crawler_child_type": "${workflow.input.crawler_child_type}",
+                                    "crawler_uri": "${workflow.input.crawler_uri}",
+                                    "rule_base_url": "${workflow.input.rule_base_url}",
+                                    "force_jsoup": "${workflow.input.force_jsoup}"
+                                },
+                                "subWorkflowParam": {
+                                    "name": "rule_workflow",
+                                    "version": 1
+                                },
+                                "type": "SUB_WORKFLOW"
+                            }
+                        ],
+                        [
+                            {
+                                "name": "Companies chunk 9",
+                                "taskReferenceName": "companies_chunk_9_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_task_ref.output.response.body.content}",
+                                    "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 9:${workflow.input.page_size}]"
+                                },
+                                "type": "JSON_JQ_TRANSFORM"
+                            },
+                            {
+                                "name": "Start rule workflow chunck 9",
+                                "taskReferenceName": "start_rule_workflow_chunck_9_ref",
+                                "inputParameters": {
+                                    "companies": "${companies_chunk_9_ref.output.result}",
+                                    "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
+                                    "crawler_save_object": "${workflow.input.crawler_save_object}",
+                                    "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
+                                    "save_method": "PUT",
+                                    "rule_name": "${workflow.input.rule_name}",
+                                    "root_rule": "${workflow.input.root_rule}",
+                                    "execute_child": "${workflow.input.execute_child}",
+                                    "connection_timeout": "${workflow.input.connection_timeout}",
+                                    "read_timeout": "${workflow.input.read_timeout}",
+                                    "crawling_mode": "${workflow.input.crawling_mode}",
+                                    "result_base_url": "${workflow.input.result_base_url}",
+                                    "crawler_child_type": "${workflow.input.crawler_child_type}",
+                                    "crawler_uri": "${workflow.input.crawler_uri}",
+                                    "rule_base_url": "${workflow.input.rule_base_url}",
+                                    "force_jsoup": "${workflow.input.force_jsoup}"
+                                },
+                                "subWorkflowParam": {
+                                    "name": "rule_workflow",
+                                    "version": 1
+                                },
+                                "type": "SUB_WORKFLOW"
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "Join",
+                    "taskReferenceName": "join_ref",
+                    "inputParameters": {},
+                    "type": "JOIN",
+                    "decisionCases": {},
+                    "defaultCase": [],
+                    "forkTasks": [],
+                    "startDelay": 0,
+                    "joinOn": [
+                        "start_rule_workflow_chunck_0_ref",
+                        "start_rule_workflow_chunck_1_ref",
+                        "start_rule_workflow_chunck_2_ref",
+                        "start_rule_workflow_chunck_3_ref",
+                        "start_rule_workflow_chunck_4_ref",
+                        "start_rule_workflow_chunck_5_ref",
+                        "start_rule_workflow_chunck_6_ref",
+                        "start_rule_workflow_chunck_7_ref",
+                        "start_rule_workflow_chunck_8_ref",
+                        "start_rule_workflow_chunck_9_ref"
+                    ],
+                    "optional": false,
+                    "defaultExclusiveJoinTask": [],
+                    "asyncComplete": false,
+                    "loopOver": [],
+                    "onStateChange": {}
+                }
+            ],
+            "evaluatorType": "value-param",
+            "onStateChange": {}
+        },
+        {
+            "name": "Codice IPA present",
+            "taskReferenceName": "codice_ipa_present_ref",
+            "inputParameters": {
+                "expression": "(function(){ if ($.s != undefined && $.s.length > 0){return true;} else { return false;} })();",
+                "evaluatorType": "javascript",
+                "s": "${workflow.input.codice_ipa}"
+            },
+            "type": "INLINE"
+        },
+        {
+            "name": "Switch codice IPA",
+            "taskReferenceName": "switch_codice_ipa_ref",
+            "inputParameters": {
+                "exists": "${codice_ipa_present_ref.output.result}"
+            },
+            "type": "SWITCH",
+            "defaultCase": [],
+            "evaluatorType": "value-param",
+            "expression": "exists",
+            "decisionCases": {
+                "false": [
+                    {
+                        "name": "Start Crawler 400 HTTP Stream",
+                        "taskReferenceName": "start_crawler_400_http_stream_ref",
+                        "inputParameters": {
+                            "status": "400",
+                            "codice_ipa": "%",
+                            "workflowId": "${parent_workflow_id_ref.output.result}",
+                            "crawler_save_object": "true",
+                            "crawler_save_screenshot": "true",
+                            "rule_name": "${workflow.input.rule_name}",
+                            "root_rule": "${workflow.input.root_rule}",
+                            "execute_child": "${workflow.input.execute_child}",
+                            "connection_timeout": "${workflow.input.connection_timeout_max}",
+                            "read_timeout": "${workflow.input.read_timeout_max}",
+                            "crawling_mode": "htmlSource",
+                            "result_base_url": "${workflow.input.result_base_url}",
+                            "crawler_child_type": "${workflow.input.crawler_child_type}",
+                            "crawler_uri": "${workflow.input.crawler_uri}",
+                            "rule_base_url": "${workflow.input.rule_base_url}",
+                            "force_jsoup": "${workflow.input.force_jsoup}",
+                            "filter_by_rule": "true"
+                        },
+                        "subWorkflowParam": {
+                            "name": "crawler_result_failed",
+                            "version": 1
+                        },
+                        "type": "SUB_WORKFLOW"
+                    },
+                    {
+                        "name": "Start Crawler Failed 407",
+                        "taskReferenceName": "start_crawler_failed_407_ref",
+                        "inputParameters": {
+                            "status": "407",
+                            "codice_ipa": "%",
+                            "workflowId": "${parent_workflow_id_ref.output.result}",
+                            "crawler_save_object": "true",
+                            "crawler_save_screenshot": "true",
+                            "rule_name": "${workflow.input.rule_name}",
+                            "root_rule": "${workflow.input.root_rule}",
+                            "execute_child": "${workflow.input.execute_child}",
+                            "connection_timeout": "${workflow.input.connection_timeout_max}",
+                            "read_timeout": "${workflow.input.read_timeout_max}",
+                            "crawling_mode": "htmlSource",
+                            "result_base_url": "${workflow.input.result_base_url}",
+                            "crawler_child_type": "${workflow.input.crawler_child_type}",
+                            "crawler_uri": "${workflow.input.crawler_uri}",
+                            "rule_base_url": "${workflow.input.rule_base_url}",
+                            "force_jsoup": "${workflow.input.force_jsoup}",
+                            "filter_by_rule": "false"
+                        },
+                        "subWorkflowParam": {
+                            "name": "crawler_result_failed",
+                            "version": 1
+                        },
+                        "type": "SUB_WORKFLOW"
+                    },
+                    {
+                        "name": "Create Map",
+                        "taskReferenceName": "create_map_ref",
+                        "inputParameters": {
+                            "http_request": {
+                                "uri": "${workflow.input.result_aggregator_base_url}/v1/aggregator/geojson?workflowId=${parent_workflow_id_ref.output.result}",
+                                "method": "PUT",
+                                "connectionTimeOut": 1000,
+                                "readTimeOut": 5000
+                            }
+                        },
+                        "type": "HTTP_WEBCLIENT",
+                        "startDelay": 0,
+                        "optional": true,
+                        "asyncComplete": false
+                    }
+                ]
             }
-          },
-          "type": "HTTP_WEBCLIENT"
-        },
-        {
-          "name": "Set Last Page",
-          "taskReferenceName": "set_last_page_ref",
-          "inputParameters": {
-            "last_page": "${companies_task_ref.output.response.body.last}"
-          },
-          "type": "SET_VARIABLE"
-        },
-        {
-          "name": "Fork Companies",
-          "taskReferenceName": "fork_ref",
-          "inputParameters": {},
-          "type": "FORK_JOIN",
-          "decisionCases": {},
-          "defaultCase": [],
-          "forkTasks": [
-            [
-              {
-                "name": "Companies chunk 0",
-                "taskReferenceName": "companies_chunk_0_ref",
-                "inputParameters": {
-                  "companies": "${companies_task_ref.output.response.body.content}",
-                  "queryExpression": ".companies |.[0:${page_divide_size_ref.output.result}]"
-                },
-                "type": "JSON_JQ_TRANSFORM"
-              },
-              {
-                "name": "Start rule workflow chunck 0",
-                "taskReferenceName": "start_rule_workflow_chunck_0_ref",
-                "inputParameters": {
-                  "companies": "${companies_chunk_0_ref.output.result}",
-                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "PUT",
-                  "rule_name": "${workflow.input.rule_name}",
-                  "root_rule": "${workflow.input.root_rule}",
-                  "execute_child": "${workflow.input.execute_child}",
-                  "connection_timeout": "${workflow.input.connection_timeout}",
-                  "read_timeout": "${workflow.input.read_timeout}",
-                  "crawling_mode": "${workflow.input.crawling_mode}",
-                  "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}",
-                  "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}"
-                },
-                "subWorkflowParam": {
-                  "name": "rule_workflow",
-                  "version": 1
-                },                
-                "type": "SUB_WORKFLOW"
-              }
-            ],
-            [
-              {
-                "name": "Companies chunk 1",
-                "taskReferenceName": "companies_chunk_1_ref",
-                "inputParameters": {
-                "companies": "${companies_task_ref.output.response.body.content}",
-                "queryExpression": ".companies |.[${page_divide_size_ref.output.result}:${page_divide_size_ref.output.result} * 2]"
-              },
-              "type": "JSON_JQ_TRANSFORM"
-              },
-              {
-                "name": "Start rule workflow chunck 1",
-                "taskReferenceName": "start_rule_workflow_chunck_1_ref",
-                "inputParameters": {
-                  "companies": "${companies_chunk_1_ref.output.result}",
-                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "PUT",
-                  "rule_name": "${workflow.input.rule_name}",
-                  "root_rule": "${workflow.input.root_rule}",
-                  "execute_child": "${workflow.input.execute_child}",
-                  "connection_timeout": "${workflow.input.connection_timeout}",
-                  "read_timeout": "${workflow.input.read_timeout}",
-                  "crawling_mode": "${workflow.input.crawling_mode}",
-                  "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}",
-                  "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}"
-                },
-                "subWorkflowParam": {
-                  "name": "rule_workflow",
-                  "version": 1
-                },
-                "type": "SUB_WORKFLOW"
-              }
-            ],
-            [
-              {
-                "name": "Companies chunk 2",
-                "taskReferenceName": "companies_chunk_2_ref",
-                "inputParameters": {
-                "companies": "${companies_task_ref.output.response.body.content}",
-                "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 2:${page_divide_size_ref.output.result} * 3]"
-              },
-              "type": "JSON_JQ_TRANSFORM"
-              },
-              {
-                "name": "Start rule workflow chunck 2",
-                "taskReferenceName": "start_rule_workflow_chunck_2_ref",
-                "inputParameters": {
-                  "companies": "${companies_chunk_2_ref.output.result}",
-                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "PUT",
-                  "rule_name": "${workflow.input.rule_name}",
-                  "root_rule": "${workflow.input.root_rule}",
-                  "execute_child": "${workflow.input.execute_child}",
-                  "connection_timeout": "${workflow.input.connection_timeout}",
-                  "read_timeout": "${workflow.input.read_timeout}",
-                  "crawling_mode": "${workflow.input.crawling_mode}",
-                  "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}",
-                  "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}"
-                },
-                "subWorkflowParam": {
-                  "name": "rule_workflow",
-                  "version": 1
-                },                
-                "type": "SUB_WORKFLOW"
-              }
-            ],
-            [
-              {
-                "name": "Companies chunk 3",
-                "taskReferenceName": "companies_chunk_3_ref",
-                "inputParameters": {
-                 "companies": "${companies_task_ref.output.response.body.content}",
-                 "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 3:${page_divide_size_ref.output.result} * 4]"
-                },
-                "type": "JSON_JQ_TRANSFORM"
-              },
-              {
-                "name": "Start rule workflow chunck 3",
-                "taskReferenceName": "start_rule_workflow_chunck_3_ref",
-                "inputParameters": {
-                  "companies": "${companies_chunk_3_ref.output.result}",
-                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "PUT",
-                  "rule_name": "${workflow.input.rule_name}",
-                  "root_rule": "${workflow.input.root_rule}",
-                  "execute_child": "${workflow.input.execute_child}",
-                  "connection_timeout": "${workflow.input.connection_timeout}",
-                  "read_timeout": "${workflow.input.read_timeout}",
-                  "crawling_mode": "${workflow.input.crawling_mode}",
-                  "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}",
-                  "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}"
-                },
-                "subWorkflowParam": {
-                  "name": "rule_workflow",
-                  "version": 1
-                },                
-                "type": "SUB_WORKFLOW"
-              }
-            ],
-            [
-              {
-                "name": "Companies chunk 4",
-                "taskReferenceName": "companies_chunk_4_ref",
-                "inputParameters": {
-                 "companies": "${companies_task_ref.output.response.body.content}",
-                 "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 4:${page_divide_size_ref.output.result} * 5]"
-                },
-                "type": "JSON_JQ_TRANSFORM"
-              },
-              {
-                "name": "Start rule workflow chunck 4",
-                "taskReferenceName": "start_rule_workflow_chunck_4_ref",
-                "inputParameters": {
-                  "companies": "${companies_chunk_4_ref.output.result}",
-                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "PUT",
-                  "rule_name": "${workflow.input.rule_name}",
-                  "root_rule": "${workflow.input.root_rule}",
-                  "execute_child": "${workflow.input.execute_child}",
-                  "connection_timeout": "${workflow.input.connection_timeout}",
-                  "read_timeout": "${workflow.input.read_timeout}",
-                  "crawling_mode": "${workflow.input.crawling_mode}",
-                  "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}",
-                  "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}"
-                },
-                "subWorkflowParam": {
-                  "name": "rule_workflow",
-                  "version": 1
-                },
-                "type": "SUB_WORKFLOW"
-              }
-            ],
-            [
-              {
-                "name": "Companies chunk 5",
-                "taskReferenceName": "companies_chunk_5_ref",
-                "inputParameters": {
-                 "companies": "${companies_task_ref.output.response.body.content}",
-                 "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 5:${page_divide_size_ref.output.result} * 6]"
-                },
-                "type": "JSON_JQ_TRANSFORM"
-              },
-              {
-                "name": "Start rule workflow chunck 5",
-                "taskReferenceName": "start_rule_workflow_chunck_5_ref",
-                "inputParameters": {
-                  "companies": "${companies_chunk_5_ref.output.result}",
-                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "PUT",
-                  "rule_name": "${workflow.input.rule_name}",
-                  "root_rule": "${workflow.input.root_rule}",
-                  "execute_child": "${workflow.input.execute_child}",
-                  "connection_timeout": "${workflow.input.connection_timeout}",
-                  "read_timeout": "${workflow.input.read_timeout}",
-                  "crawling_mode": "${workflow.input.crawling_mode}",
-                  "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}",
-                  "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}"
-                },
-                "subWorkflowParam": {
-                  "name": "rule_workflow",
-                  "version": 1
-                },                
-                "type": "SUB_WORKFLOW"
-              }
-            ],
-            [
-              {
-                "name": "Companies chunk 6",
-                "taskReferenceName": "companies_chunk_6_ref",
-                "inputParameters": {
-                 "companies": "${companies_task_ref.output.response.body.content}",
-                 "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 6:${page_divide_size_ref.output.result} * 7]"
-                },
-                "type": "JSON_JQ_TRANSFORM"
-              },
-              {
-                "name": "Start rule workflow chunck 6",
-                "taskReferenceName": "start_rule_workflow_chunck_6_ref",
-                "inputParameters": {
-                  "companies": "${companies_chunk_6_ref.output.result}",
-                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "PUT",
-                  "rule_name": "${workflow.input.rule_name}",
-                  "root_rule": "${workflow.input.root_rule}",
-                  "execute_child": "${workflow.input.execute_child}",
-                  "connection_timeout": "${workflow.input.connection_timeout}",
-                  "read_timeout": "${workflow.input.read_timeout}",
-                  "crawling_mode": "${workflow.input.crawling_mode}",
-                  "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}",
-                  "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}"
-                },
-                "subWorkflowParam": {
-                  "name": "rule_workflow",
-                  "version": 1
-                },                
-                "type": "SUB_WORKFLOW"
-              }
-            ],
-            [
-              {
-                "name": "Companies chunk 7",
-                "taskReferenceName": "companies_chunk_7_ref",
-                "inputParameters": {
-                 "companies": "${companies_task_ref.output.response.body.content}",
-                 "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 7:${page_divide_size_ref.output.result} * 8]"
-                },
-                "type": "JSON_JQ_TRANSFORM"
-              },
-              {
-                "name": "Start rule workflow chunck 7",
-                "taskReferenceName": "start_rule_workflow_chunck_7_ref",
-                "inputParameters": {
-                  "companies": "${companies_chunk_7_ref.output.result}",
-                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "PUT",
-                  "rule_name": "${workflow.input.rule_name}",
-                  "root_rule": "${workflow.input.root_rule}",
-                  "execute_child": "${workflow.input.execute_child}",
-                  "connection_timeout": "${workflow.input.connection_timeout}",
-                  "read_timeout": "${workflow.input.read_timeout}",
-                  "crawling_mode": "${workflow.input.crawling_mode}",
-                  "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}",
-                  "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}"
-                },
-                "subWorkflowParam": {
-                  "name": "rule_workflow",
-                  "version": 1
-                },
-                "type": "SUB_WORKFLOW"
-              }
-            ],
-            [
-              {
-                "name": "Companies chunk 8",
-                "taskReferenceName": "companies_chunk_8_ref",
-                "inputParameters": {
-                 "companies": "${companies_task_ref.output.response.body.content}",
-                 "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 8:${page_divide_size_ref.output.result} * 9]"
-                },
-                "type": "JSON_JQ_TRANSFORM"
-              },
-              {
-                "name": "Start rule workflow chunck 8",
-                "taskReferenceName": "start_rule_workflow_chunck_8_ref",
-                "inputParameters": {
-                  "companies": "${companies_chunk_8_ref.output.result}",
-                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "PUT",
-                  "rule_name": "${workflow.input.rule_name}",
-                  "root_rule": "${workflow.input.root_rule}",
-                  "execute_child": "${workflow.input.execute_child}",
-                  "connection_timeout": "${workflow.input.connection_timeout}",
-                  "read_timeout": "${workflow.input.read_timeout}",
-                  "crawling_mode": "${workflow.input.crawling_mode}",
-                  "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}",
-                  "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}"
-                },
-                "subWorkflowParam": {
-                  "name": "rule_workflow",
-                  "version": 1
-                },                
-                "type": "SUB_WORKFLOW"
-              }
-            ],
-            [
-              {
-                "name": "Companies chunk 9",
-                "taskReferenceName": "companies_chunk_9_ref",
-                "inputParameters": {
-                 "companies": "${companies_task_ref.output.response.body.content}",
-                 "queryExpression": ".companies |.[${page_divide_size_ref.output.result} * 9:${workflow.input.page_size}]"
-                },
-                "type": "JSON_JQ_TRANSFORM"
-              },
-              {
-                "name": "Start rule workflow chunck 9",
-                "taskReferenceName": "start_rule_workflow_chunck_9_ref",
-                "inputParameters": {
-                  "companies": "${companies_chunk_9_ref.output.result}",
-                  "parent_workflow_id": "${parent_workflow_id_ref.output.result}",
-                  "crawler_save_object": "${workflow.input.crawler_save_object}",
-                  "crawler_save_screenshot": "${workflow.input.crawler_save_screenshot}",
-                  "save_method": "PUT",
-                  "rule_name": "${workflow.input.rule_name}",
-                  "root_rule": "${workflow.input.root_rule}",
-                  "execute_child": "${workflow.input.execute_child}",
-                  "connection_timeout": "${workflow.input.connection_timeout}",
-                  "read_timeout": "${workflow.input.read_timeout}",
-                  "crawling_mode": "${workflow.input.crawling_mode}",
-                  "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}",
-                  "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}"
-                },
-                "subWorkflowParam": {
-                  "name": "rule_workflow",
-                  "version": 1
-                },                
-                "type": "SUB_WORKFLOW"
-              }
-            ]
-          ]
-        },
-        {
-          "name": "Join",
-          "taskReferenceName": "join_ref",
-          "inputParameters": {},
-          "type": "JOIN",
-          "decisionCases": {},
-          "defaultCase": [],
-          "forkTasks": [],
-          "startDelay": 0,
-          "joinOn": [
-            "start_rule_workflow_chunck_0_ref",
-            "start_rule_workflow_chunck_1_ref",
-            "start_rule_workflow_chunck_2_ref",
-            "start_rule_workflow_chunck_3_ref",
-            "start_rule_workflow_chunck_4_ref",
-            "start_rule_workflow_chunck_5_ref",
-            "start_rule_workflow_chunck_6_ref",
-            "start_rule_workflow_chunck_7_ref",
-            "start_rule_workflow_chunck_8_ref",
-            "start_rule_workflow_chunck_9_ref"
-          ],
-          "optional": false,
-          "defaultExclusiveJoinTask": [],
-          "asyncComplete": false,
-          "loopOver": [],
-          "onStateChange": {}
         }
-      ],
-      "evaluatorType": "value-param",
-      "onStateChange": {}
-    },
-    {
-        "name": "Codice IPA present",
-        "taskReferenceName": "codice_ipa_present_ref",
-        "inputParameters": {
-            "expression": "(function(){ if ($.s != undefined && $.s.length > 0){return true;} else { return false;} })();",
-            "evaluatorType": "javascript",
-            "s": "${workflow.input.codice_ipa}"
-        },
-        "type": "INLINE"
-    },
-    {
-        "name": "Switch codice IPA",
-        "taskReferenceName": "switch_codice_ipa_ref",
-        "inputParameters": {
-            "exists": "${codice_ipa_present_ref.output.result}"
-        },
-        "type": "SWITCH",
-        "defaultCase": [],
-        "evaluatorType": "value-param",
-        "expression": "exists",
-        "decisionCases": {
-            "false": [
-              {
-                "name": "Start Crawler 400 HTTP Stream",
-                "taskReferenceName": "start_crawler_400_http_stream_ref",
-                "inputParameters": {
-                  "status": "400",
-                  "codice_ipa": "%",
-                  "workflowId": "${parent_workflow_id_ref.output.result}",
-                  "crawler_save_object": "true",
-                  "crawler_save_screenshot": "true",
-                  "rule_name": "${workflow.input.rule_name}",
-                  "root_rule": "${workflow.input.root_rule}",
-                  "execute_child": "${workflow.input.execute_child}",
-                  "connection_timeout": "${workflow.input.connection_timeout_max}",
-                  "read_timeout": "${workflow.input.read_timeout_max}",
-                  "crawling_mode": "htmlSource",
-                  "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}",
-                  "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}",
-                  "filter_by_rule": "true"
-                },
-                "subWorkflowParam": {
-                  "name": "crawler_result_failed",
-                  "version": 1
-                },
-                "type": "SUB_WORKFLOW"
-              },
-              {
-                "name": "Start Crawler Failed 407",
-                "taskReferenceName": "start_crawler_failed_407_ref",
-                "inputParameters": {
-                  "status": "407",
-                  "codice_ipa": "%",
-                  "workflowId": "${parent_workflow_id_ref.output.result}",
-                  "crawler_save_object": "true",
-                  "crawler_save_screenshot": "true",
-                  "rule_name": "${workflow.input.rule_name}",
-                  "root_rule": "${workflow.input.root_rule}",
-                  "execute_child": "${workflow.input.execute_child}",
-                  "connection_timeout": "${workflow.input.connection_timeout_max}",
-                  "read_timeout": "${workflow.input.read_timeout_max}",
-                  "crawling_mode": "htmlSource",
-                  "result_base_url": "${workflow.input.result_base_url}",
-                  "crawler_child_type": "${workflow.input.crawler_child_type}",
-                  "crawler_uri": "${workflow.input.crawler_uri}",
-                  "rule_base_url": "${workflow.input.rule_base_url}",
-                  "filter_by_rule": "false"
-                },
-                "subWorkflowParam": {
-                  "name": "crawler_result_failed",
-                  "version": 1
-                },                
-                "type": "SUB_WORKFLOW"
-              },
-              {
-                "name": "Create Map",
-                "taskReferenceName": "create_map_ref",
-                "inputParameters": {
-                  "http_request": {
-                      "uri": "${workflow.input.result_aggregator_base_url}/v1/aggregator/geojson?workflowId=${parent_workflow_id_ref.output.result}",
-                      "method": "PUT",
-                      "connectionTimeOut": 1000,
-                      "readTimeOut": 5000
-                  }
-                },
-                "type": "HTTP_WEBCLIENT",
-                "startDelay": 0,
-                "optional": true,
-                "asyncComplete": false
-              }
-            ]
-        }
-    }      
-  ],
-  "inputParameters": [
-    "page_size",
-    "parent_workflow_id",
-    "codice_categoria",
-    "codice_ipa",
-    "crawling_mode",
-    "crawler_save_object",
-    "crawler_save_screenshot",
-    "rule_name",
-    "root_rule",
-    "execute_child",
-    "id_ipa_from",
-    "connection_timeout",
-    "read_timeout",
-    "connection_timeout_max",
-    "read_timeout_max",
-    "rule_base_url",
-    "public_company_base_url",
-    "result_aggregator_base_url",
-    "result_base_url",
-    "crawler_child_type",
-    "crawler_uri"
-  ],
-  "outputParameters": {},
-  "schemaVersion": 2,
-  "restartable": true,
-  "workflowStatusListenerEnabled": false,
-  "ownerEmail": "marco.spasiano@gmail.com",
-  "timeoutPolicy": "ALERT_ONLY",
-  "timeoutSeconds": 360000,
-  "variables": {},
-  "inputTemplate": {}
+    ],
+    "inputParameters": [
+        "page_size",
+        "parent_workflow_id",
+        "codice_categoria",
+        "codice_ipa",
+        "crawling_mode",
+        "crawler_save_object",
+        "crawler_save_screenshot",
+        "rule_name",
+        "root_rule",
+        "execute_child",
+        "id_ipa_from",
+        "connection_timeout",
+        "read_timeout",
+        "connection_timeout_max",
+        "read_timeout_max",
+        "force_jsoup",
+        "rule_base_url",
+        "public_company_base_url",
+        "result_aggregator_base_url",
+        "result_base_url",
+        "crawler_child_type",
+        "crawler_uri"
+    ],
+    "outputParameters": {},
+    "schemaVersion": 2,
+    "restartable": true,
+    "workflowStatusListenerEnabled": false,
+    "ownerEmail": "marco.spasiano@gmail.com",
+    "timeoutPolicy": "ALERT_ONLY",
+    "timeoutSeconds": 360000,
+    "variables": {},
+    "inputTemplate": {}
 }

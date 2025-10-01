@@ -20,6 +20,7 @@ Il flusso [principale](crawler_amministrazione_trasparente.json) necessita dei s
 | rule_name                  | Nome della regola                        					  | amministrazione-trasparente | No     |
 | root_rule                  | Nome della regola di base dell'albero    					  | amministrazione-trasparente | No     |
 | execute_child              | Booleano indica se controllare le regole figlie                | true                        | No     |
+| force_jsoup              	 | Forza l'utilizzo di JSOUP per determinare gli anchor           | true                        | No     |
 | id_ipa_from                | Identificativo numerico della PA da cui partire                | 0                           | No     |  
 | connection_timeout         | Timeout in millisecondi della connessione                      | 60000                       | No     | 
 | read_timeout               | Timeout in millisecondi della lettura                          | 60000                       | No     | 

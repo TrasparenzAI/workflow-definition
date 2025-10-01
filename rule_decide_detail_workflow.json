@@ -124,7 +124,7 @@
           "taskReferenceName": "rule_http_stream_ref",
           "inputParameters": {
             "http_request": {
-              "uri": "${workflow.input.rule_base_url}/v1/rules/child?rootRule=${workflow.input.root_rule}&ruleName=${workflow.input.rule_name}&atLeastHalf=true",
+              "uri": "${workflow.input.rule_base_url}/v1/rules/child?rootRule=${workflow.input.root_rule}&ruleName=${workflow.input.rule_name}&atLeastHalf=true&forceJsoup=${workflow.input.force_jsoup}",
               "body": "${crawler_http_stream_ref.output.response.body.htmlPage}",
               "method": "POST",
               "connectionTimeOut": 1000,
@@ -199,6 +199,7 @@
     "read_timeout",
     "connection_timeout_max",
     "read_timeout_max",
+    "force_jsoup",
     "rule_base_url",
     "public_company_base_url",
     "result_aggregator_base_url",
