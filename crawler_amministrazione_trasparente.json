@@ -3,8 +3,52 @@
     "updateTime": 1706173716218,
     "name": "crawler_amministrazione_trasparente",
     "description": "Crawler Amministrazione Trasparente",
-    "version": 1,
+    "version": 2,
     "tasks": [
+        {
+          "name": "Current time start",
+          "taskReferenceName": "get_current_time_start_ref",
+          "type": "INLINE",
+          "inputParameters": {
+            "evaluatorType": "javascript",
+            "expression": "function e() { return Date.now(); } e();"
+          }
+        },
+        {
+            "name": "Result JSON Add workflow",
+            "taskReferenceName": "result_json_add_workflow_ref",
+            "inputParameters": {
+              "workflowId": "${workflow.workflowId}",
+              "codiceIpa": "${workflow.input.codice_ipa}",
+              "rootRule": "${workflow.input.root_rule}",
+              "status": "${workflow.status}",
+              "createTime": "${get_current_time_start_ref.output.result}",              
+              "startTime": "${get_current_time_start_ref.output.result}",              
+              "queryExpression": "{workflowId: .workflowId, codiceIpa: .codiceIpa, rootRule: .rootRule, status: .status, startTime: .startTime, createTime: .createTime}"
+            },
+            "type": "JSON_JQ_TRANSFORM",
+            "retryCount": 0,
+            "startDelay": 0,
+            "optional": true,
+            "asyncComplete": false
+        },
+        {
+            "name": "Result Add Workflow",
+            "taskReferenceName": "result_add_workflow_ref",
+            "inputParameters": {
+              "http_request": {
+                "uri": "${workflow.input.result_base_url}/v1/workflows",
+                "body": "${result_json_add_workflow_ref.output.result}",
+                "method": "PUT",
+                "connectionTimeOut": 120000,
+                "readTimeOut": 120000
+              }
+            },
+            "type": "HTTP_WEBCLIENT",
+            "retryCount": 0,
+            "optional": true,
+            "asyncComplete": false
+        },
         {
             "name": "Refresh configuration of rules",
             "taskReferenceName": "refresh_rule_config_task_ref",
@@ -608,6 +652,52 @@
                     }
                 ]
             }
+        },
+        {
+          "name": "Current time end",
+          "taskReferenceName": "get_current_time_end_ref",
+          "type": "INLINE",
+          "inputParameters": {
+            "evaluatorType": "javascript",
+            "expression": "function e() { return Date.now(); } e();"
+          }
+        },
+        {
+            "name": "Result JSON End workflow",
+            "taskReferenceName": "result_json_end_workflow_ref",
+            "inputParameters": {
+              "id": "${result_add_workflow_ref.output.response.body.id}",  
+              "workflowId": "${workflow.workflowId}",
+              "codiceIpa": "${workflow.input.codice_ipa}",
+              "rootRule": "${workflow.input.root_rule}",
+              "status": "COMPLETED",
+              "createTime": "${result_add_workflow_ref.output.response.body.createTime}",  
+              "startTime": "${result_add_workflow_ref.output.response.body.startTime}",  
+              "endTime": "${get_current_time_end_ref.output.result}",              
+              "queryExpression": "{id: .id, workflowId: .workflowId, codiceIpa: .codiceIpa, rootRule: .rootRule, status: .status, createTime: .createTime, startTime: .startTime, endTime: .endTime}"
+            },
+            "type": "JSON_JQ_TRANSFORM",
+            "retryCount": 0,
+            "startDelay": 0,
+            "optional": true,
+            "asyncComplete": false
+        },
+        {
+            "name": "Result END Workflow",
+            "taskReferenceName": "result_end_workflow_ref",
+            "inputParameters": {
+              "http_request": {
+                "uri": "${workflow.input.result_base_url}/v1/workflows",
+                "body": "${result_json_end_workflow_ref.output.result}",
+                "method": "POST",
+                "connectionTimeOut": 120000,
+                "readTimeOut": 120000
+              }
+            },
+            "type": "HTTP_WEBCLIENT",
+            "retryCount": 0,
+            "optional": true,
+            "asyncComplete": false
         }
     ],
     "inputParameters": [
