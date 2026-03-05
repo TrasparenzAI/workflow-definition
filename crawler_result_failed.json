@@ -3,7 +3,7 @@
     "updateTime": 1706173716218,
     "name": "crawler_result_failed",
     "description": "Crawler Result Failed",
-    "version": 1,
+    "version": 2,
     "tasks": [
         {
             "name": "Rule name input param",
@@ -82,7 +82,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -121,7 +121,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -160,7 +160,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -199,7 +199,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -238,7 +238,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -277,7 +277,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -316,7 +316,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -355,7 +355,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -394,7 +394,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -433,7 +433,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -472,7 +472,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -511,7 +511,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -550,7 +550,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -589,7 +589,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -628,7 +628,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -667,7 +667,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -706,7 +706,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -745,7 +745,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -784,7 +784,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0
@@ -823,7 +823,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "rule_workflow",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW",
                         "retryCount": 0

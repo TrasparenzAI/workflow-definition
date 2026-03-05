@@ -6,6 +6,17 @@
     "version": 2,
     "tasks": [
         {
+            "name": "Parent Workflow ID",
+            "taskReferenceName": "parent_workflow_id_ref",
+            "inputParameters": {
+                "expression": "(function(){if ($.s && $.s.length > 0) { return $.s; } else { return  $.l; }})();",
+                "evaluatorType": "javascript",
+                "s": "${workflow.input.parent_workflow_id}",
+                "l": "${workflow.workflowId}"
+            },
+            "type": "INLINE"
+        },
+        {
           "name": "Current time start",
           "taskReferenceName": "get_current_time_start_ref",
           "type": "INLINE",
@@ -15,31 +26,12 @@
           }
         },
         {
-            "name": "Result JSON Add workflow",
-            "taskReferenceName": "result_json_add_workflow_ref",
-            "inputParameters": {
-              "workflowId": "${workflow.workflowId}",
-              "codiceIpa": "${workflow.input.codice_ipa}",
-              "rootRule": "${workflow.input.root_rule}",
-              "status": "${workflow.status}",
-              "createTime": "${get_current_time_start_ref.output.result}",              
-              "startTime": "${get_current_time_start_ref.output.result}",              
-              "queryExpression": "{workflowId: .workflowId, codiceIpa: .codiceIpa, rootRule: .rootRule, status: .status, startTime: .startTime, createTime: .createTime}"
-            },
-            "type": "JSON_JQ_TRANSFORM",
-            "retryCount": 0,
-            "startDelay": 0,
-            "optional": true,
-            "asyncComplete": false
-        },
-        {
-            "name": "Result Add Workflow",
-            "taskReferenceName": "result_add_workflow_ref",
+            "name": "Result GET Workflow",
+            "taskReferenceName": "result_get_workflow_ref",
             "inputParameters": {
               "http_request": {
-                "uri": "${workflow.input.result_base_url}/v1/workflows",
-                "body": "${result_json_add_workflow_ref.output.result}",
-                "method": "PUT",
+                "uri": "${workflow.input.result_base_url}/v1/workflows?workflowId=${parent_workflow_id_ref.output.result}",
+                "method": "GET",
                 "connectionTimeOut": 120000,
                 "readTimeOut": 120000
               }
@@ -48,6 +40,103 @@
             "retryCount": 0,
             "optional": true,
             "asyncComplete": false
+        },
+        {
+            "name": "GET Workflow Present",
+            "taskReferenceName": "workflow_present_ref",
+            "inputParameters": {
+                "expression": "(function(){ if ($.s.length > 0){return true;} else { return false;} })();",
+                "evaluatorType": "javascript",
+                "s": "${result_get_workflow_ref.output.response.body.content}"
+            },
+            "type": "INLINE"
+        },
+        {
+            "name": "SWITCH Companies Present",
+            "taskReferenceName": "switch_companies_present_ref",
+            "inputParameters": {
+                "size": "${workflow_present_ref.output.result}"
+            },
+            "type": "SWITCH",
+            "decisionCases": {
+                "true": [
+                    {
+                        "name": "Result JSON Restart Workflow",
+                        "taskReferenceName": "result_json_restart_workflow_ref",
+                        "inputParameters": {
+                          "id":"${result_get_workflow_ref.output.response.body.content[0].id}",
+                          "workflowId": "${parent_workflow_id_ref.output.result}",
+                          "codiceIpa": "${workflow.input.codice_ipa}",
+                          "rootRule": "${workflow.input.root_rule}",
+                          "status": "${workflow.status}",
+                          "createTime": "${result_get_workflow_ref.output.response.body.content[0].createTime}",              
+                          "startTime": "${result_get_workflow_ref.output.response.body.content[0].startTime}",              
+                          "queryExpression": "{id: .id, workflowId: .workflowId, codiceIpa: .codiceIpa, rootRule: .rootRule, status: .status, startTime: .startTime, createTime: .createTime}"
+                        },
+                        "type": "JSON_JQ_TRANSFORM",
+                        "retryCount": 0,
+                        "startDelay": 0,
+                        "optional": true,
+                        "asyncComplete": false
+                    },
+                    {
+                        "name": "Result Restart Workflow",
+                        "taskReferenceName": "result_restart_workflow_ref",
+                        "inputParameters": {
+                          "http_request": {
+                            "uri": "${workflow.input.result_base_url}/v1/workflows",
+                            "body": "${result_json_restart_workflow_ref.output.result}",
+                            "method": "POST",
+                            "connectionTimeOut": 120000,
+                            "readTimeOut": 120000
+                          }
+                        },
+                        "type": "HTTP_WEBCLIENT",
+                        "retryCount": 0,
+                        "optional": true,
+                        "asyncComplete": false
+                    }
+                ],
+                "false": [
+                    {
+                        "name": "Result JSON Add workflow",
+                        "taskReferenceName": "result_json_add_workflow_ref",
+                        "inputParameters": {
+                          "workflowId": "${parent_workflow_id_ref.output.result}",
+                          "codiceIpa": "${workflow.input.codice_ipa}",
+                          "rootRule": "${workflow.input.root_rule}",
+                          "status": "${workflow.status}",
+                          "createTime": "${get_current_time_start_ref.output.result}",              
+                          "startTime": "${get_current_time_start_ref.output.result}",              
+                          "queryExpression": "{workflowId: .workflowId, codiceIpa: .codiceIpa, rootRule: .rootRule, status: .status, startTime: .startTime, createTime: .createTime}"
+                        },
+                        "type": "JSON_JQ_TRANSFORM",
+                        "retryCount": 0,
+                        "startDelay": 0,
+                        "optional": true,
+                        "asyncComplete": false
+                    },
+                    {
+                        "name": "Result Add Workflow",
+                        "taskReferenceName": "result_add_workflow_ref",
+                        "inputParameters": {
+                          "http_request": {
+                            "uri": "${workflow.input.result_base_url}/v1/workflows",
+                            "body": "${result_json_add_workflow_ref.output.result}",
+                            "method": "PUT",
+                            "connectionTimeOut": 120000,
+                            "readTimeOut": 120000
+                          }
+                        },
+                        "type": "HTTP_WEBCLIENT",
+                        "retryCount": 0,
+                        "optional": true,
+                        "asyncComplete": false
+                    }                    
+                ]
+            },
+            "evaluatorType": "value-param",
+            "expression": "size"
         },
         {
             "name": "Refresh configuration of rules",
@@ -71,17 +160,6 @@
                 "last_page": false
             },
             "type": "SET_VARIABLE"
-        },
-        {
-            "name": "Parent Workflow ID",
-            "taskReferenceName": "parent_workflow_id_ref",
-            "inputParameters": {
-                "expression": "(function(){if ($.s && $.s.length() > 0) { return $.s; } else { return  $.l; }})();",
-                "evaluatorType": "javascript",
-                "s": "${workflow.input.parent_workflow_id}",
-                "l": "${workflow.workflowId}"
-            },
-            "type": "INLINE"
         },
         {
             "name": "Page divide size",
@@ -176,7 +254,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 1
+                                    "version": 2
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -214,7 +292,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 1
+                                    "version": 2
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -252,7 +330,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 1
+                                    "version": 2
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -290,7 +368,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 1
+                                    "version": 2
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -328,7 +406,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 1
+                                    "version": 2
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -366,7 +444,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 1
+                                    "version": 2
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -404,7 +482,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 1
+                                    "version": 2
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -442,7 +520,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 1
+                                    "version": 2
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -480,7 +558,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 1
+                                    "version": 2
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -518,7 +596,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 1
+                                    "version": 2
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -602,7 +680,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "crawler_result_failed",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW"
                     },
@@ -630,7 +708,7 @@
                         },
                         "subWorkflowParam": {
                             "name": "crawler_result_failed",
-                            "version": 1
+                            "version": 2
                         },
                         "type": "SUB_WORKFLOW"
                     },
@@ -667,7 +745,7 @@
             "taskReferenceName": "result_json_end_workflow_ref",
             "inputParameters": {
               "id": "${result_add_workflow_ref.output.response.body.id}",  
-              "workflowId": "${workflow.workflowId}",
+              "workflowId": "${parent_workflow_id_ref.output.result}",
               "codiceIpa": "${workflow.input.codice_ipa}",
               "rootRule": "${workflow.input.root_rule}",
               "status": "COMPLETED",
@@ -724,6 +802,7 @@
         "crawler_child_type",
         "crawler_uri"
     ],
+    "failureWorkflow": "crawler_amministrazione_trasparente_failed",
     "outputParameters": {},
     "schemaVersion": 2,
     "restartable": true,

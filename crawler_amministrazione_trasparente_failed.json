@@ -1,0 +1,104 @@
+{
+    "createTime": 1706170915910,
+    "updateTime": 1706173716218,
+    "name": "crawler_amministrazione_trasparente_failed",
+    "description": "Crawler Amministrazione Trasparente Fallito",
+    "version": 1,
+    "tasks": [
+        {
+          "name": "Current time failed",
+          "taskReferenceName": "get_current_time_failed_ref",
+          "type": "INLINE",
+          "inputParameters": {
+            "evaluatorType": "javascript",
+            "expression": "function e() { return Date.now(); } e();"
+          }
+        },
+        {
+            "name": "Result GET Workflow",
+            "taskReferenceName": "result_get_workflow_ref",
+            "inputParameters": {
+              "http_request": {
+                "uri": "${workflow.input.result_base_url}/v1/workflows?workflowId=${workflow.input.workflowId}",
+                "method": "GET",
+                "connectionTimeOut": 120000,
+                "readTimeOut": 120000
+              }
+            },
+            "type": "HTTP_WEBCLIENT",
+            "retryCount": 0,
+            "optional": true,
+            "asyncComplete": false
+        },
+        {
+            "name": "Result JSON End workflow",
+            "taskReferenceName": "result_json_end_workflow_ref",
+            "inputParameters": {
+              "id":"${result_get_workflow_ref.output.response.body.content[0].id}",
+              "workflowId": "${workflow.input.workflowId}",
+              "codiceIpa": "${workflow.input.codice_ipa}",
+              "rootRule": "${workflow.input.root_rule}",
+              "status": "${workflow.input.failureStatus}",
+              "createTime": "${result_get_workflow_ref.output.response.body.content[0].createTime}",              
+              "startTime": "${result_get_workflow_ref.output.response.body.content[0].startTime}",              
+              "endTime": "${get_current_time_failed_ref.output.result}",              
+              "queryExpression": "{id: .id, workflowId: .workflowId, codiceIpa: .codiceIpa, rootRule: .rootRule, status: .status, startTime: .startTime, createTime: .createTime, endTime: .endTime}"
+            },
+            "type": "JSON_JQ_TRANSFORM",
+            "retryCount": 0,
+            "startDelay": 0,
+            "optional": true,
+            "asyncComplete": false
+        },
+        {
+            "name": "Result END Workflow",
+            "taskReferenceName": "result_end_workflow_ref",
+            "inputParameters": {
+              "http_request": {
+                "uri": "${workflow.input.result_base_url}/v1/workflows",
+                "body": "${result_json_end_workflow_ref.output.result}",
+                "method": "POST",
+                "connectionTimeOut": 120000,
+                "readTimeOut": 120000
+              }
+            },
+            "type": "HTTP_WEBCLIENT",
+            "retryCount": 0,
+            "optional": true,
+            "asyncComplete": false
+        }
+    ],
+    "inputParameters": [
+        "page_size",
+        "parent_workflow_id",
+        "codice_categoria",
+        "codice_ipa",
+        "crawling_mode",
+        "crawler_save_object",
+        "crawler_save_screenshot",
+        "rule_name",
+        "root_rule",
+        "execute_child",
+        "id_ipa_from",
+        "connection_timeout",
+        "read_timeout",
+        "connection_timeout_max",
+        "read_timeout_max",
+        "force_jsoup",
+        "rule_base_url",
+        "public_company_base_url",
+        "result_aggregator_base_url",
+        "result_base_url",
+        "crawler_child_type",
+        "crawler_uri"
+    ],
+    "outputParameters": {},
+    "schemaVersion": 2,
+    "restartable": true,
+    "workflowStatusListenerEnabled": false,
+    "ownerEmail": "marco.spasiano@gmail.com",
+    "timeoutPolicy": "ALERT_ONLY",
+    "timeoutSeconds": 360000,
+    "variables": {},
+    "inputTemplate": {}
+}

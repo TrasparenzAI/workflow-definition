@@ -4,7 +4,7 @@
     "accessPolicy": {},
     "name": "rule_workflow",
     "description": "Rule Workflow",
-    "version": 1,
+    "version": 2,
     "tasks": [
         {
             "name": "Companies Present",
@@ -41,7 +41,7 @@
                                 "name": "INDEX DO While Execute Rule",
                                 "taskReferenceName": "index_do_while_execute_rule_ref",
                                 "inputParameters": {
-                                    "expression": "(function(){ return $.s; })();",
+                                    "expression": "(function(){ return parseInt($.s) || 1; })();",
                                     "evaluatorType": "javascript",
                                     "s": "${execute_rule_ref.output.iteration}"
                                 },
@@ -53,7 +53,8 @@
                                 "taskReferenceName": "ipa_ref",
                                 "inputParameters": {
                                     "companies": "${workflow.input.companies}",
-                                    "queryExpression": ".companies |.[(${index_do_while_execute_rule_ref.output.result} - 1)]"
+                                    "index": "${index_do_while_execute_rule_ref.output.result}",
+                                    "queryExpression": "{arr: .companies, idx: .index} | .arr[(.idx - 1)]"
                                 },
                                 "type": "JSON_JQ_TRANSFORM",
                                 "optional": true,

@@ -41,7 +41,7 @@ curl -X POST $4/api/workflow -H 'Content-type:application/json' \
 --data '{
   "name": "crawler_amministrazione_trasparente",
   "correlationId": "'$i'",  
-  "version": 1,
+  "version": 2,
   "input": {
     "page_size": 2000,
     "codice_categoria": "",
