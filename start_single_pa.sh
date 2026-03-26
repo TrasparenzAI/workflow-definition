@@ -28,7 +28,7 @@ TOKEN=$(curl $1/protocol/openid-connect/token \
   -H 'accept: application/json, text/plain, */*' \
   --data 'grant_type=client_credentials&client_id='$2'&client_secret='$3''| jq -r '.access_token')
 
-declare -a arr_pa=("cnr")
+declare -a arr_pa=("odappz")
 
 ## now loop through the above array
 for i in "${arr_pa[@]}"
@@ -56,12 +56,12 @@ curl -X POST $4/api/workflow -H 'Content-type:application/json' \
     "root_rule": "AT_TO-BE_23-12-2024",
     "rule_name": "amministrazione-trasparente",
     "connection_timeout": 30000,
-    "read_timeout": 30000,
+    "read_timeout": 180000,
     "connection_timeout_max": 60000,
     "read_timeout_max": 60000,
-    "crawler_child_type": "START_WORKFLOW",
+    "crawler_child_type": "SUB_WORKFLOW",
     "result_base_url": "https://dica33.ba.cnr.it/result-service",
-    "crawler_uri": "http://150.145.95.77:8080/crawl",
+    "crawler_uri": "http://dica33crawler.ba.cnr.it:8080/crawl",
     "rule_base_url": "https://monitorai.ba.cnr.it/rule-service",
     "public_company_base_url": "https://dica33.ba.cnr.it/public-sites-service",
     "result_aggregator_base_url": "https://dica33.ba.cnr.it/result-aggregator-service"

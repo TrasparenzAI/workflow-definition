@@ -4,7 +4,7 @@
     "accessPolicy": {},
     "name": "rule_detail_workflow",
     "description": "Rule Detail Workflow",
-    "version": 1,
+    "version": 2,
     "tasks": [
         {
             "name": "Crawler Child Type Sub Workflow",
@@ -316,7 +316,7 @@
                                                                                                                         },
                                                                                                                         "subWorkflowParam": {
                                                                                                                           "name": "rule_detail_child_workflow",
-                                                                                                                          "version": 1
+                                                                                                                          "version": 2
                                                                                                                         },                
                                                                                                                         "type": "SUB_WORKFLOW"
                                                                                                                     }
@@ -327,7 +327,6 @@
                                                                                                                         "taskReferenceName": "start_rule_child_workflow_html_source_ref",
                                                                                                                         "inputParameters": {
                                                                                                                             "startWorkflow": {
-                                                                                                                              "name": "rule_detail_child_workflow",
                                                                                                                               "input": {
                                                                                                                                 "ipa": "${workflow.input.ipa}",
                                                                                                                                 "resultURL": "${result_rule_html_source_completed_ref.output.response.body.destinationUrl}",
@@ -346,7 +345,8 @@
                                                                                                                                 "rule_base_url": "${workflow.input.rule_base_url}",
                                                                                                                                 "force_jsoup": "${workflow.input.force_jsoup}"
                                                                                                                               },
-                                                                                                                              "version": 1
+                                                                                                                              "name": "rule_detail_child_workflow",
+                                                                                                                              "version": 2
                                                                                                                             }
                                                                                                                       },
                                                                                                                       "type": "START_WORKFLOW"
@@ -611,7 +611,7 @@
                                                                                     },
                                                                                     "subWorkflowParam": {
                                                                                       "name": "rule_detail_child_workflow",
-                                                                                      "version": 1
+                                                                                      "version": 2
                                                                                     },                
                                                                                     "type": "SUB_WORKFLOW"
                                                                                 }
@@ -622,7 +622,6 @@
                                                                                     "taskReferenceName": "start_rule_child_workflow_http_stream_ref",
                                                                                     "inputParameters": {
                                                                                         "startWorkflow": {
-                                                                                          "name": "rule_detail_child_workflow",
                                                                                           "input": {
                                                                                             "ipa": "${workflow.input.ipa}",
                                                                                             "resultURL": "${result_rule_http_stream_completed_ref.output.response.body.destinationUrl}",
@@ -641,7 +640,8 @@
                                                                                             "rule_base_url": "${workflow.input.rule_base_url}",
                                                                                             "force_jsoup": "${workflow.input.force_jsoup}"
                                                                                           },
-                                                                                          "version": 1
+                                                                                          "name": "rule_detail_child_workflow",
+                                                                                          "version": 2
                                                                                         }
                                                                                   },
                                                                                   "type": "START_WORKFLOW"

@@ -138,7 +138,7 @@
                                                         },
                                                         "subWorkflowParam": {
                                                             "name": "rule_detail_workflow",
-                                                            "version": 1
+                                                            "version": 2
                                                         },
                                                         "type": "SUB_WORKFLOW",
                                                         "optional": true
@@ -208,7 +208,6 @@
                                                                     "taskReferenceName": "start_rule_child_workflow_ref",
                                                                     "inputParameters": {
                                                                         "startWorkflow": {
-                                                                            "name": "rule_detail_child_workflow",
                                                                             "input": {
                                                                                 "ipa": "${company_jq_transform_ref.output.result}",
                                                                                 "resultURL": "${ipa_ref.output.result.realUrl}",
@@ -226,7 +225,8 @@
                                                                                 "rule_base_url": "${workflow.input.rule_base_url}",
                                                                                 "force_jsoup": "${workflow.input.force_jsoup}"
                                                                             },
-                                                                            "version": 1
+                                                                            "name": "rule_detail_child_workflow",
+                                                                            "version": 2
                                                                         }
                                                                     },
                                                                     "type": "START_WORKFLOW",
@@ -302,7 +302,7 @@
                                                         },
                                                         "subWorkflowParam": {
                                                             "name": "rule_detail_workflow",
-                                                            "version": 1
+                                                            "version": 2
                                                         },
                                                         "type": "SUB_WORKFLOW",
                                                         "optional": true

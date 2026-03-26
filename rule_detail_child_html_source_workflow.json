@@ -4,7 +4,7 @@
     "accessPolicy": {},
     "name": "rule_detail_child_html_source_workflow",
     "description": "Rule Detail Child HTML Source Workflow",
-    "version": 1,
+    "version": 2,
     "tasks": [
         {
             "name": "Child Rule",
@@ -353,7 +353,7 @@
                                                                         },
                                                                         "subWorkflowParam": {
                                                                             "name": "rule_detail_child_workflow",
-                                                                            "version": 1
+                                                                            "version": 2
                                                                         },
                                                                         "type": "SUB_WORKFLOW",
                                                                         "retryCount": 0
@@ -512,8 +512,9 @@
                         "parent_workflow_id": "${workflow.input.parent_workflow_id}",
                         "workflow_child_id": "${workflow.workflowId}",
                         "error_message": "${crawler_html_source_ref.output.response}",
-                        "ruleName": "${child_rule_ref.output.result}",                    
-                        "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, status: 407, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, ruleName: .ruleName }"
+                        "ruleName": "${child_rule_ref.output.result}",
+                        "realUrl":"${workflow.input.resultURL}",
+                        "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, status: 407, realUrl: .realUrl,workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, ruleName: .ruleName }"
                     },
                     "type": "JSON_JQ_TRANSFORM",
                     "decisionCases": {},

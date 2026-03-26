@@ -61,7 +61,7 @@ curl -X POST $4/api/workflow -H 'Content-type:application/json' \
     "connection_timeout": 60000,
     "read_timeout": 60000,
     "connection_timeout_max": 120000,
-    "read_timeout_max": 120000,
+    "read_timeout_max": 180000,
     "crawling_mode": "htmlSource",
     "result_base_url": "https://dica33.ba.cnr.it/result-service",
     "crawler_child_type": "START_WORKFLOW",

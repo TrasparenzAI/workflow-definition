@@ -3,7 +3,7 @@
   "updateTime": 1710235241482,
   "name": "rule_detail_child_workflow",
   "description": "Rule Detail Child Workflow",
-  "version": 1,
+  "version": 2,
   "tasks": [
     {
         "name": "Result URL Present",
@@ -126,7 +126,7 @@
                                   },
                                   "subWorkflowParam": {
                                     "name": "rule_detail_child_html_source_workflow",
-                                    "version": 1
+                                    "version": 2
                                   },                
                                   "type": "SUB_WORKFLOW",
                                   "retryCount": 0
@@ -327,7 +327,7 @@
                                                 },
                                                 "subWorkflowParam": {
                                                   "name": "rule_detail_child_workflow",
-                                                  "version": 1
+                                                  "version": 2
                                                 },
                                                 "type": "SUB_WORKFLOW",
                                                 "retryCount": 0
@@ -492,7 +492,7 @@
                       },
                       "subWorkflowParam": {
                         "name": "rule_detail_child_html_source_workflow",
-                        "version": 1
+                        "version": 2
                       },                
                       "type": "SUB_WORKFLOW",
                       "retryCount": 0
