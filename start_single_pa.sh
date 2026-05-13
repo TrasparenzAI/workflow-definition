@@ -28,7 +28,7 @@ TOKEN=$(curl $1/protocol/openid-connect/token \
   -H 'accept: application/json, text/plain, */*' \
   --data 'grant_type=client_credentials&client_id='$2'&client_secret='$3''| jq -r '.access_token')
 
-declare -a arr_pa=("odappz")
+declare -a arr_pa=("cnr")
 
 ## now loop through the above array
 for i in "${arr_pa[@]}"
@@ -49,7 +49,7 @@ curl -X POST $4/api/workflow -H 'Content-type:application/json' \
     "id_ipa_from": 0,
     "parent_workflow_id": "'$5'",
     "execute_child": true,
-    "crawling_mode": "httpStream",
+    "crawling_mode": "htmlSource",
     "crawler_save_object": false,
     "crawler_save_screenshot": false,
     "force_jsoup": "true",

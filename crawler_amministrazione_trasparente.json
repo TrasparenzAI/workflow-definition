@@ -3,7 +3,7 @@
     "updateTime": 1706173716218,
     "name": "crawler_amministrazione_trasparente",
     "description": "Crawler Amministrazione Trasparente",
-    "version": 2,
+    "version": 3,
     "tasks": [
         {
             "name": "Parent Workflow ID",
@@ -58,6 +58,7 @@
                 "size": "${workflow_present_ref.output.result}"
             },
             "type": "SWITCH",
+            "defaultCase": [],
             "decisionCases": {
                 "true": [
                     {
@@ -138,6 +139,47 @@
             "evaluatorType": "value-param",
             "expression": "size"
         },
+        {
+            "name": "Codice IPA present",
+            "taskReferenceName": "codice_ipa_present_ref",
+            "inputParameters": {
+                "expression": "(function(){ if ($.s != undefined && $.s.length > 0){return true;} else { return false;} })();",
+                "evaluatorType": "javascript",
+                "s": "${workflow.input.codice_ipa}"
+            },
+            "type": "INLINE"
+        },
+        {
+            "name": "Switch codice IPA for lock companies",
+            "taskReferenceName": "switch_codice_ipa_lock_companies_ref",
+            "inputParameters": {
+                "exists": "${codice_ipa_present_ref.output.result}"
+            },
+            "type": "SWITCH",
+            "defaultCase": [],
+            "evaluatorType": "value-param",
+            "expression": "exists",
+            "decisionCases": {
+                "false": [
+                    {
+                        "name": "Lock companies",
+                        "taskReferenceName": "lock_companies_ref",
+                        "inputParameters": {
+                            "http_request": {
+                                "uri": "${workflow.input.public_company_base_url}/v1/admin/lock",
+                                "method": "POST",
+                                "connectionTimeOut": 1000,
+                                "readTimeOut": 5000
+                            }
+                        },
+                        "type": "HTTP_WEBCLIENT",
+                        "startDelay": 0,
+                        "optional": true,
+                        "asyncComplete": false
+                    }
+                ]
+            }
+        },        
         {
             "name": "Refresh configuration of rules",
             "taskReferenceName": "refresh_rule_config_task_ref",
@@ -635,16 +677,6 @@
             "onStateChange": {}
         },
         {
-            "name": "Codice IPA present",
-            "taskReferenceName": "codice_ipa_present_ref",
-            "inputParameters": {
-                "expression": "(function(){ if ($.s != undefined && $.s.length > 0){return true;} else { return false;} })();",
-                "evaluatorType": "javascript",
-                "s": "${workflow.input.codice_ipa}"
-            },
-            "type": "INLINE"
-        },
-        {
             "name": "Switch codice IPA",
             "taskReferenceName": "switch_codice_ipa_ref",
             "inputParameters": {
@@ -711,6 +743,22 @@
                             "version": 2
                         },
                         "type": "SUB_WORKFLOW"
+                    },
+                    {
+                        "name": "Unlock companies",
+                        "taskReferenceName": "unlock_companies_ref",
+                        "inputParameters": {
+                            "http_request": {
+                                "uri": "${workflow.input.public_company_base_url}/v1/admin/unlock",
+                                "method": "POST",
+                                "connectionTimeOut": 1000,
+                                "readTimeOut": 5000
+                            }
+                        },
+                        "type": "HTTP_WEBCLIENT",
+                        "startDelay": 0,
+                        "optional": true,
+                        "asyncComplete": false
                     },
                     {
                         "name": "Create Map",
