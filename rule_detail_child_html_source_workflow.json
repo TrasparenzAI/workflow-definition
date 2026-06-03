@@ -401,86 +401,86 @@
                                 "expression": "switchCaseValue",
                                 "onStateChange": {}
                             }
-                        ],
-                        "407": [
-                            {
-                                "name": "Company JQ HTML Source 407 Failed",
-                                "taskReferenceName": "company_jq_html_source_failed_407_ref",
-                                "inputParameters": {
-                                    "id": "${workflow.input.ipa.idResult}",
-                                    "idIpa": "${workflow.input.ipa.id}",
-                                    "codiceIpa": "${workflow.input.ipa.codiceIpa}",
-                                    "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
-                                    "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
-                                    "tipologia": "${workflow.input.ipa.tipologia}",
-                                    "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
-                                    "codiceNatura": "${workflow.input.ipa.codiceNatura}",
-                                    "acronimo": "${workflow.input.ipa.acronimo}",
-                                    "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
-                                    "sorgente": "${workflow.input.ipa.sorgente}",
-                                    "realUrl": "${crawler_html_source_ref.output.response.body.requestedUrl}",
-                                    "objectBucket": "${crawler_html_source_ref.output.response.body.objectBucket}",
-                                    "objectId": "${crawler_html_source_ref.output.response.body.objectId}",
-                                    "objectResult": "${crawler_html_source_ref.output.response.body.objectResult}",
-                                    "screenshotBucket": "${crawler_html_source_ref.output.response.body.screenshotBucket}",
-                                    "screenshotId": "${crawler_html_source_ref.output.response.body.screenShotId}",
-                                    "screenshotResult": "${crawler_html_source_ref.output.response.body.screenShotResult}",
-                                    "parent_workflow_id": "${workflow.input.parent_workflow_id}",
-                                    "workflow_child_id": "${workflow.workflowId}",
-                                    "error_message": "${crawler_html_source_ref.output.response.body.message}",
-                                    "length": "${crawler_html_source_ref.output.response.body.length}",
-                                    "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, status: 407, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, ruleName: .ruleName }",
-                                    "ruleName": "${child_rule_ref.output.result}"
-                                },
-                                "type": "JSON_JQ_TRANSFORM",
-                                "decisionCases": {},
-                                "defaultCase": [],
-                                "forkTasks": [],
-                                "startDelay": 0,
-                                "joinOn": [],
-                                "optional": true,
-                                "defaultExclusiveJoinTask": [],
-                                "asyncComplete": false,
-                                "loopOver": [],
-                                "onStateChange": {}
-                            },
-                            {
-                                "name": "Result Rule HTML Source 407 Failed",
-                                "taskReferenceName": "result_rule_html_source_407_failed_ref",
-                                "inputParameters": {
-                                    "http_request": {
-                                        "uri": "${workflow.input.result_base_url}/v1/results",
-                                        "body": "${company_jq_html_source_failed_407_ref.output.result}",
-                                        "method": "PUT",
-                                        "connectionTimeOut": 120000,
-                                        "readTimeOut": 120000
-                                    }
-                                },
-                                "type": "HTTP_WEBCLIENT",
-                                "optional": true,
-                                "asyncComplete": false
-                            },
-                            {
-                                "name": "Terminate Rule HTML Source 407Failed",
-                                "taskReferenceName": "terminate_rule_html_source_407_failed_ref",
-                                "inputParameters": {
-                                    "terminationStatus": "COMPLETED"
-                                },
-                                "type": "TERMINATE",
-                                "decisionCases": {},
-                                "defaultCase": [],
-                                "forkTasks": [],
-                                "startDelay": 0,
-                                "joinOn": [],
-                                "optional": false,
-                                "defaultExclusiveJoinTask": [],
-                                "asyncComplete": false,
-                                "loopOver": [],
-                                "onStateChange": {}
-                            }
                         ]
                     },
-                    "defaultCase": [],
+                    "defaultCase": [
+                        {
+                            "name": "Company JQ HTML Source 407 Failed",
+                            "taskReferenceName": "company_jq_html_source_failed_407_ref",
+                            "inputParameters": {
+                                "id": "${workflow.input.ipa.idResult}",
+                                "idIpa": "${workflow.input.ipa.id}",
+                                "codiceIpa": "${workflow.input.ipa.codiceIpa}",
+                                "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
+                                "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
+                                "tipologia": "${workflow.input.ipa.tipologia}",
+                                "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
+                                "codiceNatura": "${workflow.input.ipa.codiceNatura}",
+                                "acronimo": "${workflow.input.ipa.acronimo}",
+                                "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
+                                "sorgente": "${workflow.input.ipa.sorgente}",
+                                "realUrl": "${crawler_html_source_ref.output.response.body.requestedUrl}",
+                                "objectBucket": "${crawler_html_source_ref.output.response.body.objectBucket}",
+                                "objectId": "${crawler_html_source_ref.output.response.body.objectId}",
+                                "objectResult": "${crawler_html_source_ref.output.response.body.objectResult}",
+                                "screenshotBucket": "${crawler_html_source_ref.output.response.body.screenshotBucket}",
+                                "screenshotId": "${crawler_html_source_ref.output.response.body.screenShotId}",
+                                "screenshotResult": "${crawler_html_source_ref.output.response.body.screenShotResult}",
+                                "status": "${crawler_html_source_ref.output.response.body.result}",
+                                "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                "workflow_child_id": "${workflow.workflowId}",
+                                "error_message": "${crawler_html_source_ref.output.response.body.message}",
+                                "length": "${crawler_html_source_ref.output.response.body.length}",
+                                "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, status: .status, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, ruleName: .ruleName }",
+                                "ruleName": "${child_rule_ref.output.result}"
+                            },
+                            "type": "JSON_JQ_TRANSFORM",
+                            "decisionCases": {},
+                            "defaultCase": [],
+                            "forkTasks": [],
+                            "startDelay": 0,
+                            "joinOn": [],
+                            "optional": true,
+                            "defaultExclusiveJoinTask": [],
+                            "asyncComplete": false,
+                            "loopOver": [],
+                            "onStateChange": {}
+                        },
+                        {
+                            "name": "Result Rule HTML Source 407 Failed",
+                            "taskReferenceName": "result_rule_html_source_407_failed_ref",
+                            "inputParameters": {
+                                "http_request": {
+                                    "uri": "${workflow.input.result_base_url}/v1/results",
+                                    "body": "${company_jq_html_source_failed_407_ref.output.result}",
+                                    "method": "PUT",
+                                    "connectionTimeOut": 120000,
+                                    "readTimeOut": 120000
+                                }
+                            },
+                            "type": "HTTP_WEBCLIENT",
+                            "optional": true,
+                            "asyncComplete": false
+                        },
+                        {
+                            "name": "Terminate Rule HTML Source 407Failed",
+                            "taskReferenceName": "terminate_rule_html_source_407_failed_ref",
+                            "inputParameters": {
+                                "terminationStatus": "COMPLETED"
+                            },
+                            "type": "TERMINATE",
+                            "decisionCases": {},
+                            "defaultCase": [],
+                            "forkTasks": [],
+                            "startDelay": 0,
+                            "joinOn": [],
+                            "optional": false,
+                            "defaultExclusiveJoinTask": [],
+                            "asyncComplete": false,
+                            "loopOver": [],
+                            "onStateChange": {}
+                        }
+                    ],
                     "forkTasks": [],
                     "startDelay": 0,
                     "joinOn": [],

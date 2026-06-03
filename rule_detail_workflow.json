@@ -381,68 +381,69 @@
                                                                                     "evaluatorType": "value-param",
                                                                                     "expression": "switchCaseValue"
                                                                                 }
-                                                                            ],
-                                                                            "407": [
-                                                                                {
-                                                                                    "name": "Company JQ HTML Source 407 Failed",
-                                                                                    "taskReferenceName": "company_jq_html_source_failed_407_ref",
-                                                                                    "inputParameters": {
-                                                                                        "id": "${workflow.input.ipa.idResult}",
-                                                                                        "idIpa": "${workflow.input.ipa.id}",
-                                                                                        "codiceIpa": "${workflow.input.ipa.codiceIpa}",
-                                                                                        "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
-                                                                                        "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
-                                                                                        "tipologia": "${workflow.input.ipa.tipologia}",
-                                                                                        "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
-                                                                                        "codiceNatura": "${workflow.input.ipa.codiceNatura}",
-                                                                                        "acronimo": "${workflow.input.ipa.acronimo}",
-                                                                                        "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
-                                                                                        "sorgente": "${workflow.input.ipa.sorgente}",
-                                                                                        "realUrl": "${crawler_html_source_ref.output.response.body.realUrl}",
-                                                                                        "objectBucket": "${crawler_html_source_ref.output.response.body.objectBucket}",
-                                                                                        "objectId": "${crawler_html_source_ref.output.response.body.objectId}",
-                                                                                        "objectResult": "${crawler_html_source_ref.output.response.body.objectResult}",
-                                                                                        "screenshotBucket": "${crawler_html_source_ref.output.response.body.screenshotBucket}",
-                                                                                        "screenshotId": "${crawler_html_source_ref.output.response.body.screenShotId}",
-                                                                                        "screenshotResult": "${crawler_html_source_ref.output.response.body.screenShotResult}",
-                                                                                        "parent_workflow_id": "${workflow.input.parent_workflow_id}",
-                                                                                        "workflow_child_id": "${workflow.workflowId}",
-                                                                                        "ruleName": "${workflow.input.rule_name}",
-                                                                                        "error_message": "${crawler_html_source_ref.output.response.body.message}",
-                                                                                        "length": "${crawler_html_source_ref.output.response.body.length}",
-                                                                                        "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, status: 407, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, ruleName: .ruleName }"
-                                                                                    },
-                                                                                    "type": "JSON_JQ_TRANSFORM"
-                                                                                },
-                                                                                {
-                                                                                    "name": "Result Rule HTML Source 407 Failed",
-                                                                                    "taskReferenceName": "result_rule_html_source_407_failed_ref",
-                                                                                    "inputParameters": {
-                                                                                        "http_request": {
-                                                                                            "uri": "${workflow.input.result_base_url}/v1/results",
-                                                                                            "body": "${company_jq_html_source_failed_407_ref.output.result}",
-                                                                                            "method": "${workflow.input.save_method}",
-                                                                                            "connectionTimeOut": 120000,
-                                                                                            "readTimeOut": 120000
-                                                                                        }
-                                                                                    },
-                                                                                    "type": "HTTP_WEBCLIENT",
-                                                                                    "startDelay": 0,
-                                                                                    "optional": true,
-                                                                                    "asyncComplete": false
-                                                                                },
-                                                                                {
-                                                                                    "name": "Terminate Rule HTML Source 407Failed",
-                                                                                    "taskReferenceName": "terminate_rule_html_source_407_failed_ref",
-                                                                                    "inputParameters": {
-                                                                                        "terminationStatus": "COMPLETED"
-                                                                                    },
-                                                                                    "type": "TERMINATE",
-                                                                                    "startDelay": 0,
-                                                                                    "optional": false
-                                                                                }
                                                                             ]
                                                                         },
+                                                                        "defaultCase": [
+                                                                            {
+                                                                                "name": "Company JQ HTML Source 407 Failed",
+                                                                                "taskReferenceName": "company_jq_html_source_failed_407_ref",
+                                                                                "inputParameters": {
+                                                                                    "id": "${workflow.input.ipa.idResult}",
+                                                                                    "idIpa": "${workflow.input.ipa.id}",
+                                                                                    "codiceIpa": "${workflow.input.ipa.codiceIpa}",
+                                                                                    "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
+                                                                                    "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
+                                                                                    "tipologia": "${workflow.input.ipa.tipologia}",
+                                                                                    "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
+                                                                                    "codiceNatura": "${workflow.input.ipa.codiceNatura}",
+                                                                                    "acronimo": "${workflow.input.ipa.acronimo}",
+                                                                                    "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
+                                                                                    "sorgente": "${workflow.input.ipa.sorgente}",
+                                                                                    "realUrl": "${crawler_html_source_ref.output.response.body.realUrl}",
+                                                                                    "objectBucket": "${crawler_html_source_ref.output.response.body.objectBucket}",
+                                                                                    "objectId": "${crawler_html_source_ref.output.response.body.objectId}",
+                                                                                    "objectResult": "${crawler_html_source_ref.output.response.body.objectResult}",
+                                                                                    "screenshotBucket": "${crawler_html_source_ref.output.response.body.screenshotBucket}",
+                                                                                    "screenshotId": "${crawler_html_source_ref.output.response.body.screenShotId}",
+                                                                                    "screenshotResult": "${crawler_html_source_ref.output.response.body.screenShotResult}",
+                                                                                    "status": "${crawler_html_source_ref.output.response.body.result}",
+                                                                                    "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                                                                    "workflow_child_id": "${workflow.workflowId}",
+                                                                                    "ruleName": "${workflow.input.rule_name}",
+                                                                                    "error_message": "${crawler_html_source_ref.output.response.body.message}",
+                                                                                    "length": "${crawler_html_source_ref.output.response.body.length}",
+                                                                                    "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, status: .status, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, ruleName: .ruleName }"
+                                                                                },
+                                                                                "type": "JSON_JQ_TRANSFORM"
+                                                                            },
+                                                                            {
+                                                                                "name": "Result Rule HTML Source 407 Failed",
+                                                                                "taskReferenceName": "result_rule_html_source_407_failed_ref",
+                                                                                "inputParameters": {
+                                                                                    "http_request": {
+                                                                                        "uri": "${workflow.input.result_base_url}/v1/results",
+                                                                                        "body": "${company_jq_html_source_failed_407_ref.output.result}",
+                                                                                        "method": "${workflow.input.save_method}",
+                                                                                        "connectionTimeOut": 120000,
+                                                                                        "readTimeOut": 120000
+                                                                                    }
+                                                                                },
+                                                                                "type": "HTTP_WEBCLIENT",
+                                                                                "startDelay": 0,
+                                                                                "optional": true,
+                                                                                "asyncComplete": false
+                                                                            },
+                                                                            {
+                                                                                "name": "Terminate Rule HTML Source 407Failed",
+                                                                                "taskReferenceName": "terminate_rule_html_source_407_failed_ref",
+                                                                                "inputParameters": {
+                                                                                    "terminationStatus": "COMPLETED"
+                                                                                },
+                                                                                "type": "TERMINATE",
+                                                                                "startDelay": 0,
+                                                                                "optional": false
+                                                                            }                                                                            
+                                                                        ],
                                                                         "startDelay": 0,
                                                                         "optional": false,
                                                                         "asyncComplete": false,
@@ -543,8 +544,8 @@
                                                                 "content": "${rule_http_stream_ref.output.response.body.content}",
                                                                 "status": "${rule_http_stream_ref.output.response.body.status}",
                                                                 "score": "${rule_http_stream_ref.output.response.body.score}",
-                                                                "parent_workflow_id": "${workflow.input.parent_workflow_id}",
-                                                                "leaf": "${rule_http_stream_ref.output.response.body.leaf}",
+                                                                "parent_workflow_id": "${workflow.input.parent_workflow_id}"
+,                                                                "leaf": "${rule_http_stream_ref.output.response.body.leaf}",
                                                                 "workflow_child_id": "${workflow.workflowId}",
                                                                 "error_message": "${rule_http_stream_ref.output.response.body.message}",
                                                                 "length": "${crawler_http_stream_ref.output.response.body.length}",
@@ -676,70 +677,69 @@
                                                 "evaluatorType": "value-param",
                                                 "expression": "switchCaseValue"
                                             }
-                                        ],
-                                        "407": [
-                                            {
-                                                "name": "Company JQ HTTP Stream Failed",
-                                                "taskReferenceName": "company_jq_http_stream_failed_ref",
-                                                "inputParameters": {
-                                                    "id": "${workflow.input.ipa.idResult}",
-                                                    "idIpa": "${workflow.input.ipa.id}",
-                                                    "codiceIpa": "${workflow.input.ipa.codiceIpa}",
-                                                    "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
-                                                    "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
-                                                    "tipologia": "${workflow.input.ipa.tipologia}",
-                                                    "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
-                                                    "codiceNatura": "${workflow.input.ipa.codiceNatura}",
-                                                    "acronimo": "${workflow.input.ipa.acronimo}",
-                                                    "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
-                                                    "sorgente": "${workflow.input.ipa.sorgente}",
-                                                    "realUrl": "${crawler_http_stream_ref.output.response.body.realUrl}",
-                                                    "objectBucket": "${crawler_http_stream_ref.output.response.body.objectBucket}",
-                                                    "objectId": "${crawler_http_stream_ref.output.response.body.objectId}",
-                                                    "objectResult": "${crawler_http_stream_ref.output.response.body.objectResult}",
-                                                    "screenshotBucket": "${crawler_http_stream_ref.output.response.body.screenshotBucket}",
-                                                    "screenshotId": "${crawler_http_stream_ref.output.response.body.screenShotId}",
-                                                    "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenShotResult}",
-                                                    "status": "${crawler_http_stream_ref.output.response.body.result}",
-                                                    "ruleName": "${workflow.input.rule_name}",
-                                                    "parent_workflow_id": "${workflow.input.parent_workflow_id}",
-                                                    "workflow_child_id": "${workflow.workflowId}",
-                                                    "error_message": "${crawler_http_stream_ref.output.response.body.message}",
-                                                    "length": "${crawler_http_stream_ref.output.response.body.length}",
-                                                    "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, status: .status, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, ruleName: .ruleName}"
-                                                },
-                                                "type": "JSON_JQ_TRANSFORM"
-                                            },
-                                            {
-                                                "name": "Result HTTP Stream Failed",
-                                                "taskReferenceName": "result_http_stream_failed_ref",
-                                                "inputParameters": {
-                                                    "http_request": {
-                                                        "uri": "${workflow.input.result_base_url}/v1/results",
-                                                        "body": "${company_jq_http_stream_failed_ref.output.result}",
-                                                        "method": "${workflow.input.save_method}",
-                                                        "connectionTimeOut": 120000,
-                                                        "readTimeOut": 120000
-                                                    }
-                                                },
-                                                "type": "HTTP_WEBCLIENT",
-                                                "startDelay": 0,
-                                                "optional": true,
-                                                "asyncComplete": false
-                                            },
-                                            {
-                                                "name": "Terminate Result HTTP Stream Failed",
-                                                "taskReferenceName": "terminate_result_http_stream_failed_ref",
-                                                "inputParameters": {
-                                                    "terminationStatus": "COMPLETED"
-                                                },
-                                                "type": "TERMINATE",
-                                                "startDelay": 0,
-                                                "optional": false
-                                            }
                                         ]
                                     },
-                                    "defaultCase": [],
+                                    "defaultCase": [
+                                        {
+                                            "name": "Company JQ HTTP Stream Failed",
+                                            "taskReferenceName": "company_jq_http_stream_failed_ref",
+                                            "inputParameters": {
+                                                "id": "${workflow.input.ipa.idResult}",
+                                                "idIpa": "${workflow.input.ipa.id}",
+                                                "codiceIpa": "${workflow.input.ipa.codiceIpa}",
+                                                "denominazioneEnte": "${workflow.input.ipa.denominazioneEnte}",
+                                                "codiceFiscaleEnte": "${workflow.input.ipa.codiceFiscaleEnte}",
+                                                "tipologia": "${workflow.input.ipa.tipologia}",
+                                                "codiceCategoria": "${workflow.input.ipa.codiceCategoria}",
+                                                "codiceNatura": "${workflow.input.ipa.codiceNatura}",
+                                                "acronimo": "${workflow.input.ipa.acronimo}",
+                                                "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
+                                                "sorgente": "${workflow.input.ipa.sorgente}",
+                                                "realUrl": "${crawler_http_stream_ref.output.response.body.realUrl}",
+                                                "objectBucket": "${crawler_http_stream_ref.output.response.body.objectBucket}",
+                                                "objectId": "${crawler_http_stream_ref.output.response.body.objectId}",
+                                                "objectResult": "${crawler_http_stream_ref.output.response.body.objectResult}",
+                                                "screenshotBucket": "${crawler_http_stream_ref.output.response.body.screenshotBucket}",
+                                                "screenshotId": "${crawler_http_stream_ref.output.response.body.screenShotId}",
+                                                "screenshotResult": "${crawler_http_stream_ref.output.response.body.screenShotResult}",
+                                                "status": "${crawler_http_stream_ref.output.response.body.result}",
+                                                "ruleName": "${workflow.input.rule_name}",
+                                                "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                                "workflow_child_id": "${workflow.workflowId}",
+                                                "error_message": "${crawler_http_stream_ref.output.response.body.message}",
+                                                "length": "${crawler_http_stream_ref.output.response.body.length}",
+                                                "queryExpression": "{id: .id, company: {idIpa: .idIpa, codiceIpa: .codiceIpa, denominazioneEnte: .denominazioneEnte, codiceFiscaleEnte: .codiceFiscaleEnte, tipologia: .tipologia, codiceCategoria: .codiceCategoria, codiceNatura: .codiceNatura, acronimo: .acronimo, sitoIstituzionale: .sitoIstituzionale, sorgente: .sorgente }, realUrl: .realUrl, storageData: {objectBucket: .objectBucket, objectId: .objectId, objectResult: .objectResult, screenshotBucket: .screenshotBucket, screenshotId: .screenshotId, screenshotResult: .screenshotResult}, status: .status, workflowId: .parent_workflow_id, workflowChildId: .workflow_child_id, errorMessage: .error_message, length: .length, ruleName: .ruleName}"
+                                            },
+                                            "type": "JSON_JQ_TRANSFORM"
+                                        },
+                                        {
+                                            "name": "Result HTTP Stream Failed",
+                                            "taskReferenceName": "result_http_stream_failed_ref",
+                                            "inputParameters": {
+                                                "http_request": {
+                                                    "uri": "${workflow.input.result_base_url}/v1/results",
+                                                    "body": "${company_jq_http_stream_failed_ref.output.result}",
+                                                    "method": "${workflow.input.save_method}",
+                                                    "connectionTimeOut": 120000,
+                                                    "readTimeOut": 120000
+                                                }
+                                            },
+                                            "type": "HTTP_WEBCLIENT",
+                                            "startDelay": 0,
+                                            "optional": true,
+                                            "asyncComplete": false
+                                        },
+                                        {
+                                            "name": "Terminate Result HTTP Stream Failed",
+                                            "taskReferenceName": "terminate_result_http_stream_failed_ref",
+                                            "inputParameters": {
+                                                "terminationStatus": "COMPLETED"
+                                            },
+                                            "type": "TERMINATE",
+                                            "startDelay": 0,
+                                            "optional": false
+                                        }                                        
+                                    ],
                                     "startDelay": 0,
                                     "optional": false,
                                     "asyncComplete": false,
