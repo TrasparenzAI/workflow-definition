@@ -426,7 +426,7 @@
                                 "screenshotBucket": "${crawler_html_source_ref.output.response.body.screenshotBucket}",
                                 "screenshotId": "${crawler_html_source_ref.output.response.body.screenShotId}",
                                 "screenshotResult": "${crawler_html_source_ref.output.response.body.screenShotResult}",
-                                "status": "${crawler_html_source_ref.output.response.body.result}",
+                                "status": "407",
                                 "parent_workflow_id": "${workflow.input.parent_workflow_id}",
                                 "workflow_child_id": "${workflow.workflowId}",
                                 "error_message": "${crawler_html_source_ref.output.response.body.message}",
