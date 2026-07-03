@@ -248,10 +248,20 @@
                     "type": "HTTP_WEBCLIENT"
                 },
                 {
+                    "name": "Compute Last Page",
+                    "taskReferenceName": "compute_last_page_ref",
+                    "inputParameters": {
+                        "expression": "(function(){ var pg = $.p; if (!pg) { return true; } return (pg.number + 1) >= pg.totalPages; })();",
+                        "evaluatorType": "javascript",
+                        "p": "${companies_task_ref.output.response.body.page}"
+                    },
+                    "type": "INLINE"
+                },
+                {
                     "name": "Set Last Page",
                     "taskReferenceName": "set_last_page_ref",
                     "inputParameters": {
-                        "last_page": "${companies_task_ref.output.response.body.last}"
+                        "last_page": "${compute_last_page_ref.output.result}"
                     },
                     "type": "SET_VARIABLE"
                 },
