@@ -1,0 +1,383 @@
+{
+  "name": "at_map_workflow",
+  "description": "Ricerca e validazione del file ATmap (mappa dei link Amministrazione Trasparente): prima come direttiva ATmap nel robots.txt, poi come at_map.xml e at_map.json nella root del sito istituzionale. Il robots.txt e i file di default sono scaricati tramite il crawler, che restituisce il contenuto in base64. Il risultato (anche negativo) è salvato nel result-service con PUT /v1/atmaps",
+  "version": 2,
+  "tasks": [
+    {
+      "name": "Sito istituzionale present",
+      "taskReferenceName": "sito_istituzionale_present_ref",
+      "inputParameters": {
+        "expression": "(function(){ if ($.s != undefined && $.s.length > 0){return true;} else { return false;} })();",
+        "evaluatorType": "javascript",
+        "s": "${workflow.input.ipa.sitoIstituzionale}"
+      },
+      "type": "INLINE"
+    },
+    {
+      "name": "Switch sito istituzionale",
+      "taskReferenceName": "switch_sito_istituzionale_ref",
+      "inputParameters": {
+        "exists": "${sito_istituzionale_present_ref.output.result}"
+      },
+      "type": "SWITCH",
+      "evaluatorType": "value-param",
+      "expression": "exists",
+      "decisionCases": {
+        "true": [
+          {
+            "name": "AT Map Robots URL",
+            "taskReferenceName": "at_map_robots_url_ref",
+            "inputParameters": {
+              "expression": "(function(){ var s = $.s; if (!s) { return {origin: '', robots: ''}; } s = String(s).trim(); if (!/^https?:\\/\\//i.test(s)) { s = 'https://' + s; } var m = s.match(/^(https?:\\/\\/[^\\/?#]+)/i); if (!m) { return {origin: '', robots: ''}; } return {origin: m[1], robots: m[1] + '/robots.txt'}; })();",
+              "evaluatorType": "javascript",
+              "s": "${workflow.input.ipa.sitoIstituzionale}"
+            },
+            "type": "INLINE"
+          },
+          {
+            "name": "Init AT Map",
+            "taskReferenceName": "init_at_map_ref",
+            "inputParameters": {
+              "at_map_status": "NOT_FOUND",
+              "at_map_source": "",
+              "at_map_url": "",
+              "at_map_format": ""
+            },
+            "type": "SET_VARIABLE"
+          },
+          {
+            "name": "AT Map Robots Crawler",
+            "taskReferenceName": "at_map_robots_http_ref",
+            "inputParameters": {
+              "http_request": {
+                "uri": "${workflow.input.crawler_uri}",
+                "body": "{\"crawlingMode\": \"htmlSource\", \"saveObject\": false, \"saveScreenshot\": false, \"url\": \"${at_map_robots_url_ref.output.result.robots}\"}",
+                "method": "POST",
+                "connectionTimeOut": "${workflow.input.connection_timeout}",
+                "readTimeOut": "${workflow.input.read_timeout}"
+              }
+            },
+            "type": "HTTP_WEBCLIENT",
+            "startDelay": 0,
+            "optional": true,
+            "asyncComplete": false
+          },
+          {
+            "name": "AT Map Parse Robots",
+            "taskReferenceName": "at_map_parse_robots_ref",
+            "inputParameters": {
+              "expression": "(function(){ function dec(s){ var c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'; var a=[], b=0, n=0, i, v; s = s.replace(/[^A-Za-z0-9+\\/]/g, ''); for (i = 0; i < s.length; i++) { v = c.indexOf(s.charAt(i)); b = (b << 6) | v; n += 6; if (n >= 8) { n -= 8; a.push((b >> n) & 255); b = b & ((1 << n) - 1); } } var o = '', j = 0, x, y, z, w, cp; while (j < a.length) { x = a[j++]; if (x < 128) { o += String.fromCharCode(x); } else if (x >= 192 && x < 224 && j < a.length) { y = a[j++]; o += String.fromCharCode(((x & 31) << 6) | (y & 63)); } else if (x >= 224 && x < 240 && j + 1 < a.length) { y = a[j++]; z = a[j++]; o += String.fromCharCode(((x & 15) << 12) | ((y & 63) << 6) | (z & 63)); } else if (x >= 240 && j + 2 < a.length) { y = a[j++]; z = a[j++]; w = a[j++]; cp = (((x & 7) << 18) | ((y & 63) << 12) | ((z & 63) << 6) | (w & 63)) - 65536; o += String.fromCharCode(55296 + (cp >> 10), 56320 + (cp & 1023)); } else { o += String.fromCharCode(65533); } } return o; } function unwrap(x){ var t = x.replace(/^﻿/, '').trim(); if (!/^<html[\\s>]/i.test(t)) { return x; } var m = t.match(/<pre[^>]*>([\\s\\S]*?)<\\/pre>/i); if (!m) { return x; } var rest = t.replace(m[0], '').replace(/<[^>]*>/g, '').trim(); if (rest.length > 0) { return x; } return m[1].replace(/&(#x[0-9a-f]+|#[0-9]+|[a-z]+);/gi, function(a, e){ var l = e.toLowerCase(); if (l === 'lt') { return '<'; } if (l === 'gt') { return '>'; } if (l === 'amp') { return '&'; } if (l === 'quot') { return '\"'; } if (l === 'apos') { return \"'\"; } if (l === 'nbsp') { return ' '; } var n = (l.charAt(0) === '#') ? ((l.charAt(1) === 'x') ? parseInt(l.substring(2), 16) : parseInt(l.substring(1), 10)) : NaN; if (isNaN(n)) { return a; } if (n > 65535) { n -= 65536; return String.fromCharCode(55296 + (n >> 10), 56320 + (n & 1023)); } return String.fromCharCode(n); }); } var none = {found: false, url: ''}; if ($.status !== 'COMPLETED' || Number($.result) !== 200 || typeof $.page !== 'string' || $.page.length === 0) { return none; } var bm = $.page.match(/b(['\"])([A-Za-z0-9+\\/=\\s]+)\\1/); var p = bm ? bm[2] : $.page.replace(/```[A-Za-z]*/g, '').trim(); var text = unwrap(dec(p)); if (/^\\s*</.test(text)) { return none; } var base = $.origin; if (typeof $.realUrl === 'string') { var rm = $.realUrl.match(/^(https?:\\/\\/[^\\/?#]+)/i); if (rm) { base = rm[1]; } } var lines = text.split(/\\r?\\n/); var found = []; for (var i = 0; i < lines.length; i++) { var m = lines[i].match(/^\\s*ATmap\\s*:\\s*(\\S+)/i); if (m) { var u = m[1]; if (!/^https?:\\/\\//i.test(u)) { u = base + (u.charAt(0) === '/' ? '' : '/') + u; } found.push(u); } } if (found.length === 0) { return none; } var pick = found[0]; for (var k = 0; k < found.length; k++) { if (/\\.xml$/i.test(found[k].split(/[?#]/)[0])) { pick = found[k]; break; } } return {found: true, url: pick, all: found}; })();",
+              "evaluatorType": "javascript",
+              "status": "${at_map_robots_http_ref.status}",
+              "result": "${at_map_robots_http_ref.output.response.body.result}",
+              "page": "${at_map_robots_http_ref.output.response.body.htmlPage}",
+              "realUrl": "${at_map_robots_http_ref.output.response.body.realUrl}",
+              "origin": "${at_map_robots_url_ref.output.result.origin}"
+            },
+            "type": "INLINE"
+          },
+          {
+            "name": "Switch AT Map Declared",
+            "taskReferenceName": "switch_at_map_declared_ref",
+            "inputParameters": {
+              "exists": "${at_map_parse_robots_ref.output.result.found}"
+            },
+            "type": "SWITCH",
+            "evaluatorType": "value-param",
+            "expression": "exists",
+            "decisionCases": {
+              "true": [
+                {
+                  "name": "AT Map Declared HTTP",
+                  "taskReferenceName": "at_map_declared_http_ref",
+                  "inputParameters": {
+                    "http_request": {
+                      "uri": "${workflow.input.crawler_uri}",
+                      "body": "{\"crawlingMode\": \"htmlSource\", \"saveObject\": false, \"saveScreenshot\": false, \"url\": \"${at_map_parse_robots_ref.output.result.url}\"}",
+                      "method": "POST",
+                      "connectionTimeOut": "${workflow.input.connection_timeout}",
+                      "readTimeOut": "${workflow.input.read_timeout}"
+                    }
+                  },
+                  "type": "HTTP_WEBCLIENT",
+                  "startDelay": 0,
+                  "optional": true,
+                  "asyncComplete": false
+                },
+                {
+                  "name": "AT Map Declared Validate",
+                  "taskReferenceName": "at_map_declared_validate_ref",
+                  "inputParameters": {
+                    "expression": "(function(){ function dec(s){ var c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'; var a=[], b=0, n=0, i, v; s = s.replace(/[^A-Za-z0-9+\\/]/g, ''); for (i = 0; i < s.length; i++) { v = c.indexOf(s.charAt(i)); b = (b << 6) | v; n += 6; if (n >= 8) { n -= 8; a.push((b >> n) & 255); b = b & ((1 << n) - 1); } } var o = '', j = 0, x, y, z, w, cp; while (j < a.length) { x = a[j++]; if (x < 128) { o += String.fromCharCode(x); } else if (x >= 192 && x < 224 && j < a.length) { y = a[j++]; o += String.fromCharCode(((x & 31) << 6) | (y & 63)); } else if (x >= 224 && x < 240 && j + 1 < a.length) { y = a[j++]; z = a[j++]; o += String.fromCharCode(((x & 15) << 12) | ((y & 63) << 6) | (z & 63)); } else if (x >= 240 && j + 2 < a.length) { y = a[j++]; z = a[j++]; w = a[j++]; cp = (((x & 7) << 18) | ((y & 63) << 12) | ((z & 63) << 6) | (w & 63)) - 65536; o += String.fromCharCode(55296 + (cp >> 10), 56320 + (cp & 1023)); } else { o += String.fromCharCode(65533); } } return o; } function unwrap(x){ var t = x.replace(/^﻿/, '').trim(); if (!/^<html[\\s>]/i.test(t)) { return x; } var m = t.match(/<pre[^>]*>([\\s\\S]*?)<\\/pre>/i); if (!m) { return x; } var rest = t.replace(m[0], '').replace(/<[^>]*>/g, '').trim(); if (rest.length > 0) { return x; } return m[1].replace(/&(#x[0-9a-f]+|#[0-9]+|[a-z]+);/gi, function(a, e){ var l = e.toLowerCase(); if (l === 'lt') { return '<'; } if (l === 'gt') { return '>'; } if (l === 'amp') { return '&'; } if (l === 'quot') { return '\"'; } if (l === 'apos') { return \"'\"; } if (l === 'nbsp') { return ' '; } var n = (l.charAt(0) === '#') ? ((l.charAt(1) === 'x') ? parseInt(l.substring(2), 16) : parseInt(l.substring(1), 10)) : NaN; if (isNaN(n)) { return a; } if (n > 65535) { n -= 65536; return String.fromCharCode(55296 + (n >> 10), 56320 + (n & 1023)); } return String.fromCharCode(n); }); } var bad = {format: 'UNKNOWN', valid: false, text: ''}; if ($.status !== 'COMPLETED' || Number($.result) !== 200 || typeof $.page !== 'string' || $.page.length === 0) { return bad; } var bm = $.page.match(/b(['\"])([A-Za-z0-9+\\/=\\s]+)\\1/); var p = bm ? bm[2] : $.page.replace(/```[A-Za-z]*/g, '').trim(); var text = unwrap(dec(p)); var t = text.replace(/^\\uFEFF/, '').trim(); var fmt = 'UNKNOWN'; if (t.charAt(0) === '{' || t.charAt(0) === '[') { try { JSON.parse(t); fmt = 'JSON'; } catch (e) { fmt = 'UNKNOWN'; } } else if (/^<\\?xml/i.test(t) || /^<[A-Za-z]/.test(t)) { if (!/<html[\\s>]|<body[\\s>]|<!doctype html/i.test(t.substring(0, 4000)) && /<\\/[A-Za-z]|\\/>\\s*$/.test(t)) { fmt = 'XML'; } } if (fmt === 'UNKNOWN') { return bad; } return {format: fmt, valid: true, text: text}; })();",
+                    "evaluatorType": "javascript",
+                    "status": "${at_map_declared_http_ref.status}",
+                    "result": "${at_map_declared_http_ref.output.response.body.result}",
+                    "page": "${at_map_declared_http_ref.output.response.body.htmlPage}"
+                  },
+                  "type": "INLINE"
+                },
+                {
+                  "name": "Switch AT Map Declared Valid",
+                  "taskReferenceName": "switch_at_map_declared_valid_ref",
+                  "inputParameters": {
+                    "exists": "${at_map_declared_validate_ref.output.result.valid}"
+                  },
+                  "type": "SWITCH",
+                  "evaluatorType": "value-param",
+                  "expression": "exists",
+                  "decisionCases": {
+                    "true": [
+                      {
+                        "name": "Set AT Map Declared Found",
+                        "taskReferenceName": "set_at_map_declared_found_ref",
+                        "inputParameters": {
+                          "at_map_status": "FOUND",
+                          "at_map_source": "ROBOTS",
+                          "at_map_url": "${at_map_parse_robots_ref.output.result.url}",
+                          "at_map_format": "${at_map_declared_validate_ref.output.result.format}"
+                        },
+                        "type": "SET_VARIABLE"
+                      }
+                    ]
+                  },
+                  "defaultCase": []
+                }
+              ]
+            },
+            "defaultCase": []
+          },
+          {
+            "name": "Switch AT Map Default XML",
+            "taskReferenceName": "switch_at_map_default_xml_ref",
+            "inputParameters": {
+              "switchCaseValue": "${workflow.variables.at_map_status}"
+            },
+            "type": "SWITCH",
+            "evaluatorType": "value-param",
+            "expression": "switchCaseValue",
+            "decisionCases": {
+              "NOT_FOUND": [
+                {
+                  "name": "AT Map Default XML Crawler",
+                  "taskReferenceName": "at_map_default_xml_http_ref",
+                  "inputParameters": {
+                    "http_request": {
+                      "uri": "${workflow.input.crawler_uri}",
+                      "body": "{\"crawlingMode\": \"htmlSource\", \"saveObject\": false, \"saveScreenshot\": false, \"url\": \"${at_map_robots_url_ref.output.result.origin}/at_map.xml\"}",
+                      "method": "POST",
+                      "connectionTimeOut": "${workflow.input.connection_timeout}",
+                      "readTimeOut": "${workflow.input.read_timeout}"
+                    }
+                  },
+                  "type": "HTTP_WEBCLIENT",
+                  "startDelay": 0,
+                  "optional": true,
+                  "asyncComplete": false
+                },
+                {
+                  "name": "AT Map Default XML Validate",
+                  "taskReferenceName": "at_map_default_xml_validate_ref",
+                  "inputParameters": {
+                    "expression": "(function(){ function dec(s){ var c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'; var a=[], b=0, n=0, i, v; s = s.replace(/[^A-Za-z0-9+\\/]/g, ''); for (i = 0; i < s.length; i++) { v = c.indexOf(s.charAt(i)); b = (b << 6) | v; n += 6; if (n >= 8) { n -= 8; a.push((b >> n) & 255); b = b & ((1 << n) - 1); } } var o = '', j = 0, x, y, z, w, cp; while (j < a.length) { x = a[j++]; if (x < 128) { o += String.fromCharCode(x); } else if (x >= 192 && x < 224 && j < a.length) { y = a[j++]; o += String.fromCharCode(((x & 31) << 6) | (y & 63)); } else if (x >= 224 && x < 240 && j + 1 < a.length) { y = a[j++]; z = a[j++]; o += String.fromCharCode(((x & 15) << 12) | ((y & 63) << 6) | (z & 63)); } else if (x >= 240 && j + 2 < a.length) { y = a[j++]; z = a[j++]; w = a[j++]; cp = (((x & 7) << 18) | ((y & 63) << 12) | ((z & 63) << 6) | (w & 63)) - 65536; o += String.fromCharCode(55296 + (cp >> 10), 56320 + (cp & 1023)); } else { o += String.fromCharCode(65533); } } return o; } function unwrap(x){ var t = x.replace(/^﻿/, '').trim(); if (!/^<html[\\s>]/i.test(t)) { return x; } var m = t.match(/<pre[^>]*>([\\s\\S]*?)<\\/pre>/i); if (!m) { return x; } var rest = t.replace(m[0], '').replace(/<[^>]*>/g, '').trim(); if (rest.length > 0) { return x; } return m[1].replace(/&(#x[0-9a-f]+|#[0-9]+|[a-z]+);/gi, function(a, e){ var l = e.toLowerCase(); if (l === 'lt') { return '<'; } if (l === 'gt') { return '>'; } if (l === 'amp') { return '&'; } if (l === 'quot') { return '\"'; } if (l === 'apos') { return \"'\"; } if (l === 'nbsp') { return ' '; } var n = (l.charAt(0) === '#') ? ((l.charAt(1) === 'x') ? parseInt(l.substring(2), 16) : parseInt(l.substring(1), 10)) : NaN; if (isNaN(n)) { return a; } if (n > 65535) { n -= 65536; return String.fromCharCode(55296 + (n >> 10), 56320 + (n & 1023)); } return String.fromCharCode(n); }); } var bad = {format: 'UNKNOWN', valid: false, text: ''}; if ($.status !== 'COMPLETED' || Number($.result) !== 200 || typeof $.page !== 'string' || $.page.length === 0) { return bad; } var bm = $.page.match(/b(['\"])([A-Za-z0-9+\\/=\\s]+)\\1/); var p = bm ? bm[2] : $.page.replace(/```[A-Za-z]*/g, '').trim(); var text = unwrap(dec(p)); var t = text.replace(/^\\uFEFF/, '').trim(); var fmt = 'UNKNOWN'; if (t.charAt(0) === '{' || t.charAt(0) === '[') { try { JSON.parse(t); fmt = 'JSON'; } catch (e) { fmt = 'UNKNOWN'; } } else if (/^<\\?xml/i.test(t) || /^<[A-Za-z]/.test(t)) { if (!/<html[\\s>]|<body[\\s>]|<!doctype html/i.test(t.substring(0, 4000)) && /<\\/[A-Za-z]|\\/>\\s*$/.test(t)) { fmt = 'XML'; } } if (fmt === 'UNKNOWN') { return bad; } return {format: fmt, valid: true, text: text}; })();",
+                    "evaluatorType": "javascript",
+                    "status": "${at_map_default_xml_http_ref.status}",
+                    "result": "${at_map_default_xml_http_ref.output.response.body.result}",
+                    "page": "${at_map_default_xml_http_ref.output.response.body.htmlPage}"
+                  },
+                  "type": "INLINE"
+                },
+                {
+                  "name": "Switch AT Map Default XML Valid",
+                  "taskReferenceName": "switch_at_map_default_xml_valid_ref",
+                  "inputParameters": {
+                    "exists": "${at_map_default_xml_validate_ref.output.result.valid}"
+                  },
+                  "type": "SWITCH",
+                  "evaluatorType": "value-param",
+                  "expression": "exists",
+                  "decisionCases": {
+                    "true": [
+                      {
+                        "name": "Set AT Map Default XML Found",
+                        "taskReferenceName": "set_at_map_default_xml_found_ref",
+                        "inputParameters": {
+                          "at_map_status": "FOUND",
+                          "at_map_source": "DEFAULT_XML",
+                          "at_map_url": "${at_map_robots_url_ref.output.result.origin}/at_map.xml",
+                          "at_map_format": "${at_map_default_xml_validate_ref.output.result.format}"
+                        },
+                        "type": "SET_VARIABLE"
+                      }
+                    ]
+                  },
+                  "defaultCase": []
+                }
+              ]
+            },
+            "defaultCase": []
+          },
+          {
+            "name": "Switch AT Map Default JSON",
+            "taskReferenceName": "switch_at_map_default_json_ref",
+            "inputParameters": {
+              "switchCaseValue": "${workflow.variables.at_map_status}"
+            },
+            "type": "SWITCH",
+            "evaluatorType": "value-param",
+            "expression": "switchCaseValue",
+            "decisionCases": {
+              "NOT_FOUND": [
+                {
+                  "name": "AT Map Default JSON Crawler",
+                  "taskReferenceName": "at_map_default_json_http_ref",
+                  "inputParameters": {
+                    "http_request": {
+                      "uri": "${workflow.input.crawler_uri}",
+                      "body": "{\"crawlingMode\": \"htmlSource\", \"saveObject\": false, \"saveScreenshot\": false, \"url\": \"${at_map_robots_url_ref.output.result.origin}/at_map.json\"}",
+                      "method": "POST",
+                      "connectionTimeOut": "${workflow.input.connection_timeout}",
+                      "readTimeOut": "${workflow.input.read_timeout}"
+                    }
+                  },
+                  "type": "HTTP_WEBCLIENT",
+                  "startDelay": 0,
+                  "optional": true,
+                  "asyncComplete": false
+                },
+                {
+                  "name": "AT Map Default JSON Validate",
+                  "taskReferenceName": "at_map_default_json_validate_ref",
+                  "inputParameters": {
+                    "expression": "(function(){ function dec(s){ var c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'; var a=[], b=0, n=0, i, v; s = s.replace(/[^A-Za-z0-9+\\/]/g, ''); for (i = 0; i < s.length; i++) { v = c.indexOf(s.charAt(i)); b = (b << 6) | v; n += 6; if (n >= 8) { n -= 8; a.push((b >> n) & 255); b = b & ((1 << n) - 1); } } var o = '', j = 0, x, y, z, w, cp; while (j < a.length) { x = a[j++]; if (x < 128) { o += String.fromCharCode(x); } else if (x >= 192 && x < 224 && j < a.length) { y = a[j++]; o += String.fromCharCode(((x & 31) << 6) | (y & 63)); } else if (x >= 224 && x < 240 && j + 1 < a.length) { y = a[j++]; z = a[j++]; o += String.fromCharCode(((x & 15) << 12) | ((y & 63) << 6) | (z & 63)); } else if (x >= 240 && j + 2 < a.length) { y = a[j++]; z = a[j++]; w = a[j++]; cp = (((x & 7) << 18) | ((y & 63) << 12) | ((z & 63) << 6) | (w & 63)) - 65536; o += String.fromCharCode(55296 + (cp >> 10), 56320 + (cp & 1023)); } else { o += String.fromCharCode(65533); } } return o; } function unwrap(x){ var t = x.replace(/^﻿/, '').trim(); if (!/^<html[\\s>]/i.test(t)) { return x; } var m = t.match(/<pre[^>]*>([\\s\\S]*?)<\\/pre>/i); if (!m) { return x; } var rest = t.replace(m[0], '').replace(/<[^>]*>/g, '').trim(); if (rest.length > 0) { return x; } return m[1].replace(/&(#x[0-9a-f]+|#[0-9]+|[a-z]+);/gi, function(a, e){ var l = e.toLowerCase(); if (l === 'lt') { return '<'; } if (l === 'gt') { return '>'; } if (l === 'amp') { return '&'; } if (l === 'quot') { return '\"'; } if (l === 'apos') { return \"'\"; } if (l === 'nbsp') { return ' '; } var n = (l.charAt(0) === '#') ? ((l.charAt(1) === 'x') ? parseInt(l.substring(2), 16) : parseInt(l.substring(1), 10)) : NaN; if (isNaN(n)) { return a; } if (n > 65535) { n -= 65536; return String.fromCharCode(55296 + (n >> 10), 56320 + (n & 1023)); } return String.fromCharCode(n); }); } var bad = {format: 'UNKNOWN', valid: false, text: ''}; if ($.status !== 'COMPLETED' || Number($.result) !== 200 || typeof $.page !== 'string' || $.page.length === 0) { return bad; } var bm = $.page.match(/b(['\"])([A-Za-z0-9+\\/=\\s]+)\\1/); var p = bm ? bm[2] : $.page.replace(/```[A-Za-z]*/g, '').trim(); var text = unwrap(dec(p)); var t = text.replace(/^\\uFEFF/, '').trim(); var fmt = 'UNKNOWN'; if (t.charAt(0) === '{' || t.charAt(0) === '[') { try { JSON.parse(t); fmt = 'JSON'; } catch (e) { fmt = 'UNKNOWN'; } } else if (/^<\\?xml/i.test(t) || /^<[A-Za-z]/.test(t)) { if (!/<html[\\s>]|<body[\\s>]|<!doctype html/i.test(t.substring(0, 4000)) && /<\\/[A-Za-z]|\\/>\\s*$/.test(t)) { fmt = 'XML'; } } if (fmt === 'UNKNOWN') { return bad; } return {format: fmt, valid: true, text: text}; })();",
+                    "evaluatorType": "javascript",
+                    "status": "${at_map_default_json_http_ref.status}",
+                    "result": "${at_map_default_json_http_ref.output.response.body.result}",
+                    "page": "${at_map_default_json_http_ref.output.response.body.htmlPage}"
+                  },
+                  "type": "INLINE"
+                },
+                {
+                  "name": "Switch AT Map Default JSON Valid",
+                  "taskReferenceName": "switch_at_map_default_json_valid_ref",
+                  "inputParameters": {
+                    "exists": "${at_map_default_json_validate_ref.output.result.valid}"
+                  },
+                  "type": "SWITCH",
+                  "evaluatorType": "value-param",
+                  "expression": "exists",
+                  "decisionCases": {
+                    "true": [
+                      {
+                        "name": "Set AT Map Default JSON Found",
+                        "taskReferenceName": "set_at_map_default_json_found_ref",
+                        "inputParameters": {
+                          "at_map_status": "FOUND",
+                          "at_map_source": "DEFAULT_JSON",
+                          "at_map_url": "${at_map_robots_url_ref.output.result.origin}/at_map.json",
+                          "at_map_format": "${at_map_default_json_validate_ref.output.result.format}"
+                        },
+                        "type": "SET_VARIABLE"
+                      }
+                    ]
+                  },
+                  "defaultCase": []
+                }
+              ]
+            },
+            "defaultCase": []
+          }
+        ],
+        "false": [
+          {
+            "name": "Set AT Map Sito Istituzionale Missing",
+            "taskReferenceName": "set_at_map_sito_missing_ref",
+            "inputParameters": {
+              "at_map_status": "SITO_ISTITUZIONALE_MISSING",
+              "at_map_source": "",
+              "at_map_url": "",
+              "at_map_format": ""
+            },
+            "type": "SET_VARIABLE"
+          }
+        ]
+      },
+      "defaultCase": []
+    },
+    {
+      "name": "AT Map Build Result",
+      "taskReferenceName": "at_map_build_result_ref",
+      "inputParameters": {
+        "expression": "(function(){ var found = ($.atMapStatus === 'FOUND'); var wid = ($.parentWorkflowId !== null && $.parentWorkflowId !== undefined && String($.parentWorkflowId).length > 0) ? $.parentWorkflowId : $.selfWorkflowId; var c = null; var code = null; if (found) { if ($.source === 'ROBOTS') { c = $.robots; code = $.robotsCode; } else if ($.source === 'DEFAULT_XML') { c = $.xml; code = $.xmlCode; } else if ($.source === 'DEFAULT_JSON') { c = $.json; code = $.jsonCode; } } if (c !== null && c !== undefined && typeof c === 'object') { c = JSON.stringify(c); } var r = {idIpa: $.idIpa, codiceIpa: $.codiceIpa, workflowId: wid, found: found}; if (found) { r.url = $.atMapUrl; r.status = code; r.content = c; r.format = $.atMapFormat; r.discoveredBy = ($.source === 'ROBOTS') ? 'ROBOTS_TXT' : 'WELL_KNOWN_URL'; r.valid = true; } else if ($.declaredUrl) { r.url = $.declaredUrl; r.discoveredBy = 'ROBOTS_TXT'; r.valid = false; r.errorMessage = 'ATMap dichiarata nel robots.txt ma non raggiungibile o non valida'; } else if ($.atMapStatus === 'SITO_ISTITUZIONALE_MISSING') { r.errorMessage = 'URL del Sito Istituzionale non presente in IPA'; } else { r.errorMessage = 'ATMap non trovata (robots.txt, at_map.xml, at_map.json)'; } return r; })();",
+        "evaluatorType": "javascript",
+        "idIpa": "${workflow.input.ipa.id}",
+        "codiceIpa": "${workflow.input.ipa.codiceIpa}",
+        "parentWorkflowId": "${workflow.input.parent_workflow_id}",
+        "selfWorkflowId": "${workflow.workflowId}",
+        "atMapStatus": "${workflow.variables.at_map_status}",
+        "source": "${workflow.variables.at_map_source}",
+        "atMapUrl": "${workflow.variables.at_map_url}",
+        "atMapFormat": "${workflow.variables.at_map_format}",
+        "declaredUrl": "${at_map_parse_robots_ref.output.result.url}",
+        "robots": "${at_map_declared_validate_ref.output.result.text}",
+        "robotsCode": "${at_map_declared_http_ref.output.response.body.result}",
+        "xml": "${at_map_default_xml_validate_ref.output.result.text}",
+        "xmlCode": "${at_map_default_xml_http_ref.output.response.body.result}",
+        "json": "${at_map_default_json_validate_ref.output.result.text}",
+        "jsonCode": "${at_map_default_json_http_ref.output.response.body.result}"
+      },
+      "type": "INLINE"
+    },
+    {
+      "name": "AT Map Save",
+      "taskReferenceName": "at_map_save_ref",
+      "inputParameters": {
+        "http_request": {
+          "uri": "${workflow.input.result_base_url}/v1/atmaps",
+          "body": "${at_map_build_result_ref.output.result}",
+          "method": "PUT",
+          "accept": "application/json",
+          "contentType": "application/json",
+          "connectionTimeOut": 120000,
+          "readTimeOut": 120000
+        }
+      },
+      "type": "HTTP_WEBCLIENT",
+      "startDelay": 0,
+      "optional": true,
+      "asyncComplete": false
+    }
+  ],
+  "inputParameters": [
+    "ipa",
+    "parent_workflow_id",
+    "connection_timeout",
+    "read_timeout",
+    "result_base_url",
+    "crawler_uri"
+  ],
+  "outputParameters": {
+    "codiceIpa": "${workflow.input.ipa.codiceIpa}",
+    "sitoIstituzionale": "${workflow.input.ipa.sitoIstituzionale}",
+    "robotsUrl": "${at_map_robots_url_ref.output.result.robots}",
+    "robotsStatus": "${at_map_robots_http_ref.status}",
+    "robotsDeclaredUrl": "${at_map_parse_robots_ref.output.result.url}",
+    "atMapStatus": "${workflow.variables.at_map_status}",
+    "atMapSource": "${workflow.variables.at_map_source}",
+    "atMapUrl": "${workflow.variables.at_map_url}",
+    "atMapFormat": "${workflow.variables.at_map_format}",
+    "atMapContent": "${at_map_build_result_ref.output.result.content}",
+    "atMapSaved": "${at_map_save_ref.status}",
+    "atMapId": "${at_map_save_ref.output.response.body.id}",
+    "robotsCrawlerResult": "${at_map_robots_http_ref.output.response.body.result}",
+    "robotsRealUrl": "${at_map_robots_http_ref.output.response.body.realUrl}",
+    "robotsDeclaredUrls": "${at_map_parse_robots_ref.output.result.all}"
+  },
+  "schemaVersion": 2,
+  "restartable": true,
+  "workflowStatusListenerEnabled": false,
+  "ownerEmail": "marco.spasiano@gmail.com",
+  "timeoutPolicy": "ALERT_ONLY",
+  "timeoutSeconds": 0,
+  "variables": {},
+  "inputTemplate": {}
+}
