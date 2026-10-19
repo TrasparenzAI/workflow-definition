@@ -34,6 +34,8 @@ printf "Try to create or update crawler_amministrazione_trasparente \n"
 printf "\nTry to create or update crawler_result_failed\n"
 ( echo '['; cat crawler_result_failed.json ; echo ']') | curl -X PUT $4/api/metadata/workflow -H "Authorization: Bearer $TOKEN" -H 'Content-type:application/json' --data @- 
 printf "\nTry to create or update rule_workflow\n"
+( echo '['; cat at_map_workflow.json ; echo ']') | curl -X PUT $4/api/metadata/workflow -H "Authorization: Bearer $TOKEN" -H 'Content-type:application/json' --data @- 
+printf "\nTry to create or update at_map_workflow\n"
 ( echo '['; cat rule_workflow.json ; echo ']') | curl -X PUT $4/api/metadata/workflow -H "Authorization: Bearer $TOKEN" -H 'Content-type:application/json' --data @- 
 printf "\nTry to create or update rule_detail_workflow\n"
 ( echo '['; cat rule_detail_workflow.json ; echo ']') | curl -X PUT $4/api/metadata/workflow -H "Authorization: Bearer $TOKEN" -H 'Content-type:application/json' --data @-

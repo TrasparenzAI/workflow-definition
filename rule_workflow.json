@@ -116,6 +116,52 @@
                                             "decisionCases": {
                                                 "true": [
                                                     {
+                                                        "name": "AT Map Sito Present",
+                                                        "taskReferenceName": "at_map_sito_present_ref",
+                                                        "inputParameters": {
+                                                            "expression": "(function(){ if ($.s != undefined && $.s != null && String($.s).trim().length > 0){return true;} else { return false;} })();",
+                                                            "evaluatorType": "javascript",
+                                                            "s": "${result_trasform_ref.output.result.sitoIstituzionale}"
+                                                        },
+                                                        "type": "INLINE",
+                                                        "optional": true
+                                                    },
+                                                    {
+                                                        "name": "Switch AT Map Sito Present",
+                                                        "taskReferenceName": "switch_at_map_sito_present_ref",
+                                                        "inputParameters": {
+                                                            "url_present": "${at_map_sito_present_ref.output.result}"
+                                                        },
+                                                        "defaultCase": [],
+                                                        "evaluatorType": "value-param",
+                                                        "expression": "url_present",
+                                                        "type": "SWITCH",
+                                                        "decisionCases": {
+                                                            "true": [
+                                                                {
+                                                                    "name": "Start AT Map Workflow",
+                                                                    "taskReferenceName": "start_at_map_workflow_ref",
+                                                                    "inputParameters": {
+                                                                        "startWorkflow": {
+                                                                            "input": {
+                                                                                "ipa": "${result_trasform_ref.output.result}",
+                                                                                "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                                                                "connection_timeout": "${workflow.input.connection_timeout}",
+                                                                                "read_timeout": "${workflow.input.read_timeout}",
+                                                                                "result_base_url": "${workflow.input.result_base_url}",
+                                                                                "crawler_uri": "${workflow.input.crawler_uri}"
+                                                                            },
+                                                                            "name": "at_map_workflow",
+                                                                            "version": 2
+                                                                        }
+                                                                    },
+                                                                    "type": "START_WORKFLOW",
+                                                                    "optional": true
+                                                                }
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
                                                         "name": "Start Result Rule Detail Workflow",
                                                         "taskReferenceName": "start_result_rule_detail_workflow_ref",
                                                         "inputParameters": {
@@ -279,6 +325,52 @@
                                             "expression": "exists",
                                             "decisionCases": {
                                                 "false": [
+                                                    {
+                                                        "name": "AT Map Sito Present PUT",
+                                                        "taskReferenceName": "at_map_sito_present_put_ref",
+                                                        "inputParameters": {
+                                                            "expression": "(function(){ if ($.s != undefined && $.s != null && String($.s).trim().length > 0){return true;} else { return false;} })();",
+                                                            "evaluatorType": "javascript",
+                                                            "s": "${ipa_ref.output.result.sitoIstituzionale}"
+                                                        },
+                                                        "type": "INLINE",
+                                                        "optional": true
+                                                    },
+                                                    {
+                                                        "name": "Switch AT Map Sito Present PUT",
+                                                        "taskReferenceName": "switch_at_map_sito_present_put_ref",
+                                                        "inputParameters": {
+                                                            "url_present": "${at_map_sito_present_put_ref.output.result}"
+                                                        },
+                                                        "defaultCase": [],
+                                                        "evaluatorType": "value-param",
+                                                        "expression": "url_present",
+                                                        "type": "SWITCH",
+                                                        "decisionCases": {
+                                                            "true": [
+                                                                {
+                                                                    "name": "Start AT Map Workflow PUT",
+                                                                    "taskReferenceName": "start_at_map_workflow_put_ref",
+                                                                    "inputParameters": {
+                                                                        "startWorkflow": {
+                                                                            "input": {
+                                                                                "ipa": "${ipa_ref.output.result}",
+                                                                                "parent_workflow_id": "${workflow.input.parent_workflow_id}",
+                                                                                "connection_timeout": "${workflow.input.connection_timeout}",
+                                                                                "read_timeout": "${workflow.input.read_timeout}",
+                                                                                "result_base_url": "${workflow.input.result_base_url}",
+                                                                                "crawler_uri": "${workflow.input.crawler_uri}"
+                                                                            },
+                                                                            "name": "at_map_workflow",
+                                                                            "version": 2
+                                                                        }
+                                                                    },
+                                                                    "type": "START_WORKFLOW",
+                                                                    "optional": true
+                                                                }
+                                                            ]
+                                                        }
+                                                    },
                                                     {
                                                         "name": "Start Rule Detail Workflow",
                                                         "taskReferenceName": "start_rule_detail_workflow_ref",
