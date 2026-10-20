@@ -152,7 +152,7 @@
                                                                                 "crawler_uri": "${workflow.input.crawler_uri}"
                                                                             },
                                                                             "name": "at_map_workflow",
-                                                                            "version": 2
+                                                                            "version": 3
                                                                         }
                                                                     },
                                                                     "type": "START_WORKFLOW",
@@ -362,7 +362,7 @@
                                                                                 "crawler_uri": "${workflow.input.crawler_uri}"
                                                                             },
                                                                             "name": "at_map_workflow",
-                                                                            "version": 2
+                                                                            "version": 3
                                                                         }
                                                                     },
                                                                     "type": "START_WORKFLOW",

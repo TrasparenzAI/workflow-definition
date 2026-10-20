@@ -52,7 +52,7 @@ curl -X POST $4/api/workflow -H 'Content-type:application/json' \
   --data '{
     "name": "at_map_workflow",
     "correlationId": "'$5'",
-    "version": 2,
+    "version": 3,
     "input": {
       "ipa": {
         "codiceIpa": "'$5'",
