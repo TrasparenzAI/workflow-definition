@@ -3,7 +3,7 @@
     "updateTime": 1706173716218,
     "name": "crawler_amministrazione_trasparente",
     "description": "Crawler Amministrazione Trasparente",
-    "version": 3,
+    "version": 4,
     "tasks": [
         {
             "name": "Parent Workflow ID",
@@ -306,7 +306,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 2
+                                    "version": 3
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -344,7 +344,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 2
+                                    "version": 3
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -382,7 +382,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 2
+                                    "version": 3
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -420,7 +420,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 2
+                                    "version": 3
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -458,7 +458,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 2
+                                    "version": 3
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -496,7 +496,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 2
+                                    "version": 3
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -534,7 +534,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 2
+                                    "version": 3
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -572,7 +572,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 2
+                                    "version": 3
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -610,7 +610,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 2
+                                    "version": 3
                                 },
                                 "type": "SUB_WORKFLOW"
                             }
@@ -648,7 +648,7 @@
                                 },
                                 "subWorkflowParam": {
                                     "name": "rule_workflow",
-                                    "version": 2
+                                    "version": 3
                                 },
                                 "type": "SUB_WORKFLOW"
                             }

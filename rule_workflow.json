@@ -4,7 +4,7 @@
     "accessPolicy": {},
     "name": "rule_workflow",
     "description": "Rule Workflow",
-    "version": 2,
+    "version": 3,
     "tasks": [
         {
             "name": "Companies Present",
